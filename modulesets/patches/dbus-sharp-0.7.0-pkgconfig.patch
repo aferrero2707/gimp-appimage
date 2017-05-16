@@ -1,0 +1,12 @@
+diff -ur dbus-sharp-0.7.0.orig/dbus-sharp-1.0.pc.in dbus-sharp-0.7.0/dbus-sharp-1.0.pc.in
+--- dbus-sharp-0.7.0.orig/dbus-sharp-1.0.pc.in	2010-09-14 18:47:49.000000000 +0930
++++ dbus-sharp-0.7.0/dbus-sharp-1.0.pc.in	2011-08-23 21:01:16.512717282 +0930
+@@ -1,7 +1,7 @@
+ prefix=@prefix@
+ datadir=${prefix}/share
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=@libdir@
+ session_bus_services_dir=${datadir}/dbus-1/services
+ 
+ Name: Managed DBus

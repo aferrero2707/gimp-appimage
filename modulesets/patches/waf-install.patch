@@ -1,0 +1,42 @@
+Fix WAF to work as an autotools module type.
+
+Index: waf-1.4.4/wscript
+===================================================================
+--- waf-1.4.4.orig/wscript	2009-05-04 20:49:36.000000000 +0700
++++ waf-1.4.4/wscript	2009-05-04 20:49:45.000000000 +0700
+@@ -314,9 +314,6 @@
+ 			sys.exit(0)
+ 
+ 	if Params.g_commands['install']:
+-		val = Params.g_options.yes or (not sys.stdin.isatty() or raw_input("Installing Waf is discouraged. Proceed? [y/n]"))
+-		if val != True and val != "y": sys.exit(1)
+-
+ 		compute_revision()
+ 
+ 		create_waf()
+Index: waf-1.4.4/utils/autogen.sh
+===================================================================
+--- waf-1.4.4.orig/utils/autogen.sh	2009-05-04 20:49:36.000000000 +0700
++++ waf-1.4.4/utils/autogen.sh	2009-05-04 20:52:38.000000000 +0700
+@@ -2,7 +2,14 @@
+ 
+ # This script is an autogen.sh-like wrapper for allowing WAF to be installed by jhbuild
+ 
+-WAF=./waf-light
++srcdir=`dirname $0`
++if test -n "$srcdir"; then
++  srcdir=$srcdir/..
++else
++  srcdir=.
++fi
++
++WAF=$srcdir/waf-light
+ prefix=""
+ 
+ while test -n "$1"; do
+@@ -47,3 +54,5 @@
+ 
+ EOF
+ 
++$srcdir/configure --prefix=$prefix
++$srcdir/waf configure $prefix

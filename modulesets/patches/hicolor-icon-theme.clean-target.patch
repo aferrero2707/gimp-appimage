@@ -1,0 +1,11 @@
+--- hicolor-icon-theme-0.10-orig/Makefile.in	2008-08-22 10:09:01.000000000 +0200
++++ hicolor-icon-theme-0.10/Makefile.in	2008-08-22 10:09:27.000000000 +0200
+@@ -48,5 +48,7 @@
+ config.status: configure
+ 	./config.status --recheck
+ 
+-.PHONY: all install dist tag
++clean:
++
++.PHONY: all install dist tag clean
+ 

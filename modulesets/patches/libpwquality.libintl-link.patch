@@ -1,0 +1,59 @@
+diff -r -u libpwquality-1.2.2/src/Makefile.am libpwquality-1.2.2+/src/Makefile.am
+--- libpwquality-1.2.2/src/Makefile.am	2014-03-05 22:36:14.323988295 -0500
++++ libpwquality-1.2.2+/src/Makefile.am	2014-03-05 22:37:26.324056066 -0500
+@@ -25,13 +25,13 @@
+ libpwquality_la_LDFLAGS = -no-undefined $(libpwquality_version_script) \
+ 	-version-info @PWQUALITY_LT_CURRENT@:@PWQUALITY_LT_REVISION@:@PWQUALITY_LT_AGE@
+ 
+-libpwquality_la_LIBADD = @LIBCRACK@
++libpwquality_la_LIBADD = @LIBCRACK@ $(LIBINTL)
+ 
+ libpwquality_la_SOURCES = generate.c check.c settings.c error.c
+ 
+ if HAVE_PAM
+   pam_pwquality_la_LDFLAGS = -no-undefined -avoid-version -module
+-  pam_pwquality_la_LIBADD = libpwquality.la @PAM_LIBS@
++  pam_pwquality_la_LIBADD = libpwquality.la @PAM_LIBS@ $(LIBINTL)
+   pam_pwquality_la_SOURCES = pam_pwquality.c
+ else
+   pam_pwquality_la_LDFLAGS =
+@@ -41,11 +41,11 @@
+ 
+ pwscore_SOURCES = pwscore.c
+ 
+-pwscore_LDADD = libpwquality.la
++pwscore_LDADD = libpwquality.la $(LIBINTL)
+ 
+ pwmake_SOURCES = pwmake.c
+ 
+-pwmake_LDADD = libpwquality.la
++pwmake_LDADD = libpwquality.la $(LIBINTL)
+ 
+ lib_LTLIBRARIES = libpwquality.la
+ 
+diff -r -u libpwquality-1.2.2/src/Makefile.in libpwquality-1.2.2+/src/Makefile.in
+--- libpwquality-1.2.2/src/Makefile.in	2013-06-19 11:41:37.000000000 -0400
++++ libpwquality-1.2.2+/src/Makefile.in	2014-03-05 22:38:01.938157558 -0500
+@@ -308,18 +308,18 @@
+ libpwquality_la_LDFLAGS = -no-undefined $(libpwquality_version_script) \
+ 	-version-info @PWQUALITY_LT_CURRENT@:@PWQUALITY_LT_REVISION@:@PWQUALITY_LT_AGE@
+ 
+-libpwquality_la_LIBADD = @LIBCRACK@
++libpwquality_la_LIBADD = @LIBCRACK@ $(LIBINTL)
+ libpwquality_la_SOURCES = generate.c check.c settings.c error.c
+ @HAVE_PAM_FALSE@pam_pwquality_la_LDFLAGS = 
+ @HAVE_PAM_TRUE@pam_pwquality_la_LDFLAGS = -no-undefined -avoid-version -module
+ @HAVE_PAM_FALSE@pam_pwquality_la_LIBADD = 
+-@HAVE_PAM_TRUE@pam_pwquality_la_LIBADD = libpwquality.la @PAM_LIBS@
++@HAVE_PAM_TRUE@pam_pwquality_la_LIBADD = libpwquality.la @PAM_LIBS@ $(LIBINTL)
+ @HAVE_PAM_FALSE@pam_pwquality_la_SOURCES = 
+ @HAVE_PAM_TRUE@pam_pwquality_la_SOURCES = pam_pwquality.c
+ pwscore_SOURCES = pwscore.c
+-pwscore_LDADD = libpwquality.la
++pwscore_LDADD = libpwquality.la $(LIBINTL)
+ pwmake_SOURCES = pwmake.c
+-pwmake_LDADD = libpwquality.la
++pwmake_LDADD = libpwquality.la $(LIBINTL)
+ lib_LTLIBRARIES = libpwquality.la
+ @HAVE_PAM_FALSE@securelib_LTLIBRARIES = 
+ @HAVE_PAM_TRUE@securelib_LTLIBRARIES = pam_pwquality.la

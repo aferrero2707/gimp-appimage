@@ -1,0 +1,30 @@
+stop using internal glibc defines
+
+__USE_BSD is a private define of glibc and it no longer does the same
+thing with newer glibc releases.
+
+Switch to using the correct _BSD_SOURCE instead.
+
+_BSD_SOURCE is unfortunately disabled in newer releases of glibc, so we
+should also define _DEFAULT_SOURCE.
+
+https://bugs.launchpad.net/mir/+bug/1384390
+
+--- a/examples/progressbar.c	2014-09-11 05:51:44 +0000
++++ b/examples/progressbar.c	2014-10-22 18:50:33 +0000
+@@ -16,12 +16,14 @@
+  * Author: Daniel van Vugt <daniel.van.vugt@canonical.com>
+  */
+ 
++#define _DEFAULT_SOURCE
++#define _BSD_SOURCE /* for usleep() */
++
+ #include "mir_toolkit/mir_client_library.h"
+ #include <stdio.h>
+ #include <signal.h>
+ #include <stdint.h>
+ #include <stdlib.h>
+-#define __USE_BSD 1  /* for usleep() */
+ #include <unistd.h>  /* sleep() */
+ #include <string.h>
+ 

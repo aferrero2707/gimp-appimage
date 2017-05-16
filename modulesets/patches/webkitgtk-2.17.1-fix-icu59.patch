@@ -1,0 +1,106 @@
+From 868adfcb9efa4ad5cf4d0ddd5a772e5bdb2f3f35 Mon Sep 17 00:00:00 2001
+From: "annulen@yandex.ru"
+ <annulen@yandex.ru@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
+Date: Thu, 4 May 2017 15:33:41 +0000
+Subject: [PATCH] Fix compilation with ICU 59.1
+ https://bugs.webkit.org/show_bug.cgi?id=171612
+
+Reviewed by Mark Lam.
+
+ICU 59.1 has broken source compatibility. Now it defines UChar as
+char16_t, which does not allow automatic type conversion from unsigned
+short in C++ code.
+
+Source/JavaScriptCore:
+
+* API/JSStringRef.cpp:
+(JSStringCreateWithCharacters):
+(JSStringCreateWithCharactersNoCopy):
+(JSStringGetCharactersPtr):
+* runtime/DateConversion.cpp:
+(JSC::formatDateTime):
+
+Source/WebKit2:
+
+* Shared/API/c/WKString.cpp:
+(WKStringGetCharacters):
+
+
+git-svn-id: http://svn.webkit.org/repository/webkit/trunk@216187 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+---
+ Source/JavaScriptCore/API/JSStringRef.cpp              |  6 +++---
+ Source/JavaScriptCore/ChangeLog                        | 18 ++++++++++++++++++
+ Source/JavaScriptCore/runtime/DateConversion.cpp       |  7 ++-----
+ Source/WebKit2/Shared/API/c/WKString.cpp               |  2 +-
+ 7 files changed, 53 insertions(+), 10 deletions(-)
+
+diff --git a/Source/JavaScriptCore/API/JSStringRef.cpp b/Source/JavaScriptCore/API/JSStringRef.cpp
+index c9b380c..9095404 100644
+--- a/Source/JavaScriptCore/API/JSStringRef.cpp
++++ b/Source/JavaScriptCore/API/JSStringRef.cpp
+@@ -37,7 +37,7 @@ using namespace WTF::Unicode;
+ JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
+ {
+     initializeThreading();
+-    return &OpaqueJSString::create(chars, numChars).leakRef();
++    return &OpaqueJSString::create(reinterpret_cast<const UChar*>(chars), numChars).leakRef();
+ }
+ 
+ JSStringRef JSStringCreateWithUTF8CString(const char* string)
+@@ -62,7 +62,7 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
+ JSStringRef JSStringCreateWithCharactersNoCopy(const JSChar* chars, size_t numChars)
+ {
+     initializeThreading();
+-    return OpaqueJSString::create(StringImpl::createWithoutCopying(chars, numChars)).leakRef();
++    return OpaqueJSString::create(StringImpl::createWithoutCopying(reinterpret_cast<const UChar*>(chars), numChars)).leakRef();
+ }
+ 
+ JSStringRef JSStringRetain(JSStringRef string)
+@@ -87,7 +87,7 @@ const JSChar* JSStringGetCharactersPtr(JSStringRef string)
+ {
+     if (!string)
+         return nullptr;
+-    return string->characters();
++    return reinterpret_cast<const JSChar*>(string->characters());
+ }
+ 
+ size_t JSStringGetMaximumUTF8CStringSize(JSStringRef string)
+diff --git a/Source/JavaScriptCore/runtime/DateConversion.cpp b/Source/JavaScriptCore/runtime/DateConversion.cpp
+index df9a60d..05e2733 100644
+--- a/Source/JavaScriptCore/runtime/DateConversion.cpp
++++ b/Source/JavaScriptCore/runtime/DateConversion.cpp
+@@ -107,7 +107,8 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
+ #if OS(WINDOWS)
+             TIME_ZONE_INFORMATION timeZoneInformation;
+             GetTimeZoneInformation(&timeZoneInformation);
+-            const WCHAR* timeZoneName = t.isDST() ? timeZoneInformation.DaylightName : timeZoneInformation.StandardName;
++            const WCHAR* winTimeZoneName = t.isDST() ? timeZoneInformation.DaylightName : timeZoneInformation.StandardName;
++            String timeZoneName(reinterpret_cast<const UChar*>(winTimeZoneName));
+ #else
+             struct tm gtm = t;
+             char timeZoneName[70];
+@@ -115,11 +116,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
+ #endif
+             if (timeZoneName[0]) {
+                 builder.appendLiteral(" (");
+-#if OS(WINDOWS)
+-                builder.append(String(timeZoneName));
+-#else
+                 builder.append(timeZoneName);
+-#endif
+                 builder.append(')');
+             }
+         }
+diff --git a/Source/WebKit2/Shared/API/c/WKString.cpp b/Source/WebKit2/Shared/API/c/WKString.cpp
+index 34d15f1..6503670 100644
+--- a/Source/WebKit2/Shared/API/c/WKString.cpp
++++ b/Source/WebKit2/Shared/API/c/WKString.cpp
+@@ -61,7 +61,7 @@ size_t WKStringGetCharacters(WKStringRef stringRef, WKChar* buffer, size_t buffe
+     unsigned unsignedBufferLength = std::min<size_t>(bufferLength, std::numeric_limits<unsigned>::max());
+     auto substring = toImpl(stringRef)->stringView().substring(0, unsignedBufferLength);
+ 
+-    substring.getCharactersWithUpconvert(static_cast<UChar*>(buffer));
++    substring.getCharactersWithUpconvert(reinterpret_cast<UChar*>(buffer));
+     return substring.length();
+ }
+

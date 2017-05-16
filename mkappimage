@@ -1,0 +1,212 @@
+#! /bin/bash
+
+FULL_BUNDLING=0
+
+PREFIX=zzz
+
+# Move blacklisted files to a special folder
+move_blacklisted()
+{
+  mkdir -p ./usr/lib-blacklisted
+if [ x"$FULL_BUNDLING" = "x1" ]; then
+  BLACKLISTED_FILES=$(cat $APPIMAGEBASE/AppImages/excludelist | sed '/^\s*$/d' | sed '/^#.*$/d')
+else
+  #BLACKLISTED_FILES=$(wget -q https://github.com/probonopd/AppImages/raw/master/excludelist -O - | sed '/^\s*$/d' | sed '/^#.*$/d')
+  BLACKLISTED_FILES=$(cat "$WD/excludelist" | sed '/^\s*$/d' | sed '/^#.*$/d')
+fi
+  echo $BLACKLISTED_FILES
+  for FILE in $BLACKLISTED_FILES ; do
+    FOUND=$(find . -type f -name "${FILE}" 2>/dev/null)
+    if [ ! -z "$FOUND" ] ; then
+      echo "Moving blacklisted ${FOUND}"
+      #rm -f "${FOUND}"
+      mv "${FOUND}" ./usr/lib-blacklisted
+    fi
+  done
+}
+
+
+fix_pango()
+{
+    
+    version=$(pango-querymodules --version | tail -n 1 | tr -d " " | cut -d':' -f 2)
+    cat /$PREFIX/lib/pango/$version/modules.cache | sed "s|/$PREFIX/lib/pango/$version/modules/||g" > usr/lib/pango/$version/modules.cache
+}
+
+
+export APPIMAGEBASE=$(pwd)/..
+wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./functions.sh
+. ./functions.sh
+
+#cat_file_from_url https://github.com/probonopd/AppImages/raw/master/excludelist | sed '/^\s*$/d' | sed '/^#.*$/d' > blacklisted
+
+APP=gimp
+VERSION=2.9.5
+LOWERAPP=${APP,,} 
+
+rm -rf out $APP
+
+WD=$(pwd)
+
+export PATH=/$PREFIX/bin:$PATH
+export LD_LIBRARY_PATH=/$PREFIX/lib:$LD_LIBRARY_PATH
+export XDG_DATA_DIRS=/$PREFIX/share:$XDG_DATA_DIRS
+export PKG_CONFIG_PATH=/$PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
+
+
+pwd
+
+mkdir -p $APP/$APP.AppDir
+cd $APP/$APP.AppDir
+mkdir -p usr/bin
+cp -a /$PREFIX/bin/gimp* usr/bin
+mv usr/bin/gimp-2.9 usr/bin/$LOWERAPP.bin
+
+#mkdir -p usr/lib
+cp -a /$PREFIX/lib usr
+cp -a /$PREFIX/etc usr
+cp -a /$PREFIX/share usr
+
+rm -r usr/bin/photoflow
+rm -r usr/bin/pfbatch
+
+#cp -a ../../$LOWERAPP.launcher usr/bin/$LOWERAPP
+cat > usr/bin/$LOWERAPP <<\EOF
+#! /bin/bash
+pwd
+#read dummy
+HERE="$(dirname "$(readlink -f "${0}")")"
+echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+export XDG_DATA_DIRS=$HERE/../share/mime:$XDG_DATA_DIRS
+echo "XDG_DATA_DIRS=$XDG_DATA_DIRS"
+export GTK_PATH=$HERE/../lib/gtk-2.0:$GTK_PATH
+echo "GTK_PATH=${GTK_PATH}"
+
+export PANGO_LIBDIR=$HERE/../lib
+echo "PANGO_LIBDIR=${PANGO_LIBDIR}"
+
+GDK_PIXBUF_MODULEDIR=$HERE/../lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders
+GDK_PIXBUF_MODULE_FILE=$HERE/../lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache
+echo "GDK_PIXBUF_MODULEDIR: $GDK_PIXBUF_MODULEDIR"
+echo "GDK_PIXBUF_MODULE_FILE: $GDK_PIXBUF_MODULE_FILE"
+cat $GDK_PIXBUF_MODULE_FILE
+#export PF_DATA_DIR=$HERE/../share
+export GIMP2_PLUGINDIR=$(readlink -f "$HERE/../lib/gimp/2.0")
+#export PYTHONPATH=
+#export PYTHONHOME=
+echo "HERE: $HERE"
+echo "GIMP2_PLUGINDIR: $GIMP2_PLUGINDIR"
+echo "Input parameters: \"$@\""
+echo ""
+echo "Input File: $1"
+ldd $HERE/LOWERAPP.bin
+echo ""
+echo "$HERE/LOWERAPP.bin --pdb-compat-mode=on \"$@\""
+#gdb -ex "run --pdb-compat-mode=on \"$@\"" $HERE/LOWERAPP.bin
+#gdb $HERE/LOWERAPP.bin
+#which gdb
+#GDB=$(which gdb)
+#echo "Starting GDB ($GDB)"
+#$GDB
+#echo "GDB finished"
+$HERE/LOWERAPP.bin --pdb-compat-mode=on "$@"
+EOF
+sed -i -e "s|LOWERAPP|$LOWERAPP|g" usr/bin/$LOWERAPP
+chmod u+x usr/bin/$LOWERAPP
+
+mkdir -p usr/share
+cp -a /usr/share/mime usr/share
+
+get_apprun
+
+# The original desktop file is a bit strange, hence we provide our own
+cat > $LOWERAPP.desktop <<\EOF
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GIMP AppImage
+GenericName=Image Editor
+Comment=Create images and edit photographs
+Exec=LOWERAPP %f
+TryExec=LOWERAPP
+Icon=LOWERAPP
+Terminal=false
+Categories=Graphics;2DGraphics;RasterGraphics;GTK;
+StartupNotify=true
+MimeType=image/bmp;image/g3fax;image/gif;image/x-fits;image/x-pcx;image/x-portable-anymap;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-psd;image/x-sgi;image/x-tga;image/x-xbitmap;image/x-xwindowdump;image/x-xcf;image/x-compressed-xcf;image/x-gimp-gbr;image/x-gimp-pat;image/x-gimp-gih;image/tiff;image/jpeg;image/x-psp;image/png;image/x-icon;image/x-exr;image/svg+xml;image/x-wmf;image/jp2;image/jpeg2000;image/jpx;image/x-xcursor;image/x-3fr;image/x-adobe-dng;image/x-arw;image/x-bay;image/x-canon-cr2;image/x-canon-crw;image/x-cap;image/x-cr2;image/x-crw;image/x-dcr;image/x-dcraw;image/x-dcs;image/x-dng;image/x-drf;image/x-eip;image/x-erf;image/x-fff;image/x-fuji-raf;image/x-iiq;image/x-k25;image/x-kdc;image/x-mef;image/x-minolta-mrw;image/x-mos;image/x-mrw;image/x-nef;image/x-nikon-nef;image/x-nrw;image/x-olympus-orf;image/x-orf;image/x-panasonic-raw;image/x-pef;image/x-pentax-pef;image/x-ptx;image/x-pxn;image/x-r3d;image/x-raf;image/x-raw;image/x-rw2;image/x-rwl;image/x-rwz;image/x-sigma-x3f;image/x-sony-arw;image/x-sony-sr2;image/x-sony-srf;image/x-sr2;image/x-srf;image/x-x3f;
+EOF
+sed -i -e "s|LOWERAPP|$LOWERAPP|g" $LOWERAPP.desktop
+
+# Copy in the indirect dependencies
+copy_deps ; copy_deps ; copy_deps # Three runs to ensure we catch indirect ones
+
+#exit
+
+cp -a $PREFIX/lib/* usr/lib
+cp -a $PREFIX/lib64/* usr/lib64
+rm -rf $PREFIX
+
+move_lib
+
+#delete_blacklisted
+move_blacklisted
+
+#cp -a /$PREFIX/lib/libatk-bridge* usr/lib
+#cp -a /$PREFIX/lib/libatspi.* usr/lib
+
+rm -rf ../../work/sources/mypaint
+git clone https://github.com/mypaint/mypaint.git ../../work/sources/mypaint
+mkdir -p usr/share/mypaint/brushes
+for brush in classic deevad experimental kaerhon_v1 ramon tanda; do
+    cp -r ../../work/sources/mypaint/brushes/$brush usr/share/mypaint/brushes
+done
+
+fix_pango
+
+# patch_usr
+# Patching only the executable files seems not to be enough for darktable
+find usr/ -type f -exec sed -i -e "s|/$PREFIX|././|g" {} \;
+find usr/ -type f -exec sed -i -e "s|/usr|././|g" {} \;
+
+# The fonts configuration should not be patched, copy back original one
+cp /$PREFIX/etc/fonts/fonts.conf usr/etc/fonts/fonts.conf
+
+# patch for using system-supplied python interpreter
+cp /$PREFIX/lib/gimp/2.0/interpreters/pygimp.interp usr/lib/gimp/2.0/interpreters/pygimp.interp
+
+# Workaround for:
+# GLib-GIO-ERROR **: Settings schema 'org.gtk.Settings.FileChooser' is not installed
+# when trying to use the file open dialog
+# AppRun exports usr/share/glib-2.0/schemas/ which might be hurting us here
+( mkdir -p usr/share/glib-2.0/schemas/ ; cd usr/share/glib-2.0/schemas/ ; ln -s /usr/share/glib-2.0/schemas/gschemas.compiled . )
+
+# Workaround for:
+# ImportError: /usr/lib/x86_64-linux-gnu/libgdk-x11-2.0.so.0: undefined symbol: XRRGetMonitors
+cp $(ldconfig -p | grep libgdk-x11-2.0.so.0 | cut -d ">" -f 2 | xargs) ./usr/lib/
+cp $(ldconfig -p | grep libgtk-x11-2.0.so.0 | cut -d ">" -f 2 | xargs) ./usr/lib/
+
+#VER1=$(pkg-config --modversion gimp-2.0)-test
+VER1=$(pkg-config --modversion gimp-2.0)-$(date +%Y%m%d)
+if [ x"$FULL_BUNDLING" = "x1" ]; then
+    VER1="${VER1}-full"
+fi
+GLIBC_NEEDED=$(glibc_needed)
+VERSION=$VER1.glibc$GLIBC_NEEDED
+echo $VERSION
+
+get_desktopintegration $LOWERAPP
+cp -a ../../$LOWERAPP.wrapper ./usr/bin/$LOWERAPP.wrapper
+#cp -a ../../desktopintegration ./usr/bin/$LOWERAPP.wrapper
+#chmod a+x ./usr/bin/$LOWERAPP.wrapper
+#sed -i -e "s|Exec=$LOWERAPP|Exec=$LOWERAPP.wrapper|g" $LOWERAPP.desktop
+
+# Go out of AppImage
+cd ..
+
+exit
+
+echo "Building AppImage..."
+pwd
+
+ARCH="x86_64"
+generate_appimage

@@ -1,0 +1,22 @@
+diff -r -u farstream-0.2.2/transmitters/multicast/fs-multicast-transmitter.c farstream-0.2.2+/transmitters/multicast/fs-multicast-transmitter.c
+--- farstream-0.2.2/transmitters/multicast/fs-multicast-transmitter.c	2012-10-02 17:53:42.000000000 -0400
++++ farstream-0.2.2+/transmitters/multicast/fs-multicast-transmitter.c	2014-03-05 22:57:12.132051838 -0500
+@@ -55,6 +55,7 @@
+ #else /*G_OS_WIN32*/
+ # include <netdb.h>
+ # include <sys/socket.h>
++# include <netinet/in.h>
+ # include <netinet/ip.h>
+ # include <arpa/inet.h>
+ #endif /*G_OS_WIN32*/
+diff -r -u farstream-0.2.2/transmitters/rawudp/fs-rawudp-transmitter.h farstream-0.2.2+/transmitters/rawudp/fs-rawudp-transmitter.h
+--- farstream-0.2.2/transmitters/rawudp/fs-rawudp-transmitter.h	2012-10-02 17:53:42.000000000 -0400
++++ farstream-0.2.2+/transmitters/rawudp/fs-rawudp-transmitter.h	2014-03-05 22:55:58.766448109 -0500
+@@ -34,6 +34,7 @@
+ # include <ws2tcpip.h>
+ #else /*G_OS_WIN32*/
+ # include <arpa/inet.h>
++# include <netinet/in.h>
+ #endif /*G_OS_WIN32*/
+ 
+ G_BEGIN_DECLS

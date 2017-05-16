@@ -1,0 +1,146 @@
+From e9ce18d10f7f31b65deaad55d5c8b2a3a43c741a Mon Sep 17 00:00:00 2001
+From: Colin Walters <walters@verbum.org>
+Date: Fri, 15 Jul 2011 10:23:35 -0400
+Subject: [PATCH] Support Build API (configure/make/make install DESTDIR)
+
+This patch is based on one by Frederic Peters <fpeters@src.gnome.org>,
+which in turn is based on rules inspired by Debian.
+
+nss has inherited an old copy of the custom Mozilla build system, which
+has some flaws.  Namely, we care about:
+
+"USE_64": The nss maintainers are just wrong about this.  64 bit should be
+detected at configure time.
+
+"make install DESTDIR=":  We care about being able to do this, so we can
+get a manifest at build time.
+---
+ Makefile.in  |   44 ++++++++++++++++++++++++++++++++++++++++++++
+ autogen.sh   |   13 +++++++++++++
+ configure.ac |   24 ++++++++++++++++++++++++
+ nss.pc.in    |   11 +++++++++++
+ 4 files changed, 92 insertions(+), 0 deletions(-)
+ create mode 100644 Makefile.in
+ create mode 100755 autogen.sh
+ create mode 100644 configure.ac
+ create mode 100644 nss.pc.in
+
+diff --git a/Makefile.in b/Makefile.in
+new file mode 100644
+index 0000000..a308586
+--- /dev/null
++++ b/Makefile.in
+@@ -0,0 +1,44 @@
++prefix=@prefix@
++nspr_prefix=@NSPR_PREFIX@
++nspr_libdir=@NSPR_LIBDIR@
++libdir=@libdir@
++
++DISTDIR = $(CURDIR)/mozilla/dist
++
++ARGS = \
++	MOZILLA_CLIENT=1 \
++	NSPR_INCLUDE_DIR=$(nspr_prefix)/include/nspr \
++	NSPR_LIB_DIR=$(nspr_libdir) \
++	SOURCE_MD_DIR=$(DISTDIR) \
++	DIST=$(DISTDIR) \
++	BUILD_OPT=1 \
++	NS_USE_GCC=1 \
++	NSS_USE_SYSTEM_SQLITE=1 \
++	USE_64=@USE_64@ \
++	NSS_ENABLE_ECC=1
++
++all:
++	$(MAKE) -C mozilla/security/nss \
++		build_coreconf \
++		build_dbm \
++		all \
++		$(ARGS)
++
++clean:
++	$(MAKE) -C mozilla/security/nss clean
++
++install:
++	install -d -m 755 $(DESTDIR)bin
++	install -d -m 755 $(DESTDIR)$(libdir)/nss
++	install -d -m 755 $(DESTDIR)$(prefix)/include/nss
++	install -d -m 755 $(DESTDIR)$(libdir)/pkgconfig
++
++	install -m 644 -t $(DESTDIR)$(libdir) $(DISTDIR)/lib/*.so
++	install -m 644 -t $(DESTDIR)$(libdir)/nss \
++	  $(DISTDIR)/lib/libfreebl3.so \
++	  $(DISTDIR)/lib/libsoftokn3.so \
++	  $(DISTDIR)/lib/libnssdbm3.so \
++	  $(DISTDIR)/lib/libnssckbi.so
++	install -m 644 -t $(DESTDIR)$(prefix)/include/nss $(DISTDIR)/public/nss/*
++	install -m 644 -t $(DESTDIR)$(libdir)/pkgconfig nss.pc 
++
+diff --git a/autogen.sh b/autogen.sh
+new file mode 100755
+index 0000000..f05f9d4
+--- /dev/null
++++ b/autogen.sh
+@@ -0,0 +1,13 @@
++#!/bin/sh
++
++test -n "$srcdir" || srcdir=`dirname "$0"`
++test -n "$srcdir" || srcdir=.
++
++olddir=`pwd`
++cd "$srcdir"
++
++autoreconf --force --install || exit $?
++
++cd "$olddir"
++test -n "$NOCONFIGURE" || "$srcdir/configure" "$@"
++
+diff --git a/configure.ac b/configure.ac
+new file mode 100644
+index 0000000..20ce6f0
+--- /dev/null
++++ b/configure.ac
+@@ -0,0 +1,24 @@
++AC_PREREQ(2.54)
++AC_INIT([nss], [3.12])
++
++AC_CONFIG_SRCDIR([mozilla/security/nss/Makefile])
++
++NSPR_PREFIX=$(pkg-config nspr --variable=prefix)
++AC_SUBST(NSPR_PREFIX)
++NSPR_LIBDIR=$(pkg-config nspr --variable=libdir)
++AC_SUBST(NSPR_LIBDIR)
++
++AC_CHECK_SIZEOF(long)
++if test x$ac_cv_sizeof_long = x8; then
++  USE_64=1
++else
++  USE_64=
++fi
++AC_SUBST(USE_64)
++
++AC_CONFIG_FILES([
++Makefile
++nss.pc
++])
++
++AC_OUTPUT
+diff --git a/nss.pc.in b/nss.pc.in
+new file mode 100644
+index 0000000..4943134
+--- /dev/null
++++ b/nss.pc.in
+@@ -0,0 +1,11 @@
++prefix=@prefix@
++exec_prefix=${prefix}
++libdir=${prefix}/lib
++includedir=${prefix}/include/nss
++
++Name: NSS
++Description: Mozilla Network Security Services
++Version: 3.12
++Requires: nspr
++Libs: -L${libdir} -lnss3 -lnssutil3 -lsmime3 -lssl3
++Cflags: -I${includedir}
+-- 
+1.7.6
+

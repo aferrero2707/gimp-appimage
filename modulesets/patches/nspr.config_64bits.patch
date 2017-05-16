@@ -1,0 +1,42 @@
+diff -ur nspr-4.8.6.orig/mozilla/nsprpub/configure.in nspr-4.8.6/mozilla/nsprpub/configure.in
+--- nspr-4.8.6.orig/mozilla/nsprpub/configure.in	2010-07-09 12:00:36.000000000 +0930
++++ nspr-4.8.6/mozilla/nsprpub/configure.in	2010-11-23 21:21:52.404388001 +1030
+@@ -57,7 +57,7 @@
+ USE_USER_PTHREADS=
+ USE_NSPR_THREADS=
+ USE_N32=
+-USE_64=
++USE_64=maybe
+ USE_CPLUS=
+ USE_IPV6=
+ USE_MDUPDATE=
+@@ -319,11 +319,26 @@
+     fi ])
+ 
+ AC_ARG_ENABLE(64bit,
+-    [  --enable-64bit          Enable 64-bit support (on certain platforms)],
+-    [ if test "$enableval" = "yes"; then
++    [  --disable-64bit         Disable 64-bit support (on 64-bit platforms)],
++    [ if test "$enableval" = "no"; then
++	    USE_64=
++      else
+ 	    USE_64=1
+       fi ])
+ 
++if test "${USE_64}"; then
++    AC_MSG_CHECKING(for 64-bit OS)
++    AC_TRY_COMPILE([],[int assert[(sizeof(long) == 8) ? 1: -1]],
++        result="yes", result="no")
++    AC_MSG_RESULT("$result")
++    if test "$result" = "no" && test "$USE_64" = 1; then
++        AC_MSG_ERROR([Can't --enable-64bit on non 64-bit platforms])
++    fi
++    if test "$result" = "yes"; then
++        USE_64=1
++    fi
++fi
++
+ AC_ARG_ENABLE(mdupdate,
+     [  --enable-mdupdate       Enable use of certain compilers' mdupdate feature],
+     [ if test "$enableval" = "yes"; then
+Only in nspr-4.8.6/mozilla/nsprpub: configure.in.orig

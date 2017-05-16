@@ -1,0 +1,480 @@
+diff -ur udev-147.orig/autogen.sh udev-147/autogen.sh
+--- udev-147.orig/autogen.sh	2009-07-30 08:22:41.000000000 +0930
++++ udev-147/autogen.sh	2011-08-11 20:36:12.507044125 +0930
+@@ -1,7 +1,7 @@
+ #!/bin/sh -e
+ 
+ gtkdocize
+-autoreconf --install --symlink
++autoreconf --force --install --symlink
+ 
+ MYCFLAGS="-g -Wall \
+ -Wmissing-declarations -Wmissing-prototypes \
+diff -ur udev-147.orig/configure.ac udev-147/configure.ac
+--- udev-147.orig/configure.ac	2009-11-10 16:19:47.000000000 +1030
++++ udev-147/configure.ac	2011-08-11 20:37:51.998686668 +0930
+@@ -62,6 +62,10 @@
+ 	AC_CHECK_LIB([acl], [acl_init], [:], AC_MSG_ERROR([libacl not found]))
+ 	AC_CHECK_HEADER([acl/libacl.h], [:], AC_MSG_ERROR([libacl header not found]))
+ 
++	PKG_CHECK_MODULES(LIBUDEV, libudev >= 147)
++	AC_SUBST(LIBUDEV_CFLAGS)
++	AC_SUBST(LIBUDEV_LIBS)
++
+ 	PKG_CHECK_MODULES(LIBUSB, libusb >= 0.1.12)
+ 	AC_SUBST(LIBUSB_CFLAGS)
+ 	AC_SUBST(LIBUSB_LIBS)
+diff -ur udev-147.orig/Makefile.am udev-147/Makefile.am
+--- udev-147.orig/Makefile.am	2009-11-11 00:39:27.000000000 +1030
++++ udev-147/Makefile.am	2011-08-11 20:37:51.999686645 +0930
+@@ -7,7 +7,7 @@
+ 
+ EXTRA_DIST = autogen.sh
+ 
+-ACLOCAL_AMFLAGS = -I m4
++ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
+ 
+ AM_MAKEFLAGS = --no-print-directory
+ 
+@@ -25,267 +25,9 @@
+ 
+ CLEANFILES =
+ 
+-# ------------------------------------------------------------------------------
+-# libudev
+-# ------------------------------------------------------------------------------
+-LIBUDEV_CURRENT=5
+-LIBUDEV_REVISION=1
+-LIBUDEV_AGE=5
+-
+-SUBDIRS += libudev/docs
+-
+-include_HEADERS = libudev/libudev.h
+-lib_LTLIBRARIES = libudev/libudev.la
+-
+-libudev_libudev_la_SOURCES =\
+-	libudev/libudev-private.h \
+-	libudev/libudev.c \
+-	libudev/libudev-list.c \
+-	libudev/libudev-util.c \
+-	libudev/libudev-device.c \
+-	libudev/libudev-enumerate.c \
+-	libudev/libudev-monitor.c \
+-	libudev/libudev-queue.c
+-
+-libudev_libudev_la_LDFLAGS = \
+-	-version-info $(LIBUDEV_CURRENT):$(LIBUDEV_REVISION):$(LIBUDEV_AGE) \
+-	-export-symbols $(top_srcdir)/libudev/exported_symbols
+-
+-noinst_LTLIBRARIES = \
+-	libudev/libudev-private.la
+-
+-libudev_libudev_private_la_SOURCES =\
+-	$(libudev_libudev_la_SOURCES) \
+-	libudev/libudev-ctrl.c \
+-	libudev/libudev-util-private.c \
+-	libudev/libudev-device-private.c \
+-	libudev/libudev-queue-private.c
+-
+-if WITH_SELINUX
+-libudev_libudev_private_la_SOURCES += libudev/libudev-selinux-private.c
+-libudev_libudev_private_la_LIBADD = $(SELINUX_LIBS)
+-endif
+-
++lib_LTLIBRARIES =
+ pkgconfigdir = $(libdir)/pkgconfig
+-pkgconfig_DATA = libudev/libudev.pc
+-
+-EXTRA_DIST += libudev/exported_symbols
+-# move lib from $(libdir) to $(rootlib_execdir) and update devel link, if needed
+-libudev-install-move-hook:
+-	if test "$(libdir)" != "$(rootlib_execdir)"; then \
+-		mkdir -p $(DESTDIR)$(rootlib_execdir) && \
+-		so_img_name=$$(readlink $(DESTDIR)$(libdir)/libudev.so) && \
+-		so_img_rel_target_prefix=$$(echo $(libdir) | sed 's,\(^/\|\)[^/][^/]*,..,g') && \
+-		ln -sf $$so_img_rel_target_prefix$(rootlib_execdir)/$$so_img_name $(DESTDIR)$(libdir)/libudev.so && \
+-		mv $(DESTDIR)$(libdir)/libudev.so.* $(DESTDIR)$(rootlib_execdir); \
+-	fi
+-
+-libudev-uninstall-move-hook:
+-	rm -f $(DESTDIR)$(rootlib_execdir)/libudev.so*
+-
+-INSTALL_EXEC_HOOKS = libudev-install-move-hook
+-UNINSTALL_EXEC_HOOKS = libudev-uninstall-move-hook
+-
+-# ------------------------------------------------------------------------------
+-# main udev
+-# ------------------------------------------------------------------------------
+-install-data-local:
+-	-mkdir -p $(DESTDIR)$(sysconfdir)/udev/rules.d
+-
+-EXTRA_DIST += \
+-	rules/packages \
+-	rules/redhat \
+-	rules/suse \
+-	rules/gentoo
+-
+-udevrulesdir = $(libexecdir)/rules.d
+-dist_udevrules_DATA = \
+-	rules/rules.d/50-udev-default.rules \
+-	rules/rules.d/60-persistent-storage.rules \
+-	rules/rules.d/60-persistent-storage-tape.rules \
+-	rules/rules.d/60-persistent-serial.rules \
+-	rules/rules.d/60-persistent-input.rules \
+-	rules/rules.d/60-persistent-alsa.rules \
+-	rules/rules.d/80-drivers.rules \
+-	rules/rules.d/95-udev-late.rules
+-
+-udevconfdir = $(sysconfdir)/udev
+-dist_udevconf_DATA = udev.conf
+-
+-sharepkgconfigdir = $(datadir)/pkgconfig
+-sharepkgconfig_DATA = udev/udev.pc
+-
+-sbin_PROGRAMS = \
+-	udev/udevd \
+-	udev/udevadm
+-
+-udev_common_sources =\
+-	udev/udev.h \
+-	udev/udev-event.c \
+-	udev/udev-watch.c \
+-	udev/udev-node.c \
+-	udev/udev-rules.c
+-
+-udev_udevd_SOURCES = \
+-	$(udev_common_sources) \
+-	udev/udevd.c
+-udev_udevd_LDADD = libudev/libudev-private.la
+-
+-udev_udevadm_SOURCES = \
+-	$(udev_common_sources) \
+-	udev/udevadm.c \
+-	udev/udevadm-info.c \
+-	udev/udevadm-control.c \
+-	udev/udevadm-test.c \
+-	udev/udevadm-monitor.c \
+-	udev/udevadm-settle.c \
+-	udev/udevadm-trigger.c
+-udev_udevadm_LDADD = libudev/libudev-private.la
+-
+-# ------------------------------------------------------------------------------
+-# udev docs and man pages
+-# ------------------------------------------------------------------------------
+-writing_udev_rulesdir = $(docdir)/writing_udev_rules
+-dist_writing_udev_rules_DATA = \
+-	docs/writing_udev_rules/index.html
+-
+-dist_man_MANS = \
+-	udev/udev.7 \
+-	udev/udevadm.8 \
+-	udev/udevd.8
+-
+-EXTRA_DIST += \
+-	udev/udev.xml \
+-	udev/udevadm.xml \
+-	udev/udevd.xml
+-
+-%.7 %.8 : %.xml
+-	$(XSLTPROC) -o $@ -nonet http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
+-
+-# ------------------------------------------------------------------------------
+-# udev tests
+-# ------------------------------------------------------------------------------
+-TESTS = test/udev-test.pl
+-
+-check_PROGRAMS = \
+-	libudev/test-libudev \
+-	udev/test-udev
+-
+-libudev_test_libudev_SOURCES = libudev/test-libudev.c
+-libudev_test_libudev_LDADD = libudev/libudev.la
+-
+-udev_test_udev_SOURCES = \
+-	$(udev_common_sources) \
+-	udev/test-udev.c
+-udev_test_udev_LDADD = libudev/libudev-private.la
+-
+-# ------------------------------------------------------------------------------
+-# firmware.sh - firmware loading
+-# ------------------------------------------------------------------------------
+-dist_libexec_SCRIPTS = extras/firmware/firmware.sh
+-dist_udevrules_DATA += extras/firmware/50-firmware.rules
+-
+-# ------------------------------------------------------------------------------
+-# rule_generator - persistent network and optical device rule generator
+-# ------------------------------------------------------------------------------
+-dist_libexec_SCRIPTS += \
+-	extras/rule_generator/write_cd_rules \
+-	extras/rule_generator/write_net_rules
+-
+-udevhomedir = $(libexecdir)
+-dist_udevhome_DATA = extras/rule_generator/rule_generator.functions
+-
+-dist_udevrules_DATA += \
+-	extras/rule_generator/75-cd-aliases-generator.rules \
+-	extras/rule_generator/75-persistent-net-generator.rules
+-
+-# ------------------------------------------------------------------------------
+-# ata_id - ATA identify
+-# ------------------------------------------------------------------------------
+-extras_ata_id_ata_id_SOURCES = extras/ata_id/ata_id.c
+-extras_ata_id_ata_id_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS = extras/ata_id/ata_id
+-
+-# ------------------------------------------------------------------------------
+-# cdrom_id - optical drive/media capability
+-# ------------------------------------------------------------------------------
+-extras_cdrom_id_cdrom_id_SOURCES = extras/cdrom_id/cdrom_id.c
+-extras_cdrom_id_cdrom_id_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/cdrom_id/cdrom_id
+-dist_udevrules_DATA += extras/cdrom_id/60-cdrom_id.rules
+-
+-# ------------------------------------------------------------------------------
+-# collect - trigger action when a collection of devices appeared
+-# ------------------------------------------------------------------------------
+-extras_collect_collect_SOURCES = extras/collect/collect.c
+-extras_collect_collect_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/collect/collect
+-
+-# ------------------------------------------------------------------------------
+-# edd_id - BIOS EDD block device match
+-# ------------------------------------------------------------------------------
+-extras_edd_id_edd_id_SOURCES = extras/edd_id/edd_id.c
+-extras_edd_id_edd_id_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/edd_id/edd_id
+-dist_udevrules_DATA += extras/edd_id/61-persistent-storage-edd.rules
+-
+-# ------------------------------------------------------------------------------
+-# create_floppy_devices - historical floppy kernel device nodes (/dev/fd0h1440, ...)
+-# ------------------------------------------------------------------------------
+-extras_floppy_create_floppy_devices_SOURCES = extras/floppy/create_floppy_devices.c
+-extras_floppy_create_floppy_devices_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/floppy/create_floppy_devices
+-
+-# ------------------------------------------------------------------------------
+-# path_id - compose identifier of persistent elements of the parent buses
+-# ------------------------------------------------------------------------------
+-extras_path_id_path_id_SOURCES = extras/path_id/path_id.c
+-extras_path_id_path_id_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/path_id/path_id
+-
+-# ------------------------------------------------------------------------------
+-# fstab_import - import /etc/fstab entry for block device
+-# ------------------------------------------------------------------------------
+-extras_fstab_import_fstab_import_SOURCES = extras/fstab_import/fstab_import.c
+-extras_fstab_import_fstab_import_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/fstab_import/fstab_import
+-dist_udevrules_DATA += extras/fstab_import/79-fstab_import.rules
+-
+-# ------------------------------------------------------------------------------
+-# scsi_id - SCSI inquiry to get various serial numbers
+-# ------------------------------------------------------------------------------
+-extras_scsi_id_scsi_id_SOURCES =\
+-	extras/scsi_id/scsi_id.c \
+-	extras/scsi_id/scsi_serial.c \
+-	extras/scsi_id/scsi.h \
+-	extras/scsi_id/scsi_id.h
+-extras_scsi_id_scsi_id_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/scsi_id/scsi_id
+-dist_man_MANS += extras/scsi_id/scsi_id.8
+-
+-# ------------------------------------------------------------------------------
+-# usb_id - USB device property import
+-# ------------------------------------------------------------------------------
+-extras_usb_id_usb_id_SOURCES = extras/usb_id/usb_id.c
+-extras_usb_id_usb_id_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/usb_id/usb_id
+-
+-# ------------------------------------------------------------------------------
+-# v4l_id - video4linux capabilities
+-# ------------------------------------------------------------------------------
+-extras_v4l_id_v4l_id_SOURCES = extras/v4l_id/v4l_id.c
+-extras_v4l_id_v4l_id_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/v4l_id/v4l_id
+-dist_udevrules_DATA += extras/v4l_id/60-persistent-v4l.rules
+-
+-if ENABLE_EXTRAS
+-# ------------------------------------------------------------------------------
+-# conditional extras (need glib, libusb, libacl, ...)
+-# ------------------------------------------------------------------------------
+-dist_udevrules_DATA += \
+-	rules/rules.d/75-net-description.rules \
+-	rules/rules.d/75-tty-description.rules \
+-	rules/rules.d/78-sound-card.rules
++pkgconfig_DATA =
+ 
+ # ------------------------------------------------------------------------------
+ # GUdev - libudev gobject interface
+@@ -335,8 +77,8 @@
+ 	-D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT \
+ 	-D_GUDEV_COMPILATION \
+ 	-DG_LOG_DOMAIN=\"GUdev\"
+-extras_gudev_libgudev_1_0_la_CFLAGS = $(GLIB_CFLAGS)
+-extras_gudev_libgudev_1_0_la_LIBADD = libudev/libudev.la $(GLIB_LIBS)
++extras_gudev_libgudev_1_0_la_CFLAGS = $(LIBUDEV_CFLAGS)$ $(GLIB_CFLAGS)
++extras_gudev_libgudev_1_0_la_LIBADD = $(LIBUDEV_LIBS) $(GLIB_LIBS)
+ 
+ extras_gudev_libgudev_1_0_la_LDFLAGS = \
+ 	-version-info $(LIBGUDEV_CURRENT):$(LIBGUDEV_REVISION):$(LIBGUDEV_AGE) \
+@@ -366,7 +108,7 @@
+ if ENABLE_INTROSPECTION
+ extras/gudev/GUdev-1.0.gir: extras/gudev/libgudev-1.0.la $(G_IR_SCANNER) Makefile.am
+ 	$(AM_V_GEN)PKG_CONFIG_PATH=$(top_builddir)/data:$$PKG_CONFIG_PATH \
+-	LD_LIBRARY_PATH=$(top_builddir)/extras/gudev \
++	LD_LIBRARY_PATH=$(top_builddir)/extras/gudev:$$LD_LIBRARY_PATH \
+ 	$(G_IR_SCANNER) -v \
+ 		--namespace GUdev \
+ 		--nsversion=1.0 \
+@@ -401,151 +143,6 @@
+ endif # ENABLE_INTROSPECTION
+ 
+ # ------------------------------------------------------------------------------
+-# Bluetooth HID devices with special magic to switch the device
+-# ------------------------------------------------------------------------------
+-extras_hid2hci_hid2hci_SOURCES = extras/hid2hci/hid2hci.c
+-extras_hid2hci_hid2hci_CPPFLAGS = $(AM_CPPFLAGS) $(LIBUSB_CFLAGS)
+-extras_hid2hci_hid2hci_LDADD = libudev/libudev-private.la $(LIBUSB_LIBS)
+-dist_udevrules_DATA += extras/hid2hci/70-hid2hci.rules
+-libexec_PROGRAMS += extras/hid2hci/hid2hci
+-
+-# ------------------------------------------------------------------------------
+-# udev_acl - apply ACLs for users with local forground sessions
+-# ------------------------------------------------------------------------------
+-extras_udev_acl_udev_acl_SOURCES = extras/udev-acl/udev-acl.c
+-extras_udev_acl_udev_acl_CPPFLAGS = $(AM_CPPFLAGS) $(GLIB_CFLAGS)
+-extras_udev_acl_udev_acl_LDADD = libudev/libudev-private.la -lacl $(GLIB_LIBS)
+-dist_udevrules_DATA += extras/udev-acl/70-acl.rules
+-libexec_PROGRAMS += extras/udev-acl/udev-acl
+-
+-udevacl-install-hook:
+-	mkdir -p $(DESTDIR)$(prefix)/lib/ConsoleKit/run-seat.d
+-	ln -sf $(libexecdir)/udev-acl $(DESTDIR)$(prefix)/lib/ConsoleKit/run-seat.d/udev-acl.ck
+-
+-INSTALL_EXEC_HOOKS += udevacl-install-hook
+-
+-# ------------------------------------------------------------------------------
+-# usb-db - read USB vendor/device string database
+-# ------------------------------------------------------------------------------
+-extras_usb_db_usb_db_SOURCES = extras/usb-db/usb-db.c
+-extras_usb_db_usb_db_CPPFLAGS = $(AM_CPPFLAGS) -DUSB_DATABASE=\"$(USB_DATABASE)\" -DBUILD_FOR_USB
+-extras_usb_db_usb_db_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/usb-db/usb-db
+-
+-# ------------------------------------------------------------------------------
+-# pci-db - read PCI vendor/device string database
+-# ------------------------------------------------------------------------------
+-extras_usb_db_pci_db_SOURCES = extras/usb-db/usb-db.c
+-extras_usb_db_pci_db_CPPFLAGS = $(AM_CPPFLAGS) -DPCI_DATABASE=\"$(PCI_DATABASE)\" -DBUILD_FOR_PCI
+-extras_usb_db_pci_db_LDADD = libudev/libudev-private.la
+-libexec_PROGRAMS += extras/usb-db/pci-db
+-
+-# ------------------------------------------------------------------------------
+-# modem-modeswitch - magic config switch for 3G modems
+-# ------------------------------------------------------------------------------
+-extras_modem_modeswitch_modem_modeswitch_SOURCES =\
+-	extras/modem-modeswitch/modem-modeswitch.c \
+-	extras/modem-modeswitch/utils.c \
+-	extras/modem-modeswitch/utils.h \
+-	extras/modem-modeswitch/ma8280p_us.c \
+-	extras/modem-modeswitch/ma8280p_us.h \
+-	extras/modem-modeswitch/option.c \
+-	extras/modem-modeswitch/option.h
+-extras_modem_modeswitch_modem_modeswitch_CPPFLAGS = $(AM_CPPFLAGS) $(LIBUSB_CFLAGS)
+-extras_modem_modeswitch_modem_modeswitch_LDADD = libudev/libudev-private.la $(LIBUSB_LIBS)
+-
+-dist_udevrules_DATA += \
+-	extras/modem-modeswitch/61-option-modem-modeswitch.rules \
+-	extras/modem-modeswitch/61-mobile-action.rules
+-
+-libexec_PROGRAMS += extras/modem-modeswitch/modem-modeswitch
+-
+-# ------------------------------------------------------------------------------
+-# keymap - map custom hardware's multimedia keys
+-# ------------------------------------------------------------------------------
+-extras_keymap_keymap_SOURCES = extras/keymap/keymap.c
+-extras_keymap_keymap_CPPFLAGS = $(AM_CPPFLAGS) -I extras/keymap
+-nodist_extras_keymap_keymap_SOURCES = \
+-	extras/keymap/keys-from-name.h \
+-	extras/keymap/keys-to-name.h
+-BUILT_SOURCES += $(nodist_extras_keymap_keymap_SOURCES)
+-
+-EXTRA_DIST += extras/keymap/check-keymaps.sh
+-dist_udevrules_DATA += extras/keymap/95-keymap.rules
+-libexec_PROGRAMS += extras/keymap/keymap
+-dist_libexec_SCRIPTS += extras/keymap/findkeyboards
+-dist_doc_DATA = extras/keymap/README.keymap.txt
+-
+-CLEANFILES += \
+-	extras/keymap/keys.txt \
+-	extras/keymap/keys-from-name.gperf
+-
+-udevkeymapdir = $(libexecdir)/keymaps
+-dist_udevkeymap_DATA = \
+-	extras/keymap/keymaps/acer \
+-	extras/keymap/keymaps/acer-aspire_5720 \
+-	extras/keymap/keymaps/acer-aspire_5920g \
+-	extras/keymap/keymaps/acer-aspire_6920 \
+-	extras/keymap/keymaps/acer-travelmate_c300 \
+-	extras/keymap/keymaps/asus \
+-	extras/keymap/keymaps/compaq-e_evo \
+-	extras/keymap/keymaps/dell \
+-	extras/keymap/keymaps/everex-xt5000 \
+-	extras/keymap/keymaps/fujitsu-amilo_pa_2548 \
+-	extras/keymap/keymaps/fujitsu-amilo_pro_edition_v3505 \
+-	extras/keymap/keymaps/fujitsu-amilo_pro_v3205 \
+-	extras/keymap/keymaps/fujitsu-amilo_si_1520 \
+-	extras/keymap/keymaps/fujitsu-esprimo_mobile_v5 \
+-	extras/keymap/keymaps/fujitsu-esprimo_mobile_v6 \
+-	extras/keymap/keymaps/hewlett-packard \
+-	extras/keymap/keymaps/hewlett-packard-2510p_2530p \
+-	extras/keymap/keymaps/hewlett-packard-compaq_elitebook \
+-	extras/keymap/keymaps/hewlett-packard-pavilion \
+-	extras/keymap/keymaps/hewlett-packard-presario-2100 \
+-	extras/keymap/keymaps/hewlett-packard-tablet \
+-	extras/keymap/keymaps/hewlett-packard-tx2 \
+-	extras/keymap/keymaps/inventec-symphony_6.0_7.0 \
+-	extras/keymap/keymaps/lenovo-3000 \
+-	extras/keymap/keymaps/lenovo-thinkpad_x6_tablet \
+-	extras/keymap/keymaps/lenovo-thinkpad_x200_tablet \
+-	extras/keymap/keymaps/logitech-wave \
+-	extras/keymap/keymaps/logitech-wave-cordless \
+-	extras/keymap/keymaps/maxdata-pro_7000 \
+-	extras/keymap/keymaps/medion-fid2060 \
+-	extras/keymap/keymaps/medionnb-a555 \
+-	extras/keymap/keymaps/micro-star \
+-	extras/keymap/keymaps/module-asus-w3j \
+-	extras/keymap/keymaps/module-ibm \
+-	extras/keymap/keymaps/module-lenovo \
+-	extras/keymap/keymaps/module-sony \
+-	extras/keymap/keymaps/module-sony-old \
+-	extras/keymap/keymaps/oqo-model2 \
+-	extras/keymap/keymaps/samsung-other \
+-	extras/keymap/keymaps/samsung-sq1us \
+-	extras/keymap/keymaps/samsung-sx20s \
+-	extras/keymap/keymaps/toshiba-satellite_a100 \
+-	extras/keymap/keymaps/toshiba-satellite_a110 \
+-	extras/keymap/keymaps/zepto-znote
+-
+-extras/keymap/keys.txt: /usr/include/linux/input.h
+-	$(AM_V_GEN)$(AWK) '/^#define.*KEY_[^ ]+[ \t]+[0-9]/ { if ($$2 != "KEY_MAX") { print $$2 } }' < $< | sed 's/^KEY_COFFEE$$/KEY_SCREENLOCK/' > $@
+-
+-extras/keymap/keys-from-name.gperf: extras/keymap/keys.txt
+-	$(AM_V_GEN)$(AWK) 'BEGIN{ print "struct key { const char* name; unsigned short id; };"; print "%null-strings"; print "%%";} { print $$1 ", " $$1 }' < $< > $@
+-
+-extras/keymap/keys-from-name.h: extras/keymap/keys-from-name.gperf Makefile
+-	$(AM_V_GEN)$(GPERF) -L ANSI-C -t --ignore-case -N lookup_key -H hash_key_name -p -C < $< > $@
+-
+-extras/keymap/keys-to-name.h: extras/keymap/keys.txt Makefile
+-	$(AM_V_GEN)$(AWK) 'BEGIN{ print "const char* const key_names[KEY_CNT] = { "} { print "[" $$1 "] = \"" $$1 "\"," } END{print "};"}' < $< > $@
+-
+-keymaps-distcheck-hook: extras/keymap/keys.txt
+-	$(top_srcdir)/extras/keymap/check-keymaps.sh $(top_srcdir) $^
+-DISTCHECK_HOOKS = keymaps-distcheck-hook
+-
+-endif # ENABLE_EXTRAS
+-
+-# ------------------------------------------------------------------------------
+ # install, uninstall, clean hooks
+ # ------------------------------------------------------------------------------
+ clean-local:

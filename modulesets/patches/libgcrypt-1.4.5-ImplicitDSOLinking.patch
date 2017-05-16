@@ -1,0 +1,24 @@
+diff -up libgcrypt-1.4.5/tests/Makefile.am.ImplicitDSOLinking libgcrypt-1.4.5/tests/Makefile.am
+--- libgcrypt-1.4.5/tests/Makefile.am.ImplicitDSOLinking	2009-04-02 04:25:34.000000000 -0500
++++ libgcrypt-1.4.5/tests/Makefile.am	2010-02-14 14:28:49.792383613 -0600
+@@ -36,7 +36,7 @@ TESTS += benchmark
+ AM_CPPFLAGS = -I../src -I$(top_srcdir)/src
+ AM_CFLAGS = $(GPG_ERROR_CFLAGS)
+ 
+-LDADD = ../src/libgcrypt.la $(DL_LIBS)
++LDADD = ../src/libgcrypt.la $(DL_LIBS) $(GPG_ERROR_LIBS)
+ 
+ EXTRA_PROGRAMS = testapi pkbench
+ noinst_PROGRAMS = $(TESTS) fipsdrv
+diff -up libgcrypt-1.4.5/tests/Makefile.in.ImplicitDSOLinking libgcrypt-1.4.5/tests/Makefile.in
+--- libgcrypt-1.4.5/tests/Makefile.in.ImplicitDSOLinking	2009-12-11 09:43:30.000000000 -0600
++++ libgcrypt-1.4.5/tests/Makefile.in	2010-02-14 14:29:30.232368780 -0600
+@@ -334,7 +334,7 @@ top_srcdir = @top_srcdir@
+ # a built header.
+ AM_CPPFLAGS = -I../src -I$(top_srcdir)/src
+ AM_CFLAGS = $(GPG_ERROR_CFLAGS)
+-LDADD = ../src/libgcrypt.la $(DL_LIBS)
++LDADD = ../src/libgcrypt.la $(DL_LIBS) $(GPG_ERROR_LIBS)
+ EXTRA_DIST = README rsa-16k.key cavs_tests.sh cavs_driver.pl
+ all: all-am
+ 

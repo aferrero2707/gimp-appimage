@@ -1,0 +1,19 @@
+*** at-spi2-atk.orig/autogen.sh	2017-05-16 07:48:49.291719000 +0200
+--- at-spi2-atk/autogen.sh	2017-05-16 08:47:45.951165000 +0200
+***************
+*** 331,337 ****
+      1.6*) automake_progs="automake-1.12 automake-1.11 automake-1.10 automake-1.9 automake-1.8 automake-1.7 automake-1.6" ;;
+      1.7*) automake_progs="automake-1.12 automake-1.11 automake-1.10 automake-1.9 automake-1.8 automake-1.7" ;;
+      1.8*) automake_progs="automake-1.12 automake-1.11 automake-1.10 automake-1.9 automake-1.8" ;;
+!     1.9*) automake_progs="automake-1.12 automake-1.11 automake-1.10 automake-1.9" ;;
+      1.10*) automake_progs="automake-1.12 automake-1.11 automake-1.10" ;;
+      1.11*) automake_progs="automake-1.12 automake-1.11" ;;
+      1.12*) automake_progs="automake-1.12" ;;
+--- 331,337 ----
+      1.6*) automake_progs="automake-1.12 automake-1.11 automake-1.10 automake-1.9 automake-1.8 automake-1.7 automake-1.6" ;;
+      1.7*) automake_progs="automake-1.12 automake-1.11 automake-1.10 automake-1.9 automake-1.8 automake-1.7" ;;
+      1.8*) automake_progs="automake-1.12 automake-1.11 automake-1.10 automake-1.9 automake-1.8" ;;
+!     1.9*) automake_progs="automake-1.17 automake-1.16 automake-1.15 automake-1.14 automake-1.13 automake-1.12 automake-1.11 automake-1.10 automake-1.9" ;;
+      1.10*) automake_progs="automake-1.12 automake-1.11 automake-1.10" ;;
+      1.11*) automake_progs="automake-1.12 automake-1.11" ;;
+      1.12*) automake_progs="automake-1.12" ;;

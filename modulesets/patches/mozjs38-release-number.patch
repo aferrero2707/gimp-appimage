@@ -1,0 +1,30 @@
+--- a/js/src/configure
++++ b/js/src/configure
+@@ -1662,9 +1662,9 @@
+ 
+ fi
+ 
+-MOZILLA_VERSION=`$PYTHON $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir`
+-MOZILLA_UAVERSION=`$PYTHON $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir --uaversion`
+-MOZILLA_SYMBOLVERSION=`$PYTHON $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir --symbolversion`
++MOZILLA_VERSION=`python $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir`
++MOZILLA_UAVERSION=`python $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir --uaversion`
++MOZILLA_SYMBOLVERSION=`python $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir --symbolversion`
+ 
+ cat >> confdefs.pytmp <<EOF
+     (''' MOZILLA_VERSION ''', r''' "$MOZILLA_VERSION" ''')
+--- a/js/src/configure.in
++++ b/js/src/configure.in
+@@ -236,9 +236,9 @@
+ dnl ==============================================================
+ dnl Get mozilla version from central milestone file
+ dnl ==============================================================
+-MOZILLA_VERSION=`$PYTHON $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir`
+-MOZILLA_UAVERSION=`$PYTHON $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir --uaversion`
+-MOZILLA_SYMBOLVERSION=`$PYTHON $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir --symbolversion`
++MOZILLA_VERSION=`python $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir`
++MOZILLA_UAVERSION=`python $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir --uaversion`
++MOZILLA_SYMBOLVERSION=`python $srcdir/python/mozbuild/mozbuild/milestone.py --topsrcdir $srcdir --symbolversion`
+ 
+ AC_DEFINE_UNQUOTED(MOZILLA_VERSION,"$MOZILLA_VERSION")
+ AC_DEFINE_UNQUOTED(MOZILLA_VERSION_U,$MOZILLA_VERSION)

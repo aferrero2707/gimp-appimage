@@ -1,0 +1,109 @@
+<?xml version="1.0"?><!--*- mode: nxml; indent-tabs-mode: nil -*-->
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<!-- vim:set ts=2 expandtab: -->
+<moduleset>
+  <repository type="git" name="git.gnome.org" default="yes"
+      href="git://git.gnome.org/"/>
+  <repository type="git" name="git.freedesktop.org"
+      href="git://anongit.freedesktop.org/git/"/>
+  <repository type="git" name="github-git" 
+    href="http://github.com/"/>
+  <repository type="tarball" name="sourceforge.net"
+    href="http://prdownloads.sourceforge.net/sourceforge/"/>
+
+  <include href="gnome-2.32.modules"/>
+
+  <metamodule id="gimp-bootstrap">
+    <dependencies>
+      <dep package="liblzma"/>
+      <dep package="json-c"/>
+      <dep package="openexr"/>
+      <dep package="libpng"/>
+      <dep package="librsvg"/>
+      <dep package="tiff"/>
+      <dep package="gettext"/>
+      <dep package="jpeg"/>
+      <dep package="libjpeg-turbo"/>
+      <dep package="exiv2"/>
+      <dep package="lcms"/>
+    </dependencies>
+  </metamodule>
+
+  <metamodule id="gimp-appimage">
+    <dependencies>
+      <dep package="gimp"/>
+      <dep package="phfgimp"/>
+      <dep package="nufraw_"/>
+    </dependencies>
+  </metamodule>
+
+  <autotools id="gimp" autogenargs="--without-gnomevfs --disable-python --with-gimpdir=GIMP-AppImage"
+             supports-non-srcdir-builds="no">
+    <branch/>
+    <dependencies>
+      <dep package="bzip2_"/>
+      <dep package="liblzma"/>
+      <dep package="gtk+"/>
+      <dep package="intltool"/>
+      <dep package="gegl"/>
+      <dep package="glib-networking"/>
+      <dep package="gexiv2"/>
+      <dep package="librsvg"/>
+      <dep package="poppler"/>
+      <dep package="gnome-keyring"/>
+      <dep package="dbus-glib"/>
+      <dep package="openexr"/>
+      <dep package="lcms"/>
+      <dep package="libmypaint"/>
+      <dep package="at-spi2-atk"/>
+    </dependencies>
+    <suggests>
+      <dep package="iso-codes"/>
+      <dep package="pygtk_"/>
+    </suggests>
+  </autotools>
+
+<!-- GIMP plug-ins -->
+
+  <cmake id="phfgimp"
+    cmakeargs="-DBABL_FLIPS_DISABLED=OFF -DCMAKE_BUILD_TYPE=Release"
+    makeargs="VERBOSE=1"
+    supports-non-srcdir-builds="yes"
+    use-ninja="no"
+    >
+    <branch
+      repo="github-git"
+      module="https://github.com/aferrero2707/PhFGimp.git"
+      version="0.1"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="gimp"/>
+      <dep package="tiff"/>
+      <dep package="lcms"/>
+    </dependencies>
+  </cmake>
+
+  <autotools id="gtkimageview" supports-non-srcdir-builds="yes">
+    <branch
+      repo="github-git"
+      module="GNOME/gtkimageview.git"
+      version="1.6.4"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="gtk+"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="nufraw" supports-non-srcdir-builds="no" autogen-sh="configure">
+    <branch repo="sourceforge.net"
+            module="nufraw/nufraw-0.39.tar.gz" version="0.39"/>
+    <dependencies>
+      <dep package="gtk+"/>
+      <dep package="gtkimageview"/>
+    </dependencies>
+  </autotools>
+
+</moduleset>

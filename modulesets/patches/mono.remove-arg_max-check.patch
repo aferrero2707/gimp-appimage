@@ -1,0 +1,17 @@
+diff -Naur mono-1.2.6.orig/mono/io-layer/wapi_glob.c mono-1.2.6/mono/io-layer/wapi_glob.c
+--- mono-1.2.6.orig/mono/io-layer/wapi_glob.c	2008-08-22 10:26:32.000000000 +0200
++++ mono-1.2.6/mono/io-layer/wapi_glob.c	2008-08-22 10:28:08.000000000 +0200
+@@ -299,11 +299,13 @@
+ 	}
+ 	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
+ 
++#if 0
+ 	if ((pglob->gl_flags & WAPI_GLOB_LIMIT) &&
+ 	    newsize + *limitp >= ARG_MAX) {
+ 		errno = 0;
+ 		return(WAPI_GLOB_NOSPACE);
+ 	}
++#endif
+ 
+ 	return(copy == NULL ? WAPI_GLOB_NOSPACE : 0);
+ }

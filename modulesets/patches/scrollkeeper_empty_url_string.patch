@@ -1,0 +1,11 @@
+--- scrollkeeper-0.3.14/libs/install.c.old	2006-08-27 15:16:42.000000000 -0600
++++ scrollkeeper-0.3.14/libs/install.c	2006-08-27 15:00:23.000000000 -0600
+@@ -255,7 +255,7 @@
+     	    }
+ 
+ 	    docpath = get_doc_property(node, "identifier", "url");
+-	    if (docpath == NULL)
++	    if (docpath == NULL || *docpath == '\0')
+ 		continue;
+ 	    
+ 	    /* add to scrollkeeper_docs */

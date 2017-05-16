@@ -1,0 +1,15 @@
+google::ShutDownCommandLineFlags is not available in Fedora
+
+https://bugs.launchpad.net/mir/+bug/1323031
+
+diff -r -u mir-0.1.9-orig/src/server/logging/glog_logger.cpp mir-0.1.9/src/server/logging/glog_logger.cpp
+--- mir-0.1.9-orig/src/server/logging/glog_logger.cpp	2014-05-26 14:07:14.478387071 +0200
++++ mir-0.1.9/src/server/logging/glog_logger.cpp	2014-05-26 14:07:33.076630015 +0200
+@@ -47,7 +47,6 @@
+ {
+     ~google_gflag_guard_t()
+     {
+-        std::call_once(shutdown_flag_gflags, google::ShutDownCommandLineFlags);
+     }
+ } google_gflag_guard;
+ }

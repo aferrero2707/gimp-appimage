@@ -1,0 +1,11 @@
+--- cairo-1.10.0/src/cairo.h.TrailingComma	2011-01-09 08:53:45.530942705 +0100
++++ cairo-1.10.0/src/cairo.h	2011-01-09 08:54:05.272906827 +0100
+@@ -1973,7 +1973,7 @@ typedef enum _cairo_device_type {
+     CAIRO_DEVICE_TYPE_SCRIPT,
+     CAIRO_DEVICE_TYPE_XCB,
+     CAIRO_DEVICE_TYPE_XLIB,
+-    CAIRO_DEVICE_TYPE_XML,
++    CAIRO_DEVICE_TYPE_XML
+ } cairo_device_type_t;
+ 
+ cairo_public cairo_device_type_t

@@ -1,0 +1,66 @@
+Some symbols that need to be public are not marked as such.
+
+--- a/js/public/CharacterEncoding.h 2017-03-22 18:06:39.633393242 +0000
++++ b/js/public/CharacterEncoding.h 2017-03-22 18:06:57.141741214 +0000
+@@ -187,7 +187,7 @@
+  * - On success, returns a malloc'd TwoByteCharsZ, and updates |outlen| to hold
+  *   its length;  the length value excludes the trailing null.
+  */
+-extern TwoByteCharsZ
++extern JS_PUBLIC_API(TwoByteCharsZ)
+ UTF8CharsToNewTwoByteCharsZ(JSContext* cx, const UTF8Chars utf8, size_t* outlen);
+ 
+ /*
+--- a/js/public/Utility.h	2017-03-20 06:15:15.283755975 +0000
++++ b/js/public/Utility.h	2017-03-20 06:16:06.528152239 +0000
+@@ -91,7 +91,7 @@
+ # if defined(DEBUG) || defined(JS_OOM_BREAKPOINT)
+ extern bool InitThreadType(void);
+ extern void SetThreadType(ThreadType);
+-extern uint32_t GetThreadType(void);
++extern JS_FRIEND_API(uint32_t) GetThreadType(void);
+ # else
+ inline bool InitThreadType(void) { return true; }
+ inline void SetThreadType(ThreadType t) {};
+--- a/js/src/jsalloc.h	2017-03-29 18:22:18.902294948 -0700
++++ b/js/src/jsalloc.h	2017-03-29 18:23:36.694986602 -0700
+@@ -17,6 +17,8 @@
+ #include "js/TypeDecls.h"
+ #include "js/Utility.h"
+ 
++extern JS_PUBLIC_API(void) JS_ReportOutOfMemory(JSContext* cx);
++
+ namespace js {
+ 
+ enum class AllocFunction {
+@@ -130,7 +132,7 @@
+ 
+     bool checkSimulatedOOM() const {
+         if (js::oom::ShouldFailWithOOM()) {
+-            js::ReportOutOfMemory(reinterpret_cast<ExclusiveContext*>(cx_));
++            JS_ReportOutOfMemory(reinterpret_cast<JSContext*>(cx_));
+             return false;
+         }
+ 
+--- a/js/src/jsapi.h	2017-03-20 06:27:47.265550528 +0000
++++ b/js/src/jsapi.h	2017-03-20 06:28:42.645975646 +0000
+@@ -2411,7 +2411,7 @@
+     {}
+ 
+     static void trace(JSPropertyDescriptor* self, JSTracer* trc) { self->trace(trc); }
+-    void trace(JSTracer* trc);
++    JS_PUBLIC_API(void) trace(JSTracer* trc);
+ };
+ 
+ namespace JS {
+--- a/js/src/vm/CharacterEncoding.cpp	2017-03-22 18:03:40.209786639 +0000
++++ b/js/src/vm/CharacterEncoding.cpp	2017-03-22 18:03:48.717959359 +0000
+@@ -364,7 +364,7 @@
+     return TwoByteCharsZ(dst, *outlen);
+ }
+ 
+-TwoByteCharsZ
++JS_PUBLIC_API(TwoByteCharsZ)
+ JS::UTF8CharsToNewTwoByteCharsZ(JSContext* cx, const UTF8Chars utf8, size_t* outlen)
+ {
+     return InflateUTF8StringHelper(cx, utf8, InflateUTF8StringToBuffer<CountAndReportInvalids>,

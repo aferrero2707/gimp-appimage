@@ -1,0 +1,404 @@
+<?xml version="1.0"?><!--*- mode: nxml -*-->
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+  <repository type="tarball" name="cairo"
+      href="http://cairographics.org/releases/"/>
+  <repository type="tarball" name="dbus"
+      href="http://dbus.freedesktop.org/releases/"/>
+  <repository type="tarball" name="hal"
+      href="http://hal.freedesktop.org/releases/"/>
+  <repository type="cvs" name="cairo.freedesktop.org"
+      cvsroot=":pserver:anoncvs@anoncvs.freedesktop.org:/cvs/cairo"
+      password=""/>
+  <repository type="cvs" name="dbus.freedesktop.org"
+      cvsroot=":pserver:anoncvs@anoncvs.freedesktop.org:/cvs/dbus"
+      password=""/>
+  <repository type="cvs" name="icon-theme.freedesktop.org"
+      cvsroot=":pserver:anoncvs@anoncvs.freedesktop.org:/cvs/icon-theme"
+      password=""/>
+  <repository type="cvs" name="tango.freedesktop.org"
+      cvsroot=":pserver:anoncvs@anoncvs.freedesktop.org:/cvs/tango"
+      password=""/>
+  <repository type="cvs" name="xorg.freedesktop.org"
+      cvsroot=":pserver:anoncvs@anoncvs.freedesktop.org:/cvs/xorg"
+      password=""/>
+  <repository type="cvs" name="user-dirs.freedesktop.org"
+      cvsroot=":pserver:anoncvs@anoncvs.freedesktop.org:/cvs/user-dirs"
+      password=""/>
+
+  <repository type="git" name="git.freedesktop.org"
+      href="git://anongit.freedesktop.org/git/"/>
+  <repository type="git" name="libcc-git.freedesktop.org"
+      href="git://people.freedesktop.org/~herzi/"/>
+  <repository type="git" name="git.collabora.co.uk"
+      href="git://git.collabora.co.uk/git/"/>
+
+  <repository type="bzr" name="telepathy-msn.freedesktop.org"
+      href="http://bzr.collabora.co.uk/bzr/telepathy/"/>
+
+  <repository type="cvs" name="lirc.sf.net"
+      cvsroot=":pserver:anonymous@lirc.cvs.sourceforge.net:/cvsroot/lirc"
+      password=""/>
+
+  <repository type="git" name="github.com"
+    href="git://github.com/"/>
+
+  <include href="gnome-suites-2.32.modules"/>
+
+  <repository type="tarball" name="cpan" href="http://search.cpan.org/CPAN/" />
+ 
+  <autotools id="glitz">
+    <branch repo="cairo.freedesktop.org"/>
+  </autotools>
+
+  <autotools id="dbusmm">
+    <branch repo="dbus.freedesktop.org"/>
+    <dependencies>
+      <dep package="dbus"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="dbus-qt3">
+	  <branch repo="git.freedesktop.org"
+		  module="dbus/dbus-qt3" checkoutdir="dbus-qt3"  />
+    <dependencies>
+      <dep package="dbus"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="icon-slicer">
+    <branch repo="icon-theme.freedesktop.org"/>
+  </autotools>
+
+  <autotools id="tango-icon-theme">
+    <branch repo="tango.freedesktop.org"/>
+    <dependencies>
+      <dep package="icon-naming-utils"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="tango-icon-theme-extras">
+    <branch repo="tango.freedesktop.org"/>
+    <dependencies>
+      <dep package="tango-icon-theme"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="RenderProto">
+    <branch repo="git.freedesktop.org"
+	    module="xorg/proto/renderproto" checkoutdir="RenderProto" />
+  </autotools>
+
+  <autotools id="libXrender" supports-non-srcdir-builds="no">
+    <branch repo="git.freedesktop.org"
+	    module="xorg/lib/libXrender" checkoutdir="libXrender" />
+    <dependencies>
+      <dep package="RenderProto"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="libXft" supports-non-srcdir-builds="no">
+    <branch repo="git.freedesktop.org"
+	    module="xorg/lib/libXft" checkoutdir="libXft" />
+    <dependencies>
+      <dep package="fontconfig"/>
+    </dependencies>
+  </autotools>
+
+  <perl id="perl-net-dbus">
+    <branch repo="cpan"
+        module="authors/id/D/DA/DANBERR/Net-DBus-0.33.2.tar.gz" version="0.33.2"
+        hash="sha256:ec22d2394b45d22604df97d5efde5da78d23cddc98b6f8795f0428cdaf893537"
+        md5sum="7e722c48c4bca7740cf28512287571b7" size="83279"/>
+    <dependencies>
+      <dep package="dbus"/>
+    </dependencies>
+  </perl>
+
+<!--
+  <autotools id="xdg-user-dirs">
+    <branch repo="user-dirs.freedesktop.org" />
+  </autotools>
+-->
+
+  <tarball id="xdg-user-dirs" version="0.8">
+    <source href="http://user-dirs.freedesktop.org/releases/xdg-user-dirs-0.8.tar.gz"
+            hash="sha256:e0b18dd4ca81aa51cfae499b990c3e1baf1440a9cfa24518e8a3bdd79847b3cf"
+            md5sum="88adb66483d4f76f03431259e2247e09" size="225124"/>
+  </tarball>
+
+  <autotools id="libccc">
+	  <branch repo="libcc-git.freedesktop.org"
+		  module="ccc" checkoutdir="libccc"  />
+    <dependencies>
+      <dep package="dbus"/>
+    </dependencies>
+  </autotools>
+
+  <!-- You need libgs (GhostScritp) in order to build this -->
+  <autotools id="libspectre">
+	  <branch repo="git.freedesktop.org"
+		  module="libspectre" checkoutdir="libspectre"  />
+    <dependencies>
+      <dep package="cairo"/>
+    </dependencies>
+  </autotools>
+
+  <repository type="tarball" name="poppler.freedesktop.org"
+	      href="http://poppler.freedesktop.org/"/>
+  <autotools id="poppler-data" skip-autogen="true"
+	  makeargs=""  makeinstallargs="install prefix=${prefix}"
+	  check-target="false" supports-non-srcdir-builds="no">
+    <branch repo="poppler.freedesktop.org"
+	    module="poppler-data-0.2.1.tar.gz" version="0.2.1"
+            hash="sha256:890dbadf44aee07999c050fcbe0c4ea8b32fba0e8b573c439dd7de8476a1a660"
+            md5sum="bca78b8786746c7b48b324283992d658" size="4067562">
+    </branch>
+  </autotools> 
+
+  <autotools id="exempi" autogenargs="--enable-unittest=no">
+    <branch repo="git.freedesktop.org"/>
+  </autotools>
+
+  <autotools id="libopenraw">
+    <branch repo="git.freedesktop.org"/>
+    <dependencies>
+      <dep package="exempi"/>
+      <dep package="gtk+"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="dbus-glib">
+    <branch repo="git.freedesktop.org" module="dbus/dbus-glib"/>
+    <dependencies>
+      <dep package="libxml2"/>
+      <dep package="dbus"/>
+      <dep package="glib"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gypsy">
+    <branch repo="git.freedesktop.org"
+	    module="gypsy" checkoutdir="gypsy"/>
+    <dependencies>
+      <dep package="dbus-glib"/>
+      <dep package="libxslt"/>
+      <dep package="bluez"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="geoclue">
+    <branch repo="git.freedesktop.org"/>
+    <dependencies>
+      <dep package="dbus-glib"/>
+      <dep package="gconf"/>
+      <dep package="NetworkManager"/>
+      <dep package="gypsy"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="swfdec-mozilla" autogen-sh="autoreconf">
+    <branch repo="git.freedesktop.org" module="swfdec/swfdec-mozilla"
+	    checkoutdir="swfdec-mozilla"/>
+    <dependencies>
+      <dep package="swfdec"/>
+    </dependencies>
+  </autotools>
+
+  <!-- cp -dpR remotes $prefix/share/lirc/remotes -->
+  <autotools id="lirc" autogen-sh="autoreconf" autogenargs="--with-syslog=LOG_DAEMON --with-driver=userspace --enable-sandboxed">
+    <branch repo="lirc.sf.net"/>
+  </autotools>
+
+  <!-- ################################################ -->
+  <!-- ################ Telepathy Stuff ############### -->
+  <distutils id="telepathy-python">
+    <branch repo="git.collabora.co.uk"
+	    module="telepathy-python" checkoutdir="telepathy-python" />
+    <dependencies>
+      <dep package="dbus-python"/>
+    </dependencies>
+  </distutils>
+
+  <!-- Glib ICE library -->
+  <autotools id="libnice">
+    <branch repo="git.collabora.co.uk"
+            module="libnice"
+            checkoutdir="libnice"/>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gst-plugins-farsight">
+    <branch repo="git.collabora.co.uk"
+	    module="gst-plugins-farsight" checkoutdir="gst-plugins-farsight" />
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="gstreamer"/>
+      <dep package="gst-plugins-base"/>
+      <dep package="libxml2"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="farsight2">
+    <branch repo="git.collabora.co.uk"
+	    module="farsight2" checkoutdir="farsight2" />
+    <dependencies>
+      <dep package="libnice"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="telepathy-glib">
+    <branch repo="git.collabora.co.uk" />
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="dbus"/>
+      <dep package="dbus-glib"/>
+      <dep package="libxslt"/>
+    </dependencies>
+  </autotools>
+
+  <!-- Telepathy Farsight2 -->
+  <autotools id="telepathy-farsight">
+    <branch repo="git.collabora.co.uk"
+            module="telepathy-farsight"
+            checkoutdir="telepathy-farsight"/>
+    <dependencies>
+      <dep package="telepathy-glib"/>
+      <dep package="farsight2"/>
+    </dependencies>
+    <suggests>
+      <dep package="gst-python"/>
+    </suggests>
+  </autotools>
+
+  <autotools id="telepathy-stream-engine">
+    <branch repo="git.collabora.co.uk" />
+    <dependencies>
+      <dep package="telepathy-glib"/>
+      <dep package="glib"/>
+      <dep package="dbus"/>
+      <dep package="dbus-glib"/>
+      <dep package="gstreamer"/>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="loudmouth">
+    <branch repo="github.com" module="hallski/loudmouth.git" checkoutdir="loudmouth" />
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="gnutls"/>
+    </dependencies>
+  </autotools>
+
+  <!-- Gabble is a Jabber/XMPP connection manager that handles -->
+  <!-- single-user and multi-user chats and voice/video calls  -->
+  <autotools id="telepathy-gabble">
+    <branch repo="git.collabora.co.uk"
+	    module="telepathy-gabble" checkoutdir="telepathy-gabble" />
+    <dependencies>
+      <dep package="telepathy-glib"/>
+    </dependencies>
+  </autotools>
+
+  <!-- Salut is a link-local XMPP connection manager                -->
+  <!-- See http://www.xmpp.org/extensions/xep-0174.html for details -->
+  <autotools id="telepathy-salut">
+    <branch repo="git.collabora.co.uk"
+            module="telepathy-salut" checkoutdir="telepathy-salut" />
+    <dependencies>
+      <dep package="telepathy-glib"/>
+      <dep package="avahi"/>
+    </dependencies>
+  </autotools>
+
+  <!-- Idle is a full-featured IRC connection manager -->
+  <autotools id="telepathy-idle">
+    <branch repo="git.collabora.co.uk"
+            module="telepathy-idle" checkoutdir="telepathy-idle" />
+    <dependencies>
+      <dep package="telepathy-glib"/>
+    </dependencies>
+  </autotools>
+
+  <!-- Haze is a connection manager based on Pidgin's libpurple -->
+  <autotools id="telepathy-haze">
+    <branch repo="git.collabora.co.uk"
+            module="telepathy-haze" checkoutdir="telepathy-haze" />
+    <dependencies>
+      <dep package="telepathy-glib"/>
+      <!-- requires libpurple (pidgin)  -->
+    </dependencies>
+  </autotools>
+
+  <!-- pymsn is the library behind the msn connection manager -->
+  <!-- See http://live.gnome.org/JhbuildIssues/pymsn to build -->
+  <distutils id="pymsn">
+    <branch repo="telepathy-msn.freedesktop.org"
+	    module="pymsn" checkoutdir="pymsn" />
+    <dependencies>
+      <dep package="pygobject"/>
+    </dependencies>
+  </distutils>
+
+  <!-- Butterfly is a MSN connection manager based on pymsn -->
+  <waf id="telepathy-butterfly">
+    <branch repo="git.collabora.co.uk"
+	    module="telepathy-butterfly" checkoutdir="telepathy-butterfly" />
+    <dependencies>
+       <dep package="pymsn"/>
+       <dep package="telepathy-python"/>
+    </dependencies>
+  </waf>
+
+  <metamodule id="meta-telepathy-library">
+    <dependencies>
+      <dep package="telepathy-glib"/>
+      <dep package="telepathy-python"/>
+    </dependencies>
+    <suggests>
+      <!-- suggested 'cause deprecated -->
+      <dep package="libtelepathy"/>
+    </suggests>
+  </metamodule>
+
+  <metamodule id="meta-telepathy-connection-managers">
+    <dependencies>
+      <dep package="telepathy-gabble"/>
+      <dep package="telepathy-salut"/>
+      <dep package="telepathy-idle"/>
+      <dep package="telepathy-farsight"/>
+    </dependencies>
+    <suggests>
+      <!-- suggested 'cause under development -->
+      <dep package="telepathy-haze"/>
+      <dep package="telepathy-butterfly"/>
+    </suggests>
+  </metamodule>
+  <!-- ############ End of Telepathy Stuff ############ -->
+  <!-- ################################################ -->
+
+  <!-- librsvg needed for optional support to SVG image    -->
+  <!-- gtk+ needed only for the examples                   -->
+  <!-- libsoup WIP optional support to SVG fragments       -->
+  <!-- Feel free to change depend/suggest status           -->
+  <autotools id="libccss">
+    <branch repo="git.freedesktop.org"
+	    module="ccss" checkoutdir="libccss"/>
+    <dependencies>
+      <dep package="cairo"/>
+      <dep package="glib"/>
+      <dep package="libcroco"/>
+      <dep package="librsvg"/>
+    </dependencies>
+    <suggests>
+      <dep package="gtk+"/>
+      <dep package="libsoup"/>
+    </suggests>
+  </autotools>
+
+</moduleset>

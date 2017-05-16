@@ -1,0 +1,12 @@
+diff -Nur scrollkeeper-0.3.14/libs/i18n.c scrollkeeper-0.3.14.new/libs/i18n.c
+--- scrollkeeper-0.3.14/libs/i18n.c	2006-01-28 16:05:17.000000000 +0100
++++ scrollkeeper-0.3.14.new/libs/i18n.c	2006-01-28 16:05:40.000000000 +0100
+@@ -118,7 +118,7 @@
+ 		if ((i & ~mask) == 0) {
+ 			int length = strlen(language) + strlen(territory) 
+ 				+ strlen(codeset) + strlen(modifier);
+-			char *var = (char *) malloc(sizeof(char) * length);
++			char *var = (char *) malloc(sizeof(char) * (length+1));
+ 			check_ptr(var, "");
+ 
+ 			strcpy(var, language);

@@ -1,0 +1,10 @@
+--- scrollkeeper-0.3.14/libs/install.c.mitr	2004-01-02 23:20:46.000000000 +0100
++++ scrollkeeper-0.3.14/libs/install.c	2004-01-02 23:21:04.000000000 +0100
+@@ -187,6 +187,7 @@
+         return 0;
+     } else {
+         xmlValidCtxt cvp;
++	memset (&cvp, 0, sizeof (cvp));
+         cvp.userData = (char *) &outputprefs;
+         cvp.error    = (xmlValidityErrorFunc) sk_dtd_validation_message;
+         cvp.warning  = (xmlValidityWarningFunc) sk_dtd_validation_message;

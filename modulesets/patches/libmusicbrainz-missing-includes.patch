@@ -1,0 +1,56 @@
+diff -ur libmusicbrainz-2.1.4.orig/lib/comhttpsocket.cpp libmusicbrainz-2.1.4/lib/comhttpsocket.cpp
+--- libmusicbrainz-2.1.4.orig/lib/comhttpsocket.cpp	2006-05-12 04:16:54.000000000 +0930
++++ libmusicbrainz-2.1.4/lib/comhttpsocket.cpp	2008-08-31 20:35:16.000000000 +0930
+@@ -20,6 +20,7 @@
+ #endif
+ #include <stdlib.h>
+ #include <assert.h>
++#include <string.h>
+ 
+ const char* g_strCOMVer = "libmusicbrainz/"VERSION;
+ 
+diff -ur libmusicbrainz-2.1.4.orig/lib/comsocket.cpp libmusicbrainz-2.1.4/lib/comsocket.cpp
+--- libmusicbrainz-2.1.4.orig/lib/comsocket.cpp	2006-05-12 04:16:54.000000000 +0930
++++ libmusicbrainz-2.1.4/lib/comsocket.cpp	2008-08-31 20:35:16.000000000 +0930
+@@ -32,6 +32,7 @@
+ #include "config.h"
+ 
+ #include "comsocket.h"
++#include <string.h>
+ #ifndef WIN32
+ 
+ #include <netinet/tcp.h>
+diff -ur libmusicbrainz-2.1.4.orig/lib/c_wrapper.cpp libmusicbrainz-2.1.4/lib/c_wrapper.cpp
+--- libmusicbrainz-2.1.4.orig/lib/c_wrapper.cpp	2003-10-17 07:51:10.000000000 +0930
++++ libmusicbrainz-2.1.4/lib/c_wrapper.cpp	2008-08-31 20:35:16.000000000 +0930
+@@ -24,6 +24,7 @@
+ #include "musicbrainz.h"
+ #include "trm.h"
+ #include "mb_c.h"
++#include <string.h>
+ 
+ extern "C"
+ {
+diff -ur libmusicbrainz-2.1.4.orig/lib/http.cpp libmusicbrainz-2.1.4/lib/http.cpp
+--- libmusicbrainz-2.1.4.orig/lib/http.cpp	2006-08-21 21:58:47.000000000 +0930
++++ libmusicbrainz-2.1.4/lib/http.cpp	2008-08-31 20:35:16.000000000 +0930
+@@ -26,6 +26,8 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <ctype.h>
++#include <string.h>
++#include <stdlib.h>
+ #ifndef WIN32
+ #include <sys/time.h>
+ #endif
+diff -ur libmusicbrainz-2.1.4.orig/lib/sigclient.cpp libmusicbrainz-2.1.4/lib/sigclient.cpp
+--- libmusicbrainz-2.1.4.orig/lib/sigclient.cpp	2006-05-12 04:16:54.000000000 +0930
++++ libmusicbrainz-2.1.4/lib/sigclient.cpp	2008-08-31 20:35:16.000000000 +0930
+@@ -37,6 +37,7 @@
+ #include "comhttpsocket.h"
+ 
+ #include "sigxdr.h"
++#include <string.h>
+ 
+ char tooShortTRM[] = { 0xf9, 0x80, 0x9a, 0xb1, 0x2b, 0x0f, 0x4d, 0x78, 
+                        0x88, 0x62, 0xfb, 0x42, 0x5a, 0xde, 0x8a, 0xb9 };

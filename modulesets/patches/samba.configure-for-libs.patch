@@ -1,0 +1,96 @@
+diff -Naur samba-4.0.0alpha6.orig/lib/talloc/autogen.sh samba-4.0.0alpha6/lib/talloc/autogen.sh
+--- samba-4.0.0alpha6.orig/lib/talloc/autogen.sh	2009-02-03 11:09:21.000000000 +0700
++++ samba-4.0.0alpha6/lib/talloc/autogen.sh	2009-02-03 11:13:03.000000000 +0700
+@@ -1,5 +1,16 @@
+ #!/bin/sh
+ 
++ARGV0=$0
++
++# Allow invocation from a separate build directory; in that case, we change
++# to the source directory to run the auto*, then change back before running
++# configure
++srcdir=`dirname $ARGV0`
++test -z "$srcdir" && srcdir=.
++
++ORIGDIR=`pwd`
++cd $srcdir
++
+ rm -rf autom4te.cache
+ rm -f configure config.h.in
+ 
+@@ -9,6 +20,8 @@
+ 
+ rm -rf autom4te.cache
+ 
+-echo "Now run ./configure and then make."
+-exit 0
++cd "$ORIGDIR" || exit 1
++
++$srcdir/configure ${1+"$@"} && \
++	echo "Now type \`make' to compile." || exit 1
+ 
+diff -Naur samba-4.0.0alpha6.orig/lib/tdb/autogen.sh samba-4.0.0alpha6/lib/tdb/autogen.sh
+--- samba-4.0.0alpha6.orig/lib/tdb/autogen.sh	2009-02-03 11:09:27.000000000 +0700
++++ samba-4.0.0alpha6/lib/tdb/autogen.sh	2009-02-03 11:13:45.000000000 +0700
+@@ -1,5 +1,16 @@
+ #!/bin/sh
+ 
++ARGV0=$0
++
++# Allow invocation from a separate build directory; in that case, we change
++# to the source directory to run the auto*, then change back before running
++# configure
++srcdir=`dirname $ARGV0`
++test -z "$srcdir" && srcdir=.
++
++ORIGDIR=`pwd`
++cd $srcdir
++
+ rm -rf autom4te.cache
+ rm -f configure config.h.in
+ 
+@@ -9,6 +20,8 @@
+ 
+ rm -rf autom4te.cache
+ 
+-echo "Now run ./configure and then make."
+-exit 0
++cd "$ORIGDIR" || exit 1
++
++$srcdir/configure ${1+"$@"} && \
++	echo "Now type \`make' to compile." || exit 1
+ 
+diff -Naur samba-4.0.0alpha6.orig/lib/tevent/autogen.sh samba-4.0.0alpha6/lib/tevent/autogen.sh
+--- samba-4.0.0alpha6.orig/lib/tevent/autogen.sh	2009-02-03 11:09:37.000000000 +0700
++++ samba-4.0.0alpha6/lib/tevent/autogen.sh	2009-02-03 11:14:06.000000000 +0700
+@@ -1,14 +1,27 @@
+ #!/bin/sh
+ 
++ARGV0=$0
++
++# Allow invocation from a separate build directory; in that case, we change
++# to the source directory to run the auto*, then change back before running
++# configure
++srcdir=`dirname $ARGV0`
++test -z "$srcdir" && srcdir=.
++
++ORIGDIR=`pwd`
++cd $srcdir
++
+ rm -rf autom4te.cache
+ rm -f configure config.h.in
+ 
+-IPATHS="-I libreplace -I lib/replace -I ../libreplace -I ../replace -I ../../../lib/replace"
++IPATHS="-I libreplace -I lib/replace -I ../libreplace -I ../replace"
+ autoconf $IPATHS || exit 1
+ autoheader $IPATHS || exit 1
+ 
+ rm -rf autom4te.cache
+ 
+-echo "Now run ./configure and then make."
+-exit 0
++cd "$ORIGDIR" || exit 1
++
++$srcdir/configure ${1+"$@"} && \
++	echo "Now type \`make' to compile." || exit 1
+ 

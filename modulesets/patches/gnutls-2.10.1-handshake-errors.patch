@@ -1,0 +1,57 @@
+diff -up gnutls-2.10.1/lib/gnutls_handshake.c.errors gnutls-2.10.1/lib/gnutls_handshake.c
+--- gnutls-2.10.1/lib/gnutls_handshake.c.errors	2010-07-25 10:35:31.000000000 +0200
++++ gnutls-2.10.1/lib/gnutls_handshake.c	2010-09-13 17:16:05.000000000 +0200
+@@ -2769,7 +2769,7 @@ _gnutls_handshake_client (gnutls_session
+     case STATE1:
+       ret = _gnutls_send_hello (session, AGAIN (STATE1));
+       STATE = STATE1;
+-      IMED_RET ("send hello", ret, 0);
++      IMED_RET ("send hello", ret, 1);
+ 
+     case STATE2:
+       /* receive the server hello */
+@@ -2849,7 +2849,7 @@ _gnutls_handshake_client (gnutls_session
+ 	ret =
+ 	  _gnutls_send_client_certificate_verify (session, AGAIN (STATE9));
+       STATE = STATE9;
+-      IMED_RET ("send client certificate verify", ret, 0);
++      IMED_RET ("send client certificate verify", ret, 1);
+ 
+       STATE = STATE0;
+     default:
+@@ -3002,7 +3002,7 @@ _gnutls_handshake_server (gnutls_session
+     case STATE2:
+       ret = _gnutls_send_hello (session, AGAIN (STATE2));
+       STATE = STATE2;
+-      IMED_RET ("send hello", ret, 0);
++      IMED_RET ("send hello", ret, 1);
+ 
+     case STATE70:
+       if (session->security_parameters.extensions.do_send_supplemental)
+@@ -3044,7 +3044,7 @@ _gnutls_handshake_server (gnutls_session
+ 					GNUTLS_HANDSHAKE_SERVER_HELLO_DONE,
+ 					AGAIN (STATE6));
+       STATE = STATE6;
+-      IMED_RET ("send server hello done", ret, 0);
++      IMED_RET ("send server hello done", ret, 1);
+ 
+     case STATE71:
+       if (session->security_parameters.extensions.do_recv_supplemental)
+@@ -3119,7 +3119,7 @@ _gnutls_handshake_common (gnutls_session
+ #endif
+ 
+       ret = _gnutls_send_handshake_final (session, FALSE);
+-      IMED_RET ("send handshake final", ret, 0);
++      IMED_RET ("send handshake final", ret, 1);
+ 
+       /* only store if we are not resuming */
+       if (session->security_parameters.entity == GNUTLS_SERVER)
+@@ -3132,7 +3132,7 @@ _gnutls_handshake_common (gnutls_session
+     {				/* if we are a client not resuming - or we are a server resuming */
+ 
+       ret = _gnutls_send_handshake_final (session, TRUE);
+-      IMED_RET ("send handshake final 2", ret, 0);
++      IMED_RET ("send handshake final 2", ret, 1);
+ 
+ #ifdef ENABLE_SESSION_TICKET
+       switch (STATE)

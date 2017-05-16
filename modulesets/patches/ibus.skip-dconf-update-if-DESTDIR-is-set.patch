@@ -1,0 +1,42 @@
+From e6ec45d64a32d16245770f8b80e795a63e6ad553 Mon Sep 17 00:00:00 2001
+From: Colin Walters <walters@verbum.org>
+Date: Thu, 16 Jan 2014 13:22:12 +0900
+Subject: [PATCH] data/dconf: Don't run "dconf update" if $(DESTDIR) is set
+
+dconf changed as of
+https://git.gnome.org/browse/dconf/commit/?id=c211fc46496597c7ddabd73d623bae4037754916
+to actually emit an error if /etc/dconf/db is empty.  When building
+ibus in a system such as dpkg/rpm or gnome-continuous, there may
+actually be nothing in that directory in the buildroot.
+
+This will now cause "dconf update" as executed by this Makefile to
+fail.  The fix is to just check $(DESTDIR), like we should do for all
+triggers (e.g. gtk-update-icon-cache too).  It's never useful to
+execute these from per-component Makefiles if $(DESTDIR) is set.
+
+Instead, these meta-build systems (dpkg/rpm/jhbuild/Continuous) all
+take care of execution of triggers on their own.
+
+Review URL: https://codereview.appspot.com/51730044
+Patch from Colin Walters <walters@verbum.org>.
+---
+ data/dconf/Makefile.am | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/data/dconf/Makefile.am b/data/dconf/Makefile.am
+index c841a34..62c20a3 100644
+--- a/data/dconf/Makefile.am
++++ b/data/dconf/Makefile.am
+@@ -61,6 +61,8 @@ org.freedesktop.ibus.gschema.xml.in: $(top_srcdir)/data/ibus.schemas.in
+ 		{ rc=$$?; $(RM) -rf $@; exit $$rc; }
+ 
+ install-data-hook:
+-	dconf update
++	if test -z "$(DESTDIR)"; then \
++		dconf update; \
++	fi
+ 
+ -include $(top_srcdir)/git.mk
+-- 
+1.8.4.2
+

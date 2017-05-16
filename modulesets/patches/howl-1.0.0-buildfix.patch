@@ -1,0 +1,24 @@
+ Fix build bustage for --disable-static builds.  
+
+--- howl-1.0.0/configure.ac.orig	2005-06-20 15:12:10.625724368 +0800
++++ howl-1.0.0/configure.ac	2005-06-20 15:12:47.330144448 +0800
+@@ -25,7 +25,7 @@
+ 		HOWL_LIB_OBJECTS='posix_salt.lo posix_socket.lo posix_time.lo posix_signal.lo posix_interface.lo notosx_mdns_stub.lo'
+ 		MDNSRESPONDER_LIB_SUBDIRS="Posix"
+ 		MDNSRESPONDER_LIB_OBJECTS='posix_mdns.lo'
+-		AUTOIPD_EXTRA_OBJECTS='$(top_builddir)/src/autoipd/linux_autoip.lo $(top_builddir)/src/autoipd/posix_main.lo'
++		AUTOIPD_EXTRA_OBJECTS='$(top_builddir)/src/autoipd/linux_autoip.o $(top_builddir)/src/autoipd/posix_main.o'
+ 		PLATFORM_LIBS=-lpthread
+ 		HOWL_MAN_PAGES='mDNSResponder.8 autoipd.8 nifd.8'
+ 		;;
+--- howl-1.0.0/configure.orig	2005-06-20 15:12:15.443991880 +0800
++++ howl-1.0.0/configure	2005-06-20 15:17:30.803050016 +0800
+@@ -8523,7 +8523,7 @@
+ 		HOWL_LIB_OBJECTS='posix_salt.lo posix_socket.lo posix_time.lo posix_signal.lo posix_interface.lo notosx_mdns_stub.lo'
+ 		MDNSRESPONDER_LIB_SUBDIRS="Posix"
+ 		MDNSRESPONDER_LIB_OBJECTS='posix_mdns.lo'
+-		AUTOIPD_EXTRA_OBJECTS='$(top_builddir)/src/autoipd/linux_autoip.lo $(top_builddir)/src/autoipd/posix_main.lo'
++		AUTOIPD_EXTRA_OBJECTS='$(top_builddir)/src/autoipd/linux_autoip.o $(top_builddir)/src/autoipd/posix_main.o'
+ 		PLATFORM_LIBS=-lpthread
+ 		HOWL_MAN_PAGES='mDNSResponder.8 autoipd.8 nifd.8'
+ 		;;

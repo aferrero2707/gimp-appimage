@@ -1,0 +1,184 @@
+From c54a1a20c7e9390e59e3292b70d9c92bd4dad6eb Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Tue, 10 Dec 2013 10:36:09 +1100
+Subject: [PATCH] Install gdb pretty printers and make scripts compatible with
+ Python3
+Upstream Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=947669
+---
+ js/src/Makefile.in                   | 14 ++++++++++++++
+ js/src/gdb/mozilla/JSString.py       |  8 +++++++-
+ js/src/gdb/mozilla/Root.py           |  2 +-
+ js/src/gdb/mozilla/autoload.py       |  4 ++--
+ js/src/gdb/mozilla/jsid.py           |  2 +-
+ js/src/gdb/mozilla/jsval.py          |  2 +-
+ js/src/gdb/mozilla/prettyprinters.py | 10 ++++++++--
+ js/src/libmozjs-gdb.py.in            | 11 +++++++++++
+ 8 files changed, 45 insertions(+), 8 deletions(-)
+ create mode 100755 js/src/libmozjs-gdb.py.in
+
+diff --git a/js/src/Makefile.in b/js/src/Makefile.in
+index d888e4c..e06aa40 100644
+--- a/js/src/Makefile.in
++++ b/js/src/Makefile.in
+@@ -544,6 +544,20 @@ $(LIBRARY_NAME).pc: js.pc.in
+ install:: $(LIBRARY_NAME).pc
+ 	$(SYSINSTALL) $^ $(DESTDIR)$(libdir)/pkgconfig
+ 
++# Install the wrapper script for gdb pretty-printers
++ifdef JS_STANDALONE
++GDB_LIB_WRAPPER = $(LIB_PREFIX)$(LIBRARY_NAME)$(DLL_SUFFIX)-gdb.py
++
++$(GDB_LIB_WRAPPER): libmozjs-gdb.py.in
++	$(PYTHON) $(topsrcdir)/config/Preprocessor.py -Dautoloaddir=$(prefix)/share/mozilla $< > $@
++
++install:: $(GDB_LIB_WRAPPER)
++	$(SYSINSTALL) $^ $(DESTDIR)$(prefix)/share/gdb/auto-load$(libdir)
++
++install:: gdb/mozilla
++	$(SYSINSTALL) $^ $(DESTDIR)$(prefix)/share/mozilla/gdb
++endif
++
+ ######################################################
+ # BEGIN SpiderMonkey header installation
+ #
+diff --git a/js/src/gdb/mozilla/JSString.py b/js/src/gdb/mozilla/JSString.py
+index 1c7a244..76f8ca2 100644
+--- a/js/src/gdb/mozilla/JSString.py
++++ b/js/src/gdb/mozilla/JSString.py
+@@ -1,12 +1,18 @@
+ # Pretty-printers for SpiderMonkey strings.
+ 
+ import gdb
++import sys
++
+ import mozilla.prettyprinters
+ from mozilla.prettyprinters import pretty_printer, ptr_pretty_printer
+ 
+ # Forget any printers from previous loads of this module.
+ mozilla.prettyprinters.clear_module_printers(__name__)
+ 
++if sys.version_info[0] >= 3:
++    unichr = chr
++    xrange = range
++
+ # Cache information about the JSString type for this objfile.
+ class JSStringTypeCache(object):
+     def __init__(self, cache):
+@@ -40,7 +46,7 @@ class JSStringPtr(Common):
+                 yield c
+         else:
+             chars = d['u1']['chars']
+-            for i in xrange(length):
++            for i in xrange(int(length)):
+                 yield chars[i]
+ 
+     def to_string(self):
+diff --git a/js/src/gdb/mozilla/Root.py b/js/src/gdb/mozilla/Root.py
+index 2f0137a..cb82ed8 100644
+--- a/js/src/gdb/mozilla/Root.py
++++ b/js/src/gdb/mozilla/Root.py
+@@ -75,7 +75,7 @@ class EncapsulatedValue(Common):
+ def deref(root):
+     tag = root.type.strip_typedefs().tag
+     if not tag:
+-        raise TypeError, "Can't dereference type with no structure tag: %s" % (root.type,)
++        raise TypeError("Can't dereference type with no structure tag: %s" % (root.type))
+     elif tag.startswith('js::HeapPtr<'):
+         return root['value']
+     elif tag.startswith('JS::Rooted<'):
+diff --git a/js/src/gdb/mozilla/autoload.py b/js/src/gdb/mozilla/autoload.py
+index 6ca7090..e9a1e97 100644
+--- a/js/src/gdb/mozilla/autoload.py
++++ b/js/src/gdb/mozilla/autoload.py
+@@ -1,7 +1,7 @@
+ # mozilla/autoload.py: Autoload SpiderMonkey pretty-printers.
+ 
+-print "Loading JavaScript value pretty-printers; see js/src/gdb/README."
+-print "If they cause trouble, type: disable pretty-printer .* SpiderMonkey"
++print("Loading JavaScript value pretty-printers; see js/src/gdb/README.")
++print("If they cause trouble, type: disable pretty-printer .* SpiderMonkey")
+ 
+ import gdb.printing
+ import mozilla.prettyprinters
+diff --git a/js/src/gdb/mozilla/jsid.py b/js/src/gdb/mozilla/jsid.py
+index aff1eab..453471c 100644
+--- a/js/src/gdb/mozilla/jsid.py
++++ b/js/src/gdb/mozilla/jsid.py
+@@ -35,7 +35,7 @@ class jsid(object):
+         elif self.concrete_type.code == gdb.TYPE_CODE_INT:
+             return self.value
+         else:
+-            raise RuntimeError, ("definition of SpiderMonkey 'jsid' type"
++            raise RuntimeError("definition of SpiderMonkey 'jsid' type"
+                                  "neither struct nor integral type")
+ 
+     def to_string(self):
+diff --git a/js/src/gdb/mozilla/jsval.py b/js/src/gdb/mozilla/jsval.py
+index ab7c3f8..5919762 100644
+--- a/js/src/gdb/mozilla/jsval.py
++++ b/js/src/gdb/mozilla/jsval.py
+@@ -167,7 +167,7 @@ class jsvalTypeCache(object):
+         # Let self.magic_names be an array whose i'th element is the name of
+         # the i'th magic value.
+         d = gdb.types.make_enum_dict(gdb.lookup_type('JSWhyMagic'))
+-        self.magic_names = range(max(d.itervalues()) + 1)
++        self.magic_names = list(range(max(d.values()) + 1))
+         for (k,v) in d.items(): self.magic_names[v] = k
+ 
+         # Choose an unboxing scheme for this architecture.
+diff --git a/js/src/gdb/mozilla/prettyprinters.py b/js/src/gdb/mozilla/prettyprinters.py
+index e3beb70..f768e5f 100644
+--- a/js/src/gdb/mozilla/prettyprinters.py
++++ b/js/src/gdb/mozilla/prettyprinters.py
+@@ -2,6 +2,12 @@
+ 
+ import gdb
+ import re
++import sys
++
++if sys.version_info[0] >= 3:
++    _iteritems = 'items'
++else:
++    _iteritems = 'viewitems'
+ 
+ # Decorators for declaring pretty-printers.
+ #
+@@ -16,7 +22,7 @@ import re
+ # object can't carry the 'enabled' flags for two different printers.)
+ def check_for_reused_pretty_printer(fn):
+     if hasattr(fn, 'enabled'):
+-        raise RuntimeError, ("pretty-printer function %r registered more than once" % fn)
++        raise RuntimeError("pretty-printer function %r registered more than once" % fn)
+ 
+ # a dictionary mapping gdb.Type tags to pretty-printer functions.
+ printers_by_tag = {}
+@@ -107,7 +113,7 @@ def clear_module_printers(module_name):
+         # should remove. (It's not safe to delete entries from a dictionary
+         # while we're iterating over it.)
+         to_delete = []
+-        for (k, v) in d.iteritems():
++        for (k, v) in getattr(d, _iteritems)():
+             if v.__module__ == module_name:
+                 to_delete.append(k)
+                 remove_from_subprinter_list(v)
+diff --git a/js/src/libmozjs-gdb.py.in b/js/src/libmozjs-gdb.py.in
+new file mode 100755
+index 0000000..256b25f
+--- /dev/null
++++ b/js/src/libmozjs-gdb.py.in
+@@ -0,0 +1,11 @@
++"""GDB Python customization auto-loader for GDB spidermoneky library"""
++#filter substitution
++
++import sys
++
++import os.path
++sys.path[0:0] = [os.path.join('@autoloaddir@', 'gdb')]
++
++import mozilla.autoload
++mozilla.autoload.register(gdb.current_objfile())
++
+-- 
+1.8.5.1
+
+

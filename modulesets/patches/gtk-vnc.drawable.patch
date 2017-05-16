@@ -1,0 +1,26 @@
+diff --git a/src/vncdisplay.c b/src/vncdisplay.c
+index 33d2623..fdb56b5 100644
+--- a/src/vncdisplay.c
++++ b/src/vncdisplay.c
+@@ -629,9 +629,9 @@ static gboolean motion_event(GtkWidget *widget, GdkEventMotion *motion)
+ 
+ 	/* Next adjust the real client pointer */
+ 	if (!priv->absolute) {
+-		GdkDrawable *drawable = GDK_DRAWABLE(gtk_widget_get_window(widget));
+-		GdkDisplay *display = gdk_drawable_get_display(drawable);
+-		GdkScreen *screen = gdk_drawable_get_screen(drawable);
++		GdkWindow *window = gtk_widget_get_window(widget);
++		GdkDisplay *display = gdk_window_get_display(window);
++		GdkScreen *screen = gdk_window_get_screen(window);
+ 		int x = (int)motion->x_root;
+ 		int y = (int)motion->y_root;
+ 
+@@ -1260,7 +1260,7 @@ static void on_cursor_changed(VncConnection *conn G_GNUC_UNUSED,
+ 	}
+ 
+ 	if (cursor) {
+-		GdkDisplay *display = gdk_drawable_get_display(GDK_DRAWABLE(gtk_widget_get_window(GTK_WIDGET(obj))));
++		GdkDisplay *display = gtk_widget_get_display(GTK_WIDGET(obj));
+ 		GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(vnc_cursor_get_data(cursor),
+ 							     GDK_COLORSPACE_RGB,
+ 							     TRUE, 8,

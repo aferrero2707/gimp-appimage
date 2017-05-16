@@ -1,0 +1,715 @@
+From ffdd81355ec49dfe07689de23193941941228d5e Mon Sep 17 00:00:00 2001
+From: Christophe Fergeau <cfergeau@redhat.com>
+Date: Fri, 14 Feb 2014 13:25:32 +0000
+Subject: [PATCH] build-sys: Don't build tests when not building static libs
+
+The tests rely on static linking in order to get access to symbols which
+are not exported in spice-gtk shared libraries. When build of static
+libraries is disabled with --disable-static, we should not attempt to build
+the tests as this will result in link errors.
+---
+ Makefile.am                |   6 +-
+ Makefile.in                |  17 +-
+ aclocal.m4                 | 496 ++++++++++++++++----------------
+ configure                  |  19 +-
+ configure.ac               |   2 +
+ m4/libtool.m4              |   4 +-
+ spice-common/configure     |   4 +-
+ spice-common/m4/libtool.m4 |   4 +-
+ 9 files changed, 797 insertions(+), 438 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index ab10f5f..8add19f 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,7 +1,11 @@
+ ACLOCAL_AMFLAGS = -I m4
+ NULL =
+ 
+-SUBDIRS = spice-common gtk po doc data tests
++SUBDIRS = spice-common gtk po doc data
++
++if BUILD_TESTS
++SUBDIRS += tests
++endif
+ 
+ if HAVE_INTROSPECTION
+ if WITH_VALA
+diff --git a/Makefile.in b/Makefile.in
+index 25e44b2..a1ddc1f 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -78,18 +78,19 @@ PRE_UNINSTALL = :
+ POST_UNINSTALL = :
+ build_triplet = @build@
+ host_triplet = @host@
+-@HAVE_INTROSPECTION_TRUE@@WITH_VALA_TRUE@am__append_1 = vapi
+-@WITH_CONTROLLER_TRUE@am__append_2 = spice-controller.pc
++@BUILD_TESTS_TRUE@am__append_1 = tests
++@HAVE_INTROSPECTION_TRUE@@WITH_VALA_TRUE@am__append_2 = vapi
++@WITH_CONTROLLER_TRUE@am__append_3 = spice-controller.pc
+ subdir = .
+ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
+ 	$(top_srcdir)/configure $(am__configure_deps) \
+ 	$(srcdir)/config.h.in $(srcdir)/spice-client-glib-2.0.pc.in \
+ 	$(srcdir)/spice-client-gtk-2.0.pc.in \
+ 	$(srcdir)/spice-client-gtk-3.0.pc.in \
+-	$(srcdir)/spice-controller.pc.in AUTHORS COPYING NEWS README \
+-	TODO build-aux/ar-lib build-aux/compile build-aux/config.guess \
+-	build-aux/config.sub build-aux/depcomp build-aux/install-sh \
+-	build-aux/missing build-aux/ltmain.sh \
++	$(srcdir)/spice-controller.pc.in AUTHORS COPYING ChangeLog \
++	NEWS README THANKS TODO build-aux/ar-lib build-aux/compile \
++	build-aux/config.guess build-aux/config.sub build-aux/depcomp \
++	build-aux/install-sh build-aux/missing build-aux/ltmain.sh \
+ 	$(top_srcdir)/build-aux/ar-lib $(top_srcdir)/build-aux/compile \
+ 	$(top_srcdir)/build-aux/config.guess \
+ 	$(top_srcdir)/build-aux/config.sub \
+@@ -479,11 +480,11 @@ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ ACLOCAL_AMFLAGS = -I m4
+ NULL = 
+-SUBDIRS = spice-common gtk po doc data tests $(am__append_1)
++SUBDIRS = spice-common gtk po doc data $(am__append_1) $(am__append_2)
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = spice-client-glib-2.0.pc \
+ 	spice-client-gtk-$(SPICE_GTK_API_VERSION).pc $(NULL) \
+-	$(am__append_2)
++	$(am__append_3)
+ INTLTOOL_FILES = \
+ 	intltool-extract.in			\
+ 	intltool-merge.in			\
+diff --git a/aclocal.m4 b/aclocal.m4
+index 2cae928..1edc6e5 100644
+--- a/aclocal.m4
++++ b/aclocal.m4
+@@ -20,6 +20,254 @@ You have another version of autoconf.  It may work, but is not guaranteed to.
+ If you have problems, you may need to regenerate the build system entirely.
+ To do so, use the procedure documented by the package, typically 'autoreconf'.])])
+ 
++# nls.m4 serial 5 (gettext-0.18)
++dnl Copyright (C) 1995-2003, 2005-2006, 2008-2013 Free Software Foundation,
++dnl Inc.
++dnl This file is free software; the Free Software Foundation
++dnl gives unlimited permission to copy and/or distribute it,
++dnl with or without modifications, as long as this notice is preserved.
++dnl
++dnl This file can can be used in projects which are not available under
++dnl the GNU General Public License or the GNU Library General Public
++dnl License but which still want to provide support for the GNU gettext
++dnl functionality.
++dnl Please note that the actual code of the GNU gettext library is covered
++dnl by the GNU Library General Public License, and the rest of the GNU
++dnl gettext package package is covered by the GNU General Public License.
++dnl They are *not* in the public domain.
++
++dnl Authors:
++dnl   Ulrich Drepper <drepper@cygnus.com>, 1995-2000.
++dnl   Bruno Haible <haible@clisp.cons.org>, 2000-2003.
++
++AC_PREREQ([2.50])
++
++AC_DEFUN([AM_NLS],
++[
++  AC_MSG_CHECKING([whether NLS is requested])
++  dnl Default is enabled NLS
++  AC_ARG_ENABLE([nls],
++    [  --disable-nls           do not use Native Language Support],
++    USE_NLS=$enableval, USE_NLS=yes)
++  AC_MSG_RESULT([$USE_NLS])
++  AC_SUBST([USE_NLS])
++])
++
++# pkg.m4 - Macros to locate and utilise pkg-config.            -*- Autoconf -*-
++# serial 1 (pkg-config-0.24)
++# 
++# Copyright © 2004 Scott James Remnant <scott@netsplit.com>.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful, but
++# WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++# General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
++#
++# As a special exception to the GNU General Public License, if you
++# distribute this file as part of a program that contains a
++# configuration script generated by Autoconf, you may include it under
++# the same distribution terms that you use for the rest of that program.
++
++# PKG_PROG_PKG_CONFIG([MIN-VERSION])
++# ----------------------------------
++AC_DEFUN([PKG_PROG_PKG_CONFIG],
++[m4_pattern_forbid([^_?PKG_[A-Z_]+$])
++m4_pattern_allow([^PKG_CONFIG(_(PATH|LIBDIR|SYSROOT_DIR|ALLOW_SYSTEM_(CFLAGS|LIBS)))?$])
++m4_pattern_allow([^PKG_CONFIG_(DISABLE_UNINSTALLED|TOP_BUILD_DIR|DEBUG_SPEW)$])
++AC_ARG_VAR([PKG_CONFIG], [path to pkg-config utility])
++AC_ARG_VAR([PKG_CONFIG_PATH], [directories to add to pkg-config's search path])
++AC_ARG_VAR([PKG_CONFIG_LIBDIR], [path overriding pkg-config's built-in search path])
++
++if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
++	AC_PATH_TOOL([PKG_CONFIG], [pkg-config])
++fi
++if test -n "$PKG_CONFIG"; then
++	_pkg_min_version=m4_default([$1], [0.9.0])
++	AC_MSG_CHECKING([pkg-config is at least version $_pkg_min_version])
++	if $PKG_CONFIG --atleast-pkgconfig-version $_pkg_min_version; then
++		AC_MSG_RESULT([yes])
++	else
++		AC_MSG_RESULT([no])
++		PKG_CONFIG=""
++	fi
++fi[]dnl
++])# PKG_PROG_PKG_CONFIG
++
++# PKG_CHECK_EXISTS(MODULES, [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
++#
++# Check to see whether a particular set of modules exists.  Similar
++# to PKG_CHECK_MODULES(), but does not set variables or print errors.
++#
++# Please remember that m4 expands AC_REQUIRE([PKG_PROG_PKG_CONFIG])
++# only at the first occurence in configure.ac, so if the first place
++# it's called might be skipped (such as if it is within an "if", you
++# have to call PKG_CHECK_EXISTS manually
++# --------------------------------------------------------------
++AC_DEFUN([PKG_CHECK_EXISTS],
++[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
++if test -n "$PKG_CONFIG" && \
++    AC_RUN_LOG([$PKG_CONFIG --exists --print-errors "$1"]); then
++  m4_default([$2], [:])
++m4_ifvaln([$3], [else
++  $3])dnl
++fi])
++
++# _PKG_CONFIG([VARIABLE], [COMMAND], [MODULES])
++# ---------------------------------------------
++m4_define([_PKG_CONFIG],
++[if test -n "$$1"; then
++    pkg_cv_[]$1="$$1"
++ elif test -n "$PKG_CONFIG"; then
++    PKG_CHECK_EXISTS([$3],
++                     [pkg_cv_[]$1=`$PKG_CONFIG --[]$2 "$3" 2>/dev/null`
++		      test "x$?" != "x0" && pkg_failed=yes ],
++		     [pkg_failed=yes])
++ else
++    pkg_failed=untried
++fi[]dnl
++])# _PKG_CONFIG
++
++# _PKG_SHORT_ERRORS_SUPPORTED
++# -----------------------------
++AC_DEFUN([_PKG_SHORT_ERRORS_SUPPORTED],
++[AC_REQUIRE([PKG_PROG_PKG_CONFIG])
++if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
++        _pkg_short_errors_supported=yes
++else
++        _pkg_short_errors_supported=no
++fi[]dnl
++])# _PKG_SHORT_ERRORS_SUPPORTED
++
++
++# PKG_CHECK_MODULES(VARIABLE-PREFIX, MODULES, [ACTION-IF-FOUND],
++# [ACTION-IF-NOT-FOUND])
++#
++#
++# Note that if there is a possibility the first call to
++# PKG_CHECK_MODULES might not happen, you should be sure to include an
++# explicit call to PKG_PROG_PKG_CONFIG in your configure.ac
++#
++#
++# --------------------------------------------------------------
++AC_DEFUN([PKG_CHECK_MODULES],
++[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
++AC_ARG_VAR([$1][_CFLAGS], [C compiler flags for $1, overriding pkg-config])dnl
++AC_ARG_VAR([$1][_LIBS], [linker flags for $1, overriding pkg-config])dnl
++
++pkg_failed=no
++AC_MSG_CHECKING([for $1])
++
++_PKG_CONFIG([$1][_CFLAGS], [cflags], [$2])
++_PKG_CONFIG([$1][_LIBS], [libs], [$2])
++
++m4_define([_PKG_TEXT], [Alternatively, you may set the environment variables $1[]_CFLAGS
++and $1[]_LIBS to avoid the need to call pkg-config.
++See the pkg-config man page for more details.])
++
++if test $pkg_failed = yes; then
++   	AC_MSG_RESULT([no])
++        _PKG_SHORT_ERRORS_SUPPORTED
++        if test $_pkg_short_errors_supported = yes; then
++	        $1[]_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$2" 2>&1`
++        else 
++	        $1[]_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$2" 2>&1`
++        fi
++	# Put the nasty error message in config.log where it belongs
++	echo "$$1[]_PKG_ERRORS" >&AS_MESSAGE_LOG_FD
++
++	m4_default([$4], [AC_MSG_ERROR(
++[Package requirements ($2) were not met:
++
++$$1_PKG_ERRORS
++
++Consider adjusting the PKG_CONFIG_PATH environment variable if you
++installed software in a non-standard prefix.
++
++_PKG_TEXT])[]dnl
++        ])
++elif test $pkg_failed = untried; then
++     	AC_MSG_RESULT([no])
++	m4_default([$4], [AC_MSG_FAILURE(
++[The pkg-config script could not be found or is too old.  Make sure it
++is in your PATH or set the PKG_CONFIG environment variable to the full
++path to pkg-config.
++
++_PKG_TEXT
++
++To get pkg-config, see <http://pkg-config.freedesktop.org/>.])[]dnl
++        ])
++else
++	$1[]_CFLAGS=$pkg_cv_[]$1[]_CFLAGS
++	$1[]_LIBS=$pkg_cv_[]$1[]_LIBS
++        AC_MSG_RESULT([yes])
++	$3
++fi[]dnl
++])# PKG_CHECK_MODULES
++
++
++# PKG_INSTALLDIR(DIRECTORY)
++# -------------------------
++# Substitutes the variable pkgconfigdir as the location where a module
++# should install pkg-config .pc files. By default the directory is
++# $libdir/pkgconfig, but the default can be changed by passing
++# DIRECTORY. The user can override through the --with-pkgconfigdir
++# parameter.
++AC_DEFUN([PKG_INSTALLDIR],
++[m4_pushdef([pkg_default], [m4_default([$1], ['${libdir}/pkgconfig'])])
++m4_pushdef([pkg_description],
++    [pkg-config installation directory @<:@]pkg_default[@:>@])
++AC_ARG_WITH([pkgconfigdir],
++    [AS_HELP_STRING([--with-pkgconfigdir], pkg_description)],,
++    [with_pkgconfigdir=]pkg_default)
++AC_SUBST([pkgconfigdir], [$with_pkgconfigdir])
++m4_popdef([pkg_default])
++m4_popdef([pkg_description])
++]) dnl PKG_INSTALLDIR
++
++
++# PKG_NOARCH_INSTALLDIR(DIRECTORY)
++# -------------------------
++# Substitutes the variable noarch_pkgconfigdir as the location where a
++# module should install arch-independent pkg-config .pc files. By
++# default the directory is $datadir/pkgconfig, but the default can be
++# changed by passing DIRECTORY. The user can override through the
++# --with-noarch-pkgconfigdir parameter.
++AC_DEFUN([PKG_NOARCH_INSTALLDIR],
++[m4_pushdef([pkg_default], [m4_default([$1], ['${datadir}/pkgconfig'])])
++m4_pushdef([pkg_description],
++    [pkg-config arch-independent installation directory @<:@]pkg_default[@:>@])
++AC_ARG_WITH([noarch-pkgconfigdir],
++    [AS_HELP_STRING([--with-noarch-pkgconfigdir], pkg_description)],,
++    [with_noarch_pkgconfigdir=]pkg_default)
++AC_SUBST([noarch_pkgconfigdir], [$with_noarch_pkgconfigdir])
++m4_popdef([pkg_default])
++m4_popdef([pkg_description])
++]) dnl PKG_NOARCH_INSTALLDIR
++
++
++# PKG_CHECK_VAR(VARIABLE, MODULE, CONFIG-VARIABLE,
++# [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
++# -------------------------------------------
++# Retrieves the value of the pkg-config variable for the given module.
++AC_DEFUN([PKG_CHECK_VAR],
++[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
++AC_ARG_VAR([$1], [value of $3 for $2, overriding pkg-config])dnl
++
++_PKG_CONFIG([$1], [variable="][$3]["], [$2])
++AS_VAR_COPY([$1], [pkg_cv_][$1])
++
++AS_VAR_IF([$1], [""], [$5], [$4])dnl
++])# PKG_CHECK_VAR
++
+ # Copyright (C) 1995-2002 Free Software Foundation, Inc.
+ # Copyright (C) 2001-2003,2004 Red Hat, Inc.
+ #
+@@ -553,254 +801,6 @@ AC_DEFUN([GOBJECT_INTROSPECTION_REQUIRE],
+   _GOBJECT_INTROSPECTION_CHECK_INTERNAL([$1], [require])
+ ])
+ 
+-# nls.m4 serial 5 (gettext-0.18)
+-dnl Copyright (C) 1995-2003, 2005-2006, 2008-2013 Free Software Foundation,
+-dnl Inc.
+-dnl This file is free software; the Free Software Foundation
+-dnl gives unlimited permission to copy and/or distribute it,
+-dnl with or without modifications, as long as this notice is preserved.
+-dnl
+-dnl This file can can be used in projects which are not available under
+-dnl the GNU General Public License or the GNU Library General Public
+-dnl License but which still want to provide support for the GNU gettext
+-dnl functionality.
+-dnl Please note that the actual code of the GNU gettext library is covered
+-dnl by the GNU Library General Public License, and the rest of the GNU
+-dnl gettext package package is covered by the GNU General Public License.
+-dnl They are *not* in the public domain.
+-
+-dnl Authors:
+-dnl   Ulrich Drepper <drepper@cygnus.com>, 1995-2000.
+-dnl   Bruno Haible <haible@clisp.cons.org>, 2000-2003.
+-
+-AC_PREREQ([2.50])
+-
+-AC_DEFUN([AM_NLS],
+-[
+-  AC_MSG_CHECKING([whether NLS is requested])
+-  dnl Default is enabled NLS
+-  AC_ARG_ENABLE([nls],
+-    [  --disable-nls           do not use Native Language Support],
+-    USE_NLS=$enableval, USE_NLS=yes)
+-  AC_MSG_RESULT([$USE_NLS])
+-  AC_SUBST([USE_NLS])
+-])
+-
+-# pkg.m4 - Macros to locate and utilise pkg-config.            -*- Autoconf -*-
+-# serial 1 (pkg-config-0.24)
+-# 
+-# Copyright © 2004 Scott James Remnant <scott@netsplit.com>.
+-#
+-# This program is free software; you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation; either version 2 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful, but
+-# WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-# General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program; if not, write to the Free Software
+-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-#
+-# As a special exception to the GNU General Public License, if you
+-# distribute this file as part of a program that contains a
+-# configuration script generated by Autoconf, you may include it under
+-# the same distribution terms that you use for the rest of that program.
+-
+-# PKG_PROG_PKG_CONFIG([MIN-VERSION])
+-# ----------------------------------
+-AC_DEFUN([PKG_PROG_PKG_CONFIG],
+-[m4_pattern_forbid([^_?PKG_[A-Z_]+$])
+-m4_pattern_allow([^PKG_CONFIG(_(PATH|LIBDIR|SYSROOT_DIR|ALLOW_SYSTEM_(CFLAGS|LIBS)))?$])
+-m4_pattern_allow([^PKG_CONFIG_(DISABLE_UNINSTALLED|TOP_BUILD_DIR|DEBUG_SPEW)$])
+-AC_ARG_VAR([PKG_CONFIG], [path to pkg-config utility])
+-AC_ARG_VAR([PKG_CONFIG_PATH], [directories to add to pkg-config's search path])
+-AC_ARG_VAR([PKG_CONFIG_LIBDIR], [path overriding pkg-config's built-in search path])
+-
+-if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
+-	AC_PATH_TOOL([PKG_CONFIG], [pkg-config])
+-fi
+-if test -n "$PKG_CONFIG"; then
+-	_pkg_min_version=m4_default([$1], [0.9.0])
+-	AC_MSG_CHECKING([pkg-config is at least version $_pkg_min_version])
+-	if $PKG_CONFIG --atleast-pkgconfig-version $_pkg_min_version; then
+-		AC_MSG_RESULT([yes])
+-	else
+-		AC_MSG_RESULT([no])
+-		PKG_CONFIG=""
+-	fi
+-fi[]dnl
+-])# PKG_PROG_PKG_CONFIG
+-
+-# PKG_CHECK_EXISTS(MODULES, [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+-#
+-# Check to see whether a particular set of modules exists.  Similar
+-# to PKG_CHECK_MODULES(), but does not set variables or print errors.
+-#
+-# Please remember that m4 expands AC_REQUIRE([PKG_PROG_PKG_CONFIG])
+-# only at the first occurence in configure.ac, so if the first place
+-# it's called might be skipped (such as if it is within an "if", you
+-# have to call PKG_CHECK_EXISTS manually
+-# --------------------------------------------------------------
+-AC_DEFUN([PKG_CHECK_EXISTS],
+-[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+-if test -n "$PKG_CONFIG" && \
+-    AC_RUN_LOG([$PKG_CONFIG --exists --print-errors "$1"]); then
+-  m4_default([$2], [:])
+-m4_ifvaln([$3], [else
+-  $3])dnl
+-fi])
+-
+-# _PKG_CONFIG([VARIABLE], [COMMAND], [MODULES])
+-# ---------------------------------------------
+-m4_define([_PKG_CONFIG],
+-[if test -n "$$1"; then
+-    pkg_cv_[]$1="$$1"
+- elif test -n "$PKG_CONFIG"; then
+-    PKG_CHECK_EXISTS([$3],
+-                     [pkg_cv_[]$1=`$PKG_CONFIG --[]$2 "$3" 2>/dev/null`
+-		      test "x$?" != "x0" && pkg_failed=yes ],
+-		     [pkg_failed=yes])
+- else
+-    pkg_failed=untried
+-fi[]dnl
+-])# _PKG_CONFIG
+-
+-# _PKG_SHORT_ERRORS_SUPPORTED
+-# -----------------------------
+-AC_DEFUN([_PKG_SHORT_ERRORS_SUPPORTED],
+-[AC_REQUIRE([PKG_PROG_PKG_CONFIG])
+-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+-        _pkg_short_errors_supported=yes
+-else
+-        _pkg_short_errors_supported=no
+-fi[]dnl
+-])# _PKG_SHORT_ERRORS_SUPPORTED
+-
+-
+-# PKG_CHECK_MODULES(VARIABLE-PREFIX, MODULES, [ACTION-IF-FOUND],
+-# [ACTION-IF-NOT-FOUND])
+-#
+-#
+-# Note that if there is a possibility the first call to
+-# PKG_CHECK_MODULES might not happen, you should be sure to include an
+-# explicit call to PKG_PROG_PKG_CONFIG in your configure.ac
+-#
+-#
+-# --------------------------------------------------------------
+-AC_DEFUN([PKG_CHECK_MODULES],
+-[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+-AC_ARG_VAR([$1][_CFLAGS], [C compiler flags for $1, overriding pkg-config])dnl
+-AC_ARG_VAR([$1][_LIBS], [linker flags for $1, overriding pkg-config])dnl
+-
+-pkg_failed=no
+-AC_MSG_CHECKING([for $1])
+-
+-_PKG_CONFIG([$1][_CFLAGS], [cflags], [$2])
+-_PKG_CONFIG([$1][_LIBS], [libs], [$2])
+-
+-m4_define([_PKG_TEXT], [Alternatively, you may set the environment variables $1[]_CFLAGS
+-and $1[]_LIBS to avoid the need to call pkg-config.
+-See the pkg-config man page for more details.])
+-
+-if test $pkg_failed = yes; then
+-   	AC_MSG_RESULT([no])
+-        _PKG_SHORT_ERRORS_SUPPORTED
+-        if test $_pkg_short_errors_supported = yes; then
+-	        $1[]_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$2" 2>&1`
+-        else 
+-	        $1[]_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$2" 2>&1`
+-        fi
+-	# Put the nasty error message in config.log where it belongs
+-	echo "$$1[]_PKG_ERRORS" >&AS_MESSAGE_LOG_FD
+-
+-	m4_default([$4], [AC_MSG_ERROR(
+-[Package requirements ($2) were not met:
+-
+-$$1_PKG_ERRORS
+-
+-Consider adjusting the PKG_CONFIG_PATH environment variable if you
+-installed software in a non-standard prefix.
+-
+-_PKG_TEXT])[]dnl
+-        ])
+-elif test $pkg_failed = untried; then
+-     	AC_MSG_RESULT([no])
+-	m4_default([$4], [AC_MSG_FAILURE(
+-[The pkg-config script could not be found or is too old.  Make sure it
+-is in your PATH or set the PKG_CONFIG environment variable to the full
+-path to pkg-config.
+-
+-_PKG_TEXT
+-
+-To get pkg-config, see <http://pkg-config.freedesktop.org/>.])[]dnl
+-        ])
+-else
+-	$1[]_CFLAGS=$pkg_cv_[]$1[]_CFLAGS
+-	$1[]_LIBS=$pkg_cv_[]$1[]_LIBS
+-        AC_MSG_RESULT([yes])
+-	$3
+-fi[]dnl
+-])# PKG_CHECK_MODULES
+-
+-
+-# PKG_INSTALLDIR(DIRECTORY)
+-# -------------------------
+-# Substitutes the variable pkgconfigdir as the location where a module
+-# should install pkg-config .pc files. By default the directory is
+-# $libdir/pkgconfig, but the default can be changed by passing
+-# DIRECTORY. The user can override through the --with-pkgconfigdir
+-# parameter.
+-AC_DEFUN([PKG_INSTALLDIR],
+-[m4_pushdef([pkg_default], [m4_default([$1], ['${libdir}/pkgconfig'])])
+-m4_pushdef([pkg_description],
+-    [pkg-config installation directory @<:@]pkg_default[@:>@])
+-AC_ARG_WITH([pkgconfigdir],
+-    [AS_HELP_STRING([--with-pkgconfigdir], pkg_description)],,
+-    [with_pkgconfigdir=]pkg_default)
+-AC_SUBST([pkgconfigdir], [$with_pkgconfigdir])
+-m4_popdef([pkg_default])
+-m4_popdef([pkg_description])
+-]) dnl PKG_INSTALLDIR
+-
+-
+-# PKG_NOARCH_INSTALLDIR(DIRECTORY)
+-# -------------------------
+-# Substitutes the variable noarch_pkgconfigdir as the location where a
+-# module should install arch-independent pkg-config .pc files. By
+-# default the directory is $datadir/pkgconfig, but the default can be
+-# changed by passing DIRECTORY. The user can override through the
+-# --with-noarch-pkgconfigdir parameter.
+-AC_DEFUN([PKG_NOARCH_INSTALLDIR],
+-[m4_pushdef([pkg_default], [m4_default([$1], ['${datadir}/pkgconfig'])])
+-m4_pushdef([pkg_description],
+-    [pkg-config arch-independent installation directory @<:@]pkg_default[@:>@])
+-AC_ARG_WITH([noarch-pkgconfigdir],
+-    [AS_HELP_STRING([--with-noarch-pkgconfigdir], pkg_description)],,
+-    [with_noarch_pkgconfigdir=]pkg_default)
+-AC_SUBST([noarch_pkgconfigdir], [$with_noarch_pkgconfigdir])
+-m4_popdef([pkg_default])
+-m4_popdef([pkg_description])
+-]) dnl PKG_NOARCH_INSTALLDIR
+-
+-
+-# PKG_CHECK_VAR(VARIABLE, MODULE, CONFIG-VARIABLE,
+-# [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+-# -------------------------------------------
+-# Retrieves the value of the pkg-config variable for the given module.
+-AC_DEFUN([PKG_CHECK_VAR],
+-[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+-AC_ARG_VAR([$1], [value of $3 for $2, overriding pkg-config])dnl
+-
+-_PKG_CONFIG([$1], [variable="][$3]["], [$2])
+-AS_VAR_COPY([$1], [pkg_cv_][$1])
+-
+-AS_VAR_IF([$1], [""], [$5], [$4])dnl
+-])# PKG_CHECK_VAR
+-
+ # Copyright (C) 2002-2013 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+diff --git a/configure b/configure
+index b085a91..99dd0e9 100755
+--- a/configure
++++ b/configure
+@@ -696,6 +696,8 @@ ac_subst_vars='am__EXEEXT_FALSE
+ am__EXEEXT_TRUE
+ LTLIBOBJS
+ LIBOBJS
++BUILD_TESTS_FALSE
++BUILD_TESTS_TRUE
+ SPICE_GTK_REQUIRES
+ SPICE_GLIB_REQUIRES
+ SPICE_GTK_CFLAGS
+@@ -6771,10 +6773,10 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+ 	  x86_64-*linux*)
+ 	    LD="${LD-ld} -m elf_i386"
+ 	    ;;
+-	  powerpcle-*linux*)
++	  powerpc64le-*linux*)
+ 	    LD="${LD-ld} -m elf32lppclinux"
+ 	    ;;
+-	  powerpc-*linux*)
++	  powerpc64-*linux*)
+ 	    LD="${LD-ld} -m elf32ppclinux"
+ 	    ;;
+ 	  s390x-*linux*)
+@@ -19548,6 +19550,15 @@ fi
+ AM_BACKSLASH='\'
+ 
+ 
++ if test x"$enable_static" = xyes; then
++  BUILD_TESTS_TRUE=
++  BUILD_TESTS_FALSE='#'
++else
++  BUILD_TESTS_TRUE='#'
++  BUILD_TESTS_FALSE=
++fi
++
++
+ ac_config_files="$ac_config_files Makefile spice-client-glib-2.0.pc spice-client-gtk-2.0.pc spice-client-gtk-3.0.pc spice-controller.pc data/Makefile data/spicy.desktop.in data/spicy.nsis po/Makefile.in gtk/Makefile gtk/controller/Makefile doc/Makefile doc/reference/Makefile vapi/Makefile tests/Makefile"
+ 
+ cat >confcache <<\_ACEOF
+@@ -19824,6 +19835,10 @@ if test -z "${WITH_PYTHON_TRUE}" && test -z "${WITH_PYTHON_FALSE}"; then
+   as_fn_error $? "conditional \"WITH_PYTHON\" was never defined.
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+ fi
++if test -z "${BUILD_TESTS_TRUE}" && test -z "${BUILD_TESTS_FALSE}"; then
++  as_fn_error $? "conditional \"BUILD_TESTS\" was never defined.
++Usually this means the macro was only invoked conditionally." "$LINENO" 5
++fi
+ 
+ : "${CONFIG_STATUS=./config.status}"
+ ac_write_fail=0
+diff --git a/configure.ac b/configure.ac
+index 24416a9..e2dd742 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -696,6 +696,8 @@ AC_SUBST(SPICE_GTK_REQUIRES)
+ 
+ m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
+ 
++AM_CONDITIONAL([BUILD_TESTS], [test x"$enable_static" = xyes])
++
+ AC_OUTPUT([
+ Makefile
+ spice-client-glib-2.0.pc
+diff --git a/m4/libtool.m4 b/m4/libtool.m4
+index 126202f..f12cfdf 100644
+--- a/m4/libtool.m4
++++ b/m4/libtool.m4
+@@ -1326,10 +1326,10 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+ 	  x86_64-*linux*)
+ 	    LD="${LD-ld} -m elf_i386"
+ 	    ;;
+-	  powerpcle-*linux*)
++	  powerpc64le-*linux*)
+ 	    LD="${LD-ld} -m elf32lppclinux"
+ 	    ;;
+-	  powerpc-*linux*)
++	  powerpc64-*linux*)
+ 	    LD="${LD-ld} -m elf32ppclinux"
+ 	    ;;
+ 	  s390x-*linux*)
+diff --git a/spice-common/configure b/spice-common/configure
+index 5541a31..8fb0fde 100755
+--- a/spice-common/configure
++++ b/spice-common/configure
+@@ -6788,10 +6788,10 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+ 	  x86_64-*linux*)
+ 	    LD="${LD-ld} -m elf_i386"
+ 	    ;;
+-	  powerpcle-*linux*)
++	  powerpc64le-*linux*)
+ 	    LD="${LD-ld} -m elf32lppclinux"
+ 	    ;;
+-	  powerpc-*linux*)
++	  powerpc64-*linux*)
+ 	    LD="${LD-ld} -m elf32ppclinux"
+ 	    ;;
+ 	  s390x-*linux*)
+diff --git a/spice-common/m4/libtool.m4 b/spice-common/m4/libtool.m4
+index 126202f..f12cfdf 100644
+--- a/spice-common/m4/libtool.m4
++++ b/spice-common/m4/libtool.m4
+@@ -1326,10 +1326,10 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
+ 	  x86_64-*linux*)
+ 	    LD="${LD-ld} -m elf_i386"
+ 	    ;;
+-	  powerpcle-*linux*)
++	  powerpc64le-*linux*)
+ 	    LD="${LD-ld} -m elf32lppclinux"
+ 	    ;;
+-	  powerpc-*linux*)
++	  powerpc64-*linux*)
+ 	    LD="${LD-ld} -m elf32ppclinux"
+ 	    ;;
+ 	  s390x-*linux*)
+-- 
+1.8.5.3
+

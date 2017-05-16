@@ -1,0 +1,401 @@
+http://svn.mandriva.com/cgi-bin/viewvc.cgi/packages/cooker/python/current/SOURCES/
+
+diff -Naur Python-2.5.2.orig/configure Python-2.5.2/configure
+--- Python-2.5.2.orig/configure	2008-12-04 12:53:20.850370886 +0100
++++ Python-2.5.2/configure	2008-12-04 12:56:26.041364487 +0100
+@@ -685,6 +685,8 @@
+ GREP
+ EGREP
+ BUILDEXEEXT
++ARCH
++LIB
+ LIBRARY
+ LDLIBRARY
+ DLLLIBRARY
+@@ -3833,6 +3835,49 @@
+ esac
+ 
+ 
++{ echo "$as_me:$LINENO: checking ARCH" >&5
++echo $ECHO_N "checking ARCH... $ECHO_C" >&6; }
++ARCH=`uname -m`
++case $ARCH in
++i?86) ARCH=i386;;
++esac
++{ echo "$as_me:$LINENO: result: $ARCH" >&5
++echo "${ECHO_T}$ARCH" >&6; }
++
++
++{ echo "$as_me:$LINENO: checking LIB" >&5
++echo $ECHO_N "checking LIB... $ECHO_C" >&6; }
++case $ac_sys_system in
++Linux*)
++  # Test if the compiler is 64bit
++  echo 'int i;' > conftest.$ac_ext
++  python_cv_cc_64bit_output=no
++  if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
++  (eval $ac_compile) 2>&5
++  ac_status=$?
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); }; then
++    case `/usr/bin/file conftest.$ac_objext` in
++    *"ELF 64"*)
++      python_cv_cc_64bit_output=yes
++      ;;
++    esac
++  fi
++  rm -rf conftest*
++  ;;
++esac
++
++case $ARCH:$python_cv_cc_64bit_output in
++ppc64:yes | powerpc64:yes | s390x:yes | sparc64:yes | x86_64:yes)
++  LIB="lib64"
++  ;;
++*:*)
++  LIB="lib"
++  ;;
++esac
++{ echo "$as_me:$LINENO: result: $LIB" >&5
++echo "${ECHO_T}$LIB" >&6; }
++
+ 
+ { echo "$as_me:$LINENO: checking LIBRARY" >&5
+ echo $ECHO_N "checking LIBRARY... $ECHO_C" >&6; }
+@@ -23367,6 +23412,8 @@
+ GREP!$GREP$ac_delim
+ EGREP!$EGREP$ac_delim
+ BUILDEXEEXT!$BUILDEXEEXT$ac_delim
++ARCH!$ARCH$ac_delim
++LIB!$LIB$ac_delim
+ LIBRARY!$LIBRARY$ac_delim
+ LDLIBRARY!$LDLIBRARY$ac_delim
+ DLLLIBRARY!$DLLLIBRARY$ac_delim
+@@ -23393,8 +23440,6 @@
+ LINKFORSHARED!$LINKFORSHARED$ac_delim
+ CFLAGSFORSHARED!$CFLAGSFORSHARED$ac_delim
+ SHLIBS!$SHLIBS$ac_delim
+-USE_SIGNAL_MODULE!$USE_SIGNAL_MODULE$ac_delim
+-SIGNAL_OBJS!$SIGNAL_OBJS$ac_delim
+ _ACEOF
+ 
+   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
+@@ -23436,6 +23481,8 @@
+ ac_delim='%!_!# '
+ for ac_last_try in false false false false false :; do
+   cat >conf$$subs.sed <<_ACEOF
++USE_SIGNAL_MODULE!$USE_SIGNAL_MODULE$ac_delim
++SIGNAL_OBJS!$SIGNAL_OBJS$ac_delim
+ USE_THREAD_MODULE!$USE_THREAD_MODULE$ac_delim
+ LDLAST!$LDLAST$ac_delim
+ THREADOBJ!$THREADOBJ$ac_delim
+@@ -23457,7 +23504,7 @@
+ LTLIBOBJS!$LTLIBOBJS$ac_delim
+ _ACEOF
+ 
+-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 19; then
++  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 21; then
+     break
+   elif $ac_last_try; then
+     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
+diff -Naur Python-2.5.2.orig/configure.in Python-2.5.2/configure.in
+--- Python-2.5.2.orig/configure.in	2008-12-04 12:53:22.283369893 +0100
++++ Python-2.5.2/configure.in	2008-12-04 12:54:55.362364592 +0100
+@@ -513,6 +513,41 @@
+     ;;
+ esac
+ 
++AC_SUBST(ARCH)
++AC_MSG_CHECKING(ARCH)
++ARCH=`uname -m`
++case $ARCH in
++i?86) ARCH=i386;;
++esac
++AC_MSG_RESULT($ARCH)
++
++AC_SUBST(LIB)
++AC_MSG_CHECKING(LIB)
++case $ac_sys_system in
++Linux*)
++  # Test if the compiler is 64bit
++  echo 'int i;' > conftest.$ac_ext
++  python_cv_cc_64bit_output=no
++  if AC_TRY_EVAL(ac_compile); then
++    case `/usr/bin/file conftest.$ac_objext` in
++    *"ELF 64"*)
++      python_cv_cc_64bit_output=yes
++      ;;
++    esac
++  fi
++  rm -rf conftest*
++  ;;
++esac
++
++case $ARCH:$python_cv_cc_64bit_output in
++ppc64:yes | powerpc64:yes | s390x:yes | sparc64:yes | x86_64:yes)
++  LIB="lib64"
++  ;;
++*:*)
++  LIB="lib"
++  ;;
++esac
++AC_MSG_RESULT($LIB)
+ 
+ AC_SUBST(LIBRARY)
+ AC_MSG_CHECKING(LIBRARY)
+diff -Naur Python-2.5.2.orig/Include/pythonrun.h Python-2.5.2/Include/pythonrun.h
+--- Python-2.5.2.orig/Include/pythonrun.h	2008-12-04 12:53:23.384369909 +0100
++++ Python-2.5.2/Include/pythonrun.h	2008-12-04 12:54:55.366365660 +0100
+@@ -107,6 +107,8 @@
+ /* In their own files */
+ PyAPI_FUNC(const char *) Py_GetVersion(void);
+ PyAPI_FUNC(const char *) Py_GetPlatform(void);
++PyAPI_FUNC(const char *) Py_GetArch(void);
++PyAPI_FUNC(const char *) Py_GetLib(void);
+ PyAPI_FUNC(const char *) Py_GetCopyright(void);
+ PyAPI_FUNC(const char *) Py_GetCompiler(void);
+ PyAPI_FUNC(const char *) Py_GetBuildInfo(void);
+diff -Naur Python-2.5.2.orig/Lib/distutils/command/install.py Python-2.5.2/Lib/distutils/command/install.py
+--- Python-2.5.2.orig/Lib/distutils/command/install.py	2008-12-04 12:53:20.869369116 +0100
++++ Python-2.5.2/Lib/distutils/command/install.py	2008-12-04 12:54:55.365365533 +0100
+@@ -19,6 +19,8 @@
+ from distutils.errors import DistutilsOptionError
+ from glob import glob
+ 
++libname = sys.lib
++
+ if sys.version < "2.2":
+     WINDOWS_SCHEME = {
+         'purelib': '$base',
+@@ -39,14 +41,14 @@
+ INSTALL_SCHEMES = {
+     'unix_prefix': {
+         'purelib': '$base/lib/python$py_version_short/site-packages',
+-        'platlib': '$platbase/lib/python$py_version_short/site-packages',
++        'platlib': '$platbase/'+libname+'/python$py_version_short/site-packages',
+         'headers': '$base/include/python$py_version_short/$dist_name',
+         'scripts': '$base/bin',
+         'data'   : '$base',
+         },
+     'unix_home': {
+         'purelib': '$base/lib/python',
+-        'platlib': '$base/lib/python',
++        'platlib': '$base/'+libname+'/python',
+         'headers': '$base/include/python/$dist_name',
+         'scripts': '$base/bin',
+         'data'   : '$base',
+diff -Naur Python-2.5.2.orig/Lib/distutils/sysconfig.py Python-2.5.2/Lib/distutils/sysconfig.py
+--- Python-2.5.2.orig/Lib/distutils/sysconfig.py	2008-12-04 12:53:20.868368429 +0100
++++ Python-2.5.2/Lib/distutils/sysconfig.py	2008-12-04 12:54:55.364364847 +0100
+@@ -99,8 +99,12 @@
+         prefix = plat_specific and EXEC_PREFIX or PREFIX
+ 
+     if os.name == "posix":
++        if plat_specific:
++            lib = sys.lib
++        else:
++            lib = 'lib'
+         libpython = os.path.join(prefix,
+-                                 "lib", "python" + get_python_version())
++                                 lib, "python" + get_python_version())
+         if standard_lib:
+             return libpython
+         else:
+diff -Naur Python-2.5.2.orig/Lib/distutils/tests/test_install.py Python-2.5.2/Lib/distutils/tests/test_install.py
+--- Python-2.5.2.orig/Lib/distutils/tests/test_install.py	2008-12-04 12:53:20.870370919 +0100
++++ Python-2.5.2/Lib/distutils/tests/test_install.py	2008-12-04 12:54:55.365365533 +0100
+@@ -1,6 +1,6 @@
+ """Tests for distutils.command.install."""
+ 
+-import os
++import os,sys
+ import unittest
+ 
+ from distutils.command.install import install
+@@ -39,8 +39,9 @@
+             self.assertEqual(got, expected)
+ 
+         libdir = os.path.join(destination, "lib", "python")
++        platlibdir =  os.path.join(destination, sys.lib, "python")
+         check_path(cmd.install_lib, libdir)
+-        check_path(cmd.install_platlib, libdir)
++        check_path(cmd.install_platlib, platlibdir)
+         check_path(cmd.install_purelib, libdir)
+         check_path(cmd.install_headers,
+                    os.path.join(destination, "include", "python", "foopkg"))
+diff -Naur Python-2.5.2.orig/Lib/site.py Python-2.5.2/Lib/site.py
+--- Python-2.5.2.orig/Lib/site.py	2008-12-04 12:53:20.861370890 +0100
++++ Python-2.5.2/Lib/site.py	2008-12-04 12:54:55.364364847 +0100
+@@ -182,12 +182,18 @@
+                 sitedirs = [os.path.join(prefix, "Lib", "site-packages")]
+             elif os.sep == '/':
+                 sitedirs = [os.path.join(prefix,
+-                                         "lib",
++                                         sys.lib,
+                                          "python" + sys.version[:3],
+                                          "site-packages"),
+-                            os.path.join(prefix, "lib", "site-python")]
++                            os.path.join(prefix, sys.lib, "site-python")]
++                if sys.lib != 'lib':
++                    sitedirs.append(os.path.join(prefix,
++                                                 'lib',
++                                                 "python" + sys.version[:3],
++                                                 "site-packages"))
++                    sitedirs.append(os.path.join(prefix, 'lib', "site-python"))
+             else:
+-                sitedirs = [prefix, os.path.join(prefix, "lib", "site-packages")]
++                sitedirs = [prefix, os.path.join(prefix, sys.lib, "site-packages")]
+             if sys.platform == 'darwin':
+                 # for framework builds *only* we add the standard Apple
+                 # locations. Currently only per-user, but /Library and
+diff -Naur Python-2.5.2.orig/Makefile.pre.in Python-2.5.2/Makefile.pre.in
+--- Python-2.5.2.orig/Makefile.pre.in	2008-12-04 12:53:22.283369893 +0100
++++ Python-2.5.2/Makefile.pre.in	2008-12-04 12:54:55.353367357 +0100
+@@ -75,6 +75,8 @@
+ 
+ # Machine-dependent subdirectories
+ MACHDEP=	@MACHDEP@
++LIB=		@LIB@
++ARCH=		@ARCH@
+ 
+ # Install prefix for architecture-independent files
+ prefix=		@prefix@
+@@ -87,11 +89,11 @@
+ 
+ # Expanded directories
+ BINDIR=		$(exec_prefix)/bin
+-LIBDIR=		$(exec_prefix)/lib
++LIBDIR=		$(exec_prefix)/$(LIB)
+ MANDIR=		@mandir@
+ INCLUDEDIR=	@includedir@
+ CONFINCLUDEDIR=	$(exec_prefix)/include
+-SCRIPTDIR=	$(prefix)/lib
++SCRIPTDIR=	$(prefix)/$(LIB)
+ 
+ # Detailed destination directories
+ BINLIBDEST=	$(LIBDIR)/python$(VERSION)
+@@ -495,7 +497,7 @@
+ Python/compile.o Python/symtable.o: $(GRAMMAR_H) $(AST_H)
+ 
+ Python/getplatform.o: $(srcdir)/Python/getplatform.c
+-		$(CC) -c $(PY_CFLAGS) -DPLATFORM='"$(MACHDEP)"' -o $@ $(srcdir)/Python/getplatform.c
++		$(CC) -c $(PY_CFLAGS) -DPLATFORM='"$(MACHDEP)"' -DARCH='"$(ARCH)"' -DLIB='"$(LIB)"' -o $@ $(srcdir)/Python/getplatform.c
+ 
+ Python/importdl.o: $(srcdir)/Python/importdl.c
+ 		$(CC) -c $(PY_CFLAGS) -I$(DLINCLDIR) -o $@ $(srcdir)/Python/importdl.c
+diff -Naur Python-2.5.2.orig/Modules/getpath.c Python-2.5.2/Modules/getpath.c
+--- Python-2.5.2.orig/Modules/getpath.c	2008-12-04 12:53:23.369370512 +0100
++++ Python-2.5.2/Modules/getpath.c	2008-12-04 12:54:55.364364847 +0100
+@@ -116,9 +116,17 @@
+ #define EXEC_PREFIX PREFIX
+ #endif
+ 
++#ifndef LIB_PYTHON
++#if defined(__x86_64__) || defined(__powerpc64__)
++#define LIB_PYTHON "lib64/python" VERSION
++#else
++#define LIB_PYTHON "lib/python" VERSION
++#endif
++#endif
++
+ #ifndef PYTHONPATH
+-#define PYTHONPATH PREFIX "/lib/python" VERSION ":" \
+-              EXEC_PREFIX "/lib/python" VERSION "/lib-dynload"
++#define PYTHONPATH PREFIX "/" LIB_PYTHON ":" \
++              EXEC_PREFIX "/" LIB_PYTHON "/lib-dynload"
+ #endif
+ 
+ #ifndef LANDMARK
+@@ -129,7 +137,7 @@
+ static char exec_prefix[MAXPATHLEN+1];
+ static char progpath[MAXPATHLEN+1];
+ static char *module_search_path = NULL;
+-static char lib_python[] = "lib/python" VERSION;
++static char lib_python[] = LIB_PYTHON;
+ 
+ static void
+ reduce(char *dir)
+diff -Naur Python-2.5.2.orig/Python/getplatform.c Python-2.5.2/Python/getplatform.c
+--- Python-2.5.2.orig/Python/getplatform.c	2008-12-04 12:53:23.173370128 +0100
++++ Python-2.5.2/Python/getplatform.c	2008-12-04 12:54:55.365365533 +0100
+@@ -10,3 +10,23 @@
+ {
+ 	return PLATFORM;
+ }
++
++#ifndef ARCH
++#define ARCH "unknown"
++#endif
++
++const char *
++Py_GetArch(void)
++{
++	return ARCH;
++}
++
++#ifndef LIB
++#define LIB "lib"
++#endif
++
++const char *
++Py_GetLib(void)
++{
++	return LIB;
++}
+diff -Naur Python-2.5.2.orig/Python/sysmodule.c Python-2.5.2/Python/sysmodule.c
+--- Python-2.5.2.orig/Python/sysmodule.c	2008-12-04 12:53:23.175368986 +0100
++++ Python-2.5.2/Python/sysmodule.c	2008-12-04 12:54:55.366365660 +0100
+@@ -1159,6 +1159,10 @@
+ 			    PyString_FromString(Py_GetPlatform()));
+ 	SET_SYS_FROM_STRING("executable",
+ 			    PyString_FromString(Py_GetProgramFullPath()));
++	SET_SYS_FROM_STRING("arch",
++			    PyString_FromString(Py_GetArch()));
++	SET_SYS_FROM_STRING("lib",
++			    PyString_FromString(Py_GetLib()));
+ 	SET_SYS_FROM_STRING("prefix",
+ 			    PyString_FromString(Py_GetPrefix()));
+ 	SET_SYS_FROM_STRING("exec_prefix",
+diff -Naur Python-2.5.2.orig/setup.py Python-2.5.2/setup.py
+--- Python-2.5.2.orig/setup.py	2008-12-04 12:53:22.286366085 +0100
++++ Python-2.5.2/setup.py	2008-12-04 12:54:55.363365837 +0100
+@@ -291,12 +291,12 @@
+         except NameError:
+             have_unicode = 0
+ 
++        libname = sys.lib
+         # lib_dirs and inc_dirs are used to search for files;
+         # if a file is found in one of those directories, it can
+         # be assumed that no additional -I,-L directives are needed.
+         lib_dirs = self.compiler.library_dirs + [
+-            '/lib64', '/usr/lib64',
+-            '/lib', '/usr/lib',
++            libname, '/usr/'+libname
+             ]
+         inc_dirs = self.compiler.include_dirs + ['/usr/include']
+         exts = []
+@@ -497,11 +497,11 @@
+             elif self.compiler.find_library_file(lib_dirs, 'curses'):
+                 readline_libs.append('curses')
+             elif self.compiler.find_library_file(lib_dirs +
+-                                               ['/usr/lib/termcap'],
++                                               ['/usr/'+libname+'/termcap'],
+                                                'termcap'):
+                 readline_libs.append('termcap')
+             exts.append( Extension('readline', ['readline.c'],
+-                                   library_dirs=['/usr/lib/termcap'],
++                                   library_dirs=['/usr/'+libname+'/termcap'],
+                                    extra_link_args=readline_extra_link_args,
+                                    libraries=readline_libs) )
+         if platform not in ['mac']:
+@@ -1267,8 +1267,8 @@
+             added_lib_dirs.append('/usr/openwin/lib')
+         elif os.path.exists('/usr/X11R6/include'):
+             include_dirs.append('/usr/X11R6/include')
+-            added_lib_dirs.append('/usr/X11R6/lib64')
+-            added_lib_dirs.append('/usr/X11R6/lib')
++            added_lib_dirs.append('/usr/X11R6/'+sys.lib)
++            #added_lib_dirs.append('/usr/X11R6/lib')
+         elif os.path.exists('/usr/X11R5/include'):
+             include_dirs.append('/usr/X11R5/include')
+             added_lib_dirs.append('/usr/X11R5/lib')

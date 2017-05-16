@@ -1,0 +1,164 @@
+--- sqlite-3.7.1-original/configure	2010-08-18 23:00:56.000000000 +0100
++++ sqlite-3.7.1/configure	2010-10-11 12:10:02.283382675 +0100
+@@ -910,6 +910,7 @@
+ enable_libtool_lock
+ enable_largefile
+ with_hints
++enable_load_extension
+ enable_threadsafe
+ enable_cross_thread_connections
+ enable_threads_override_locks
+@@ -922,7 +923,6 @@
+ with_readline_inc
+ enable_debug
+ enable_amalgamation
+-enable_load_extension
+ enable_gcov
+ '
+       ac_precious_vars='build_alias
+@@ -1566,6 +1566,8 @@
+                           optimize for fast installation [default=yes]
+   --disable-libtool-lock  avoid locking (might break parallel builds)
+   --disable-largefile     omit support for large files
++  --enable-load-extension Include SQL functions for loading extension
++                          libraries
+   --enable-threadsafe     Support threadsafe operation
+   --enable-cross-thread-connections
+                           Allow connection sharing across threads
+@@ -12443,6 +12445,136 @@
+ 
+ 
+ ##########
++# Do we want to support load_extension()?
++#
++# Check whether --enable-load-extension was given.
++if test "${enable_load_extension+set}" = set; then
++  enableval=$enable_load_extension;
++else
++  enable_load_extension=auto
++fi
++
++
++if test "x$enable_load_extension" = xyes ||
++   test "x$enable_load_extension" = xauto; then
++
++  can_load_extension=yes
++  # libtool will already have looked for <dlfcn.h>
++  if test $ac_cv_header_dlfcn_h = no; then
++    can_load_extension=no
++  else
++    { $as_echo "$as_me:$LINENO: checking for library containing dlopen" >&5
++$as_echo_n "checking for library containing dlopen... " >&6; }
++if test "${ac_cv_search_dlopen+set}" = set; then
++  $as_echo_n "(cached) " >&6
++else
++  ac_func_search_save_LIBS=$LIBS
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char dlopen ();
++int
++main ()
++{
++return dlopen ();
++  ;
++  return 0;
++}
++_ACEOF
++for ac_lib in '' dl; do
++  if test -z "$ac_lib"; then
++    ac_res="none required"
++  else
++    ac_res=-l$ac_lib
++    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
++  fi
++  rm -f conftest.$ac_objext conftest$ac_exeext
++if { (ac_try="$ac_link"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
++$as_echo "$ac_try_echo") >&5
++  (eval "$ac_link") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest$ac_exeext && {
++	 test "$cross_compiling" = yes ||
++	 $as_test_x conftest$ac_exeext
++       }; then
++  ac_cv_search_dlopen=$ac_res
++else
++  $as_echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++
++fi
++
++rm -rf conftest.dSYM
++rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
++      conftest$ac_exeext
++  if test "${ac_cv_search_dlopen+set}" = set; then
++  break
++fi
++done
++if test "${ac_cv_search_dlopen+set}" = set; then
++  :
++else
++  ac_cv_search_dlopen=no
++fi
++rm conftest.$ac_ext
++LIBS=$ac_func_search_save_LIBS
++fi
++{ $as_echo "$as_me:$LINENO: result: $ac_cv_search_dlopen" >&5
++$as_echo "$ac_cv_search_dlopen" >&6; }
++ac_res=$ac_cv_search_dlopen
++if test "$ac_res" != no; then
++  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
++
++else
++  can_load_extension=no
++fi
++
++  fi
++elif test "x$enable_load_extension" = xno; then
++  can_load_extension=no
++else
++  { { $as_echo "$as_me:$LINENO: error: invalid argument to --enable-load-extension" >&5
++$as_echo "$as_me: error: invalid argument to --enable-load-extension" >&2;}
++   { (exit 1); exit 1; }; }
++fi
++
++if test $can_load_extension = no; then
++  if test "x$enable_load_extension" = xyes; then
++    { { $as_echo "$as_me:$LINENO: error: <dlfcn.h> routines missing, load_extension() not supported" >&5
++$as_echo "$as_me: error: <dlfcn.h> routines missing, load_extension() not supported" >&2;}
++   { (exit 1); exit 1; }; }
++  fi
++
++cat >>confdefs.h <<\_ACEOF
++#define SQLITE_OMIT_LOAD_EXTENSION 1
++_ACEOF
++
++fi
++
++##########
+ # Do we want to support multithreaded use of sqlite
+ #
+ # Check whether --enable-threadsafe was given.

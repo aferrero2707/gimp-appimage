@@ -1,0 +1,17 @@
+diff -urN nspr-4.8.6.orig/autogen.sh nspr-4.8.6/autogen.sh
+--- nspr-4.8.6.orig/autogen.sh	1970-01-01 09:30:00.000000000 +0930
++++ nspr-4.8.6/autogen.sh	2010-11-23 21:30:55.729387997 +1030
+@@ -0,0 +1,13 @@
++#!/bin/sh
++
++test -n "$srcdir" || srcdir=`dirname "$0"`
++test -n "$srcdir" || srcdir=.
++
++olddir=`pwd`
++cd "$srcdir/mozilla/nsprpub"
++
++autoreconf --force --install || exit $?
++
++cd "$olddir"
++test -n "$NOCONFIGURE" || "$srcdir/mozilla/nsprpub/configure" "$@"
++

@@ -1,0 +1,12 @@
+diff -Nur scrollkeeper-0.3.14.orig/libs/i18n.c scrollkeeper-0.3.14/libs/i18n.c
+--- scrollkeeper-0.3.14.orig/libs/i18n.c	2003-11-10 00:05:36.000000000 +0100
++++ scrollkeeper-0.3.14/libs/i18n.c	2005-08-26 22:55:13.000000000 +0200
+@@ -206,7 +206,7 @@
+ 		count++;
+ 	}
+ 	
+-	tab = (char ***)malloc(sizeof(char **) * count);
++	tab = (char ***)malloc(sizeof(char **) * (count + 1));
+ 	
+ 	str = strdup(lang);
+ 	check_ptr(str, "");

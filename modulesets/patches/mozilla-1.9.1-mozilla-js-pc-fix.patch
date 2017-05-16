@@ -1,0 +1,10 @@
+    Fix JavaScript engine header location
+
+--- mozilla-1.9.1.11/xulrunner/installer/mozilla-js.pc.in.orig	2010-09-01 16:45:47.829536589 -0400
++++ mozilla-1.9.1.11/xulrunner/installer/mozilla-js.pc.in	2010-09-01 16:48:33.860536683 -0400
+@@ -7,4 +7,4 @@
+ Version: %MOZILLA_VERSION%
+ Requires: %NSPR_NAME% >= %NSPR_VERSION%
+ Libs: -L${sdkdir}/lib -lmozjs
+-Cflags: -I${includedir}/stable -DXP_UNIX -DJS_THREADSAFE
++Cflags: -I${includedir}/unstable -DXP_UNIX -DJS_THREADSAFE

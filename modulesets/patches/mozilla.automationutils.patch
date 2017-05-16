@@ -1,0 +1,88 @@
+
+# HG changeset patch
+# User Neil Rashbrook <neil@parkwaycc.co.uk>
+# Date 1267475713 -3600
+# Node ID 4fdc73ee872985801d3a9ccb368300cafe87e062
+# Parent 5b9590ed573d045bfc62dfa03ab2d47b62349c80
+Bug 525047 - 'make clean' deletes automationutils.py.
+r=ted a-1.9.1.9=dveditz.
+
+--- a/build/Makefile.in
++++ b/build/Makefile.in
+@@ -74,7 +74,7 @@ _LEAKTEST_DIR = $(DEPTH)/_leaktest
+ 
+ _LEAKTEST_FILES =    \
+ 		automation.py \
+-		$(CURDIR)/automationutils.py \
++		automationutils.py \
+ 		leaktest.py \
+ 		bloatcycle.html \
+ 		$(topsrcdir)/build/pgo/server-locations.txt \
+--- a/build/automation-build.mk
++++ b/build/automation-build.mk
+@@ -70,11 +70,6 @@ else
+ AUTOMATION_PPARGS += -DIS_DEBUG_BUILD=0
+ endif
+ 
+-$(CURDIR)/automationutils.py: $(MOZILLA_DIR)/build/automationutils.py
+-	$(INSTALL) $< .
+-
+-automation.py: $(MOZILLA_DIR)/build/automation.py.in $(MOZILLA_DIR)/build/automation-build.mk $(CURDIR)/automationutils.py
++automation.py: $(MOZILLA_DIR)/build/automation.py.in $(MOZILLA_DIR)/build/automation-build.mk
+ 	$(PYTHON) $(MOZILLA_DIR)/config/Preprocessor.py \
+ 	$(AUTOMATION_PPARGS) $(DEFINES) $(ACDEFINES) $< > $@
+-
+-GARBAGE += automation.py $(CURDIR)/automationutils.py
+--- a/build/automation.py.in
++++ b/build/automation.py.in
+@@ -49,14 +49,14 @@ import subprocess
+ import sys
+ import threading
+ 
+-from automationutils import checkForCrashes
+-
+ """
+ Runs the browser from a script, and provides useful utilities
+ for setting up the browser environment.
+ """
+ 
+ SCRIPT_DIR = os.path.abspath(os.path.realpath(os.path.dirname(sys.argv[0])))
++sys.path.insert(0, SCRIPT_DIR);
++from automationutils import checkForCrashes
+ 
+ __all__ = [
+            "UNIXISH",
+--- a/build/pgo/Makefile.in
++++ b/build/pgo/Makefile.in
+@@ -54,7 +54,7 @@ include $(topsrcdir)/build/automation-bu
+ 
+ _PGO_FILES = 	\
+ 		automation.py \
+-		$(CURDIR)/automationutils.py \
++		$(topsrcdir)/build/automationutils.py \
+ 		profileserver.py \
+ 		genpgocert.py \
+ 		index.html \
+--- a/layout/tools/reftest/Makefile.in
++++ b/layout/tools/reftest/Makefile.in
+@@ -79,7 +79,7 @@ endif
+ _HARNESS_FILES = \
+   $(srcdir)/runreftest.py \
+   automation.py \
+-  $(CURDIR)/automationutils.py \
++  $(topsrcdir)/build/automationutils.py \
+   $(NULL)
+ 
+ $(_DEST_DIR):
+--- a/testing/mochitest/Makefile.in
++++ b/testing/mochitest/Makefile.in
+@@ -60,7 +60,7 @@ include $(topsrcdir)/build/automation-bu
+ _SERV_FILES = 	\
+ 		runtests.py \
+ 		automation.py \
+-		$(CURDIR)/automationutils.py \
++		$(topsrcdir)/build/automationutils.py \
+ 		gen_template.pl \
+ 		server.js \
+ 		harness-a11y.xul \
+

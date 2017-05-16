@@ -1,0 +1,12 @@
+Index: src/Query.cc
+===================================================================
+--- src/Query.cc	(revision 13450)
++++ src/Query.cc	(working copy)
+@@ -32,6 +32,7 @@
+ #include <iostream>
+ 
+ #include <string.h>
++#include <unistd.h>
+ #include <sys/time.h>
+ 
+ #include <ne_uri.h>

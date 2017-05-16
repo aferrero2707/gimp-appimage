@@ -1,0 +1,87 @@
+# HG changeset patch
+# User Till Schneidereit <till@tillschneidereit.net>
+# Date 1443697149 -7200
+#      Thu Oct 01 12:59:09 2015 +0200
+# Node ID abab858f34206c8281ef6bfd0e046b4c8e70131a
+# Parent  3b476e0a4777fc2f0d977e7a9137f3892924ef90
+Bug 1176787 - Disable MOZ_GLUE_IN_PROGRAM in stand-alone builds on all platforms. r=glandium
+
+diff --git a/js/src/configure.in b/js/src/configure.in
+--- a/js/src/configure.in
++++ b/js/src/configure.in
+@@ -2931,26 +2931,31 @@ MOZ_ARG_DISABLE_BOOL(jemalloc,
+ 
+ dnl Consult the command-line arguments in stand alone-builds only. In
+ dnl non-stand-alone builds, we always use the value of MOZ_MEMORY inherited from
+ dnl the top-level configure script.
+ if test "$JS_STANDALONE"; then
+     MOZ_MEMORY=$LOCAL_MOZ_MEMORY
+ fi
+ 
+-case "${OS_TARGET}" in
+-Android|WINNT|Darwin)
++dnl In stand-alone builds we always only want to link executables against mozglue.
++if test "$JS_STANDALONE"; then
+   MOZ_GLUE_IN_PROGRAM=
+-  ;;
+-*)
+-  dnl On !Android !Windows !OSX, we only want to link executables against mozglue
+-  MOZ_GLUE_IN_PROGRAM=1
+-  AC_DEFINE(MOZ_GLUE_IN_PROGRAM)
+-  ;;
+-esac
++else
++  case "${OS_TARGET}" in
++  Android|WINNT|Darwin)
++    MOZ_GLUE_IN_PROGRAM=
++    ;;
++  *)
++    dnl On !Android !Windows !OSX, we only want to link executables against mozglue
++    MOZ_GLUE_IN_PROGRAM=1
++    AC_DEFINE(MOZ_GLUE_IN_PROGRAM)
++    ;;
++  esac
++fi
+ 
+ if test "$MOZ_MEMORY"; then
+   AC_DEFINE(MOZ_MEMORY)
+   if test "x$MOZ_DEBUG" = "x1"; then
+     AC_DEFINE(MOZ_MEMORY_DEBUG)
+   fi
+   dnl The generic feature tests that determine how to compute ncpus are long and
+   dnl complicated.  Therefore, simply define special cpp variables for the
+--- a/js/src/configure	2017-03-20 10:01:40.087593115 +0000
++++ b/js/src/configure	2017-03-20 10:03:55.320550817 +0000
+@@ -14064,12 +14064,15 @@
+     MOZ_MEMORY=$LOCAL_MOZ_MEMORY
+ fi
+ 
+-case "${OS_TARGET}" in
+-Android|WINNT|Darwin)
++if test "$JS_STANDALONE"; then
+   MOZ_GLUE_IN_PROGRAM=
+-  ;;
+-*)
+-    MOZ_GLUE_IN_PROGRAM=1
++else
++  case "${OS_TARGET}" in
++  Android|WINNT|Darwin)
++    MOZ_GLUE_IN_PROGRAM=
++    ;;
++  *)
++      MOZ_GLUE_IN_PROGRAM=1
+   cat >> confdefs.pytmp <<\EOF
+     (''' MOZ_GLUE_IN_PROGRAM ''', ' 1 ')
+ EOF
+@@ -14077,8 +14080,9 @@
+ #define MOZ_GLUE_IN_PROGRAM 1
+ EOF
+ 
+-  ;;
+-esac
++    ;;
++  esac
++fi
+ 
+ if test "$MOZ_MEMORY"; then
+   cat >> confdefs.pytmp <<\EOF

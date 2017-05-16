@@ -1,0 +1,13 @@
+Copies installed files to the install directory, instead of symlinking them.
+
+--- a/python/mozbuild/mozbuild/backend/recursivemake.py	2017-03-17 22:43:57.750699563 -0700
++++ b/python/mozbuild/mozbuild/backend/recursivemake.py	2017-03-17 22:44:28.722912859 -0700
+@@ -1306,7 +1306,7 @@
+             for f in files:
+                 if not isinstance(f, ObjDirPath):
+                     dest = mozpath.join(reltarget, path, mozpath.basename(f))
+-                    install_manifest.add_symlink(f.full_path, dest)
++                    install_manifest.add_copy(f.full_path, dest)
+                 else:
+                     backend_file.write('%s_FILES += %s\n' % (
+                         target_var, self._pretty_path(f, backend_file)))

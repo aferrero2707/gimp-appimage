@@ -1,0 +1,30 @@
+--- configure.orig	2014-08-20 09:06:04.662429549 +0200
++++ configure	2014-08-20 09:06:37.324364017 +0200
+@@ -14829,26 +14829,7 @@
+ fi
+ 
+ 
+-# These variables are only ever used when we cross-build to X86_WIN32.
+-# And we only support this with GCC, so...
+-if test "x$GCC" = "xyes"; then
+-  if test -n "$with_cross_host" &&
+-     test x"$with_cross_host" != x"no"; then
+-    toolexecdir='$(exec_prefix)/$(target_alias)'
+-    toolexeclibdir='$(toolexecdir)/lib'
+-  else
+-    toolexecdir='$(libdir)/gcc-lib/$(target_alias)'
+-    toolexeclibdir='$(libdir)'
+-  fi
+-  multi_os_directory=`$CC -print-multi-os-directory`
+-  case $multi_os_directory in
+-    .) ;; # Avoid trailing /.
+-    ../*) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
+-  esac
+-
+-else
+-  toolexeclibdir='$(libdir)'
+-fi
++toolexeclibdir='$(libdir)'
+ 
+ 
+ ac_config_commands="$ac_config_commands include"

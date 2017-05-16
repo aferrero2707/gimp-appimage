@@ -1,0 +1,32 @@
+Index: tools/hal-device.c
+===================================================================
+RCS file: /cvs/hal/hal/tools/hal-device.c,v
+retrieving revision 1.4
+diff -u -p -r1.4 hal-device.c
+--- tools/hal-device.c	2 Nov 2005 15:38:14 -0000	1.4
++++ tools/hal-device.c	20 Aug 2006 00:51:46 -0000
+@@ -155,7 +155,7 @@ int main(int argc, char **argv)
+ 
+ 	libhal_ctx_shutdown(hal_ctx, &error);
+ 	libhal_ctx_free(hal_ctx);
+-	dbus_connection_disconnect(conn);
++	dbus_connection_close(conn);
+ 	dbus_connection_unref(conn);
+ 	dbus_error_free(&error);
+ 
+Index: tools/lshal.c
+===================================================================
+RCS file: /cvs/hal/hal/tools/lshal.c,v
+retrieving revision 1.19
+diff -u -p -r1.19 lshal.c
+--- tools/lshal.c	13 Feb 2006 14:35:31 -0000	1.19
++++ tools/lshal.c	20 Aug 2006 00:51:47 -0000
+@@ -701,7 +701,7 @@ main (int argc, char *argv[])
+ 	libhal_ctx_shutdown (hal_ctx, &error);
+ 	libhal_ctx_free (hal_ctx);
+ 
+-	dbus_connection_disconnect (conn);
++	dbus_connection_close (conn);
+ 	dbus_connection_unref (conn);
+ 
+ 	if (show_device)
