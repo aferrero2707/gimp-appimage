@@ -1,5 +1,12 @@
 #! /bin/bash
 
+if [ ! -e /zzz ]; then
+    username=$(whoami)
+    groupname=$(id -gn $username)
+    sudo mkdir -p /zzz
+    sudo chown -R $username:$groupname /zzz
+fi
+
 mkdir -p work
 cd work
 
