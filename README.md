@@ -1,4 +1,4 @@
-*** How to build ***
+# How to build
 
 Two commands are needed to build and create the AppImage:
 
@@ -9,7 +9,7 @@ This will download the source code on work/sources, install them under /zzz, and
 
 The root password is needed the first time to create the /zzz folder if it does not exist.
 
-*** Dependencies ***
+# Dependencies
 
 zlib (zlib1g-dev in Ubuntu)
 python (libpython-all-dev in Ubuntu)
