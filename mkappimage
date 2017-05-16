@@ -203,7 +203,7 @@ cp -a ../../$LOWERAPP.wrapper ./usr/bin/$LOWERAPP.wrapper
 # Go out of AppImage
 cd ..
 
-exit
+#exit
 
 echo "Building AppImage..."
 pwd

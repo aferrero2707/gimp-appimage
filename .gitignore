@@ -1,4 +1,7 @@
 functions.sh
 gimp
 work
+out
 run_gimp
+pass.txt
+upload.sh
