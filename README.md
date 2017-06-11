@@ -42,4 +42,4 @@ The AppImage uses the exec-wrapper originally developed by the KDE team:
 
     git://anongit.kde.org/scratch/brauch/appimage-exec-wrapper
     
-It allows GIMP to spawn external commands with the original shell environment instead of the one propoer to the AppImage itself. 
+It allows GIMP to spawn external commands with the original shell environment instead of the one proper to the AppImage itself. 
