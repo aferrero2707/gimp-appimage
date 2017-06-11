@@ -233,7 +233,8 @@ if [ x"$FULL_BUNDLING" = "x1" ]; then
     VER1="${VER1}-full"
 fi
 GLIBC_NEEDED=$(glibc_needed)
-VERSION=$VER1.glibc$GLIBC_NEEDED
+#VERSION=$VER1.glibc$GLIBC_NEEDED
+VERSION=$VER1
 echo $VERSION
 
 get_desktopintegration $LOWERAPP
@@ -245,7 +246,7 @@ cp -a ../../$LOWERAPP.wrapper ./usr/bin/$LOWERAPP.wrapper
 # Go out of AppImage
 cd ..
 
-exit
+#exit
 
 echo "Building AppImage..."
 pwd
