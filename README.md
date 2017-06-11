@@ -35,3 +35,11 @@ libicu-dev,
 bison + libbison-dev,
 libgmp-dev,
 libbzip2-dev
+
+# Credits
+
+The AppImage uses the exec-wrapper originally developed by the KDE team:
+
+    git://anongit.kde.org/scratch/brauch/appimage-exec-wrapper
+    
+It allows GIMP to spawn external commands with the original shell environment instead of the one propoer to the AppImage itself. 
