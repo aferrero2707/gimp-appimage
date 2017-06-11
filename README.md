@@ -6,7 +6,7 @@ However, there is no need to manually install jhbuild, as the build scripts will
 
 The creation of the AppImage proceeds in three steps:
 
-1. installation of Pythin 2.7 and jhbuild:
+1. installation of Python 2.7 and jhbuild:
 
     ./bootstrap.sh
     
