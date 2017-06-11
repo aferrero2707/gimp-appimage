@@ -30,8 +30,8 @@ prefix = '/zzz'
 
 # extra arguments to pass to all autogen.sh scripts
 # to speed up builds of GNOME, try '--disable-static --disable-gtk-doc'
-#autogenargs=''
+autogenargs='--enable-introspection=no --disable-static --disable-gtk-doc'
 
 # A string listing additional arguments to be passed to make.
 # Set makeargs to 'V=1' for verbose build output.
-#makeargs = ''
+makeargs = '-j 1 V=1'

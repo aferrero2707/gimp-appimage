@@ -86,6 +86,7 @@
 
   <autotools id="glib" supports-non-srcdir-builds="no">
     <branch revision="glib-2-48"/>
+    <!-- <branch repo="gnome.org" module="glib/2.44/glib-2.44.0.tar.xz" version="2.44.0"/> -->
     <dependencies>
       <dep package="gtk-doc"/>
     </dependencies>
@@ -161,7 +162,7 @@
     </after>
   </autotools>
 
-  <autotools id="gtk-doc">
+  <autotools id="gtk-doc_">
     <branch/>
     <dependencies>
       <dep package="libxslt"/>
@@ -233,7 +234,7 @@
   </autotools>
 
   <autotools id="libglade">
-    <branch/>
+     <branch repo="gnome.org" module="libglade/2.6/libglade-2.6.4.tar.gz" version="2.6.4"/>
     <dependencies>
       <dep package="gtk+"/>
       <dep package="libxml2"/>
@@ -717,7 +718,7 @@
 
   <autotools id="gnome-doc-utils"
              supports-non-srcdir-builds="no">
-    <branch/>
+    <branch repo="gnome.org" module="gnome-doc-utils/0.20/gnome-doc-utils-0.20.10.tar.xz" version="0.20.10"/>
     <dependencies>
       <dep package="libxslt"/>
       <dep package="intltool"/>
@@ -1056,11 +1057,14 @@
     </dependencies>
   </autotools>
 
-  <autotools id="gobject-introspection"
+  <autotools id="gobject-introspection_"
              supports-non-srcdir-builds="no">
     <branch revision="gnome-3-20"/>
+    <!-- <branch revision="gnome-3-0"/> -->
+    <!-- <branch repo="gnome.org" module="gobject-introspection/1.29/gobject-introspection-1.29.16.tar.bz2" version="1.29.16"/> -->
     <dependencies>
       <dep package="glib"/>
+      <dep package="cairo"/>
     </dependencies>
   </autotools>
 
@@ -1634,8 +1638,9 @@
     </dependencies>
   </autotools>
 
-  <autotools id="pygobject" supports-non-srcdir-builds="no">
-    <branch revision="pygobject-3-24"/>
+  <autotools id="pygobject" supports-non-srcdir-builds="no" autogen-sh="./configure" autogenargs="--with-python=python2" >
+    <!-- <branch revision="pygobject-2-28"/> -->
+    <branch repo="gnome.org" module="pygobject/2.28/pygobject-2.28.6.tar.bz2" version="2.28.6"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="gobject-introspection"/>
@@ -1644,7 +1649,8 @@
   </autotools>
 
   <autotools id="pygtk">
-    <branch revision="pygtk-2-22"/>
+    <!-- <branch revision="pygtk-2-24"/> -->
+    <branch repo="gnome.org" module="pygtk/2.24/pygtk-2.24.0.tar.gz" version="2.24.0"/>
     <dependencies>
       <dep package="pygobject"/>
       <dep package="gtk+"/>

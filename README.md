@@ -13,6 +13,7 @@ The root password is needed the first time to create the /zzz folder if it does 
 
 zlib (zlib1g-dev in Ubuntu),
 python (libpython-all-dev in Ubuntu),
+python-dev (for python-config)
 libffi (libffi-dev in Ubuntu),
 libpcre3-dev,
 lzma-dev,

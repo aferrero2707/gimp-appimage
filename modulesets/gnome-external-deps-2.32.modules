@@ -63,6 +63,13 @@
 
        -->
 
+  <repository type="tarball" name="python.org"
+              href="https://www.python.org/ftp/"/>
+  <autotools id="python2_" autogenargs="--enable-shared=yes">
+    <branch repo="python.org" module="python/2.7.13/Python-2.7.13.tar.xz"
+            version="2.7.13"/>
+  </autotools>
+
   <autotools id="libjpeg-turbo" 
     autogen-sh="configure"
     >
@@ -287,7 +294,7 @@
     <source href="http://www.fontconfig.org/release/fontconfig-2.12.1.tar.gz"/>
     <dependencies>
       <dep package="expat"/>
-      <dep package="freetype"/>
+      <dep package="freetype-no-harfbuzz"/>
     </dependencies>
   </tarball>
 
@@ -300,7 +307,7 @@
     </dependencies>
   </tarball>
 
-  <tarball id="gnutls" version="2.8.6" autogenargs="--enable-guile=no">
+  <tarball id="gnutls" version="2.8.6" autogen-sh="./configure" autogenargs="--enable-guile=no">
     <source href="ftp://ftp.gnu.org/pub/gnu/gnutls/gnutls-2.8.6.tar.bz2"
             hash="sha256:d6f846a7064af3ee2c9aebd65dcee76953b767170cbcd719e990ed6b9688a356"
             md5sum="eb0a6d7d3cb9ac684d971c14f9f6d3ba" size="6469369" />
@@ -407,13 +414,14 @@
             repo="ftp.gnu.org" version="3.3"/>
   </autotools>
 
-  <autotools id="gettext" autogen-sh="configure">
+  <autotools id="gettext" autogen-sh="configure" autogenargs="--without-emacs">
     <branch module="gettext/gettext-0.19.8.tar.gz"
             repo="ftp.gnu.org" version="0.9.18"/>
   </autotools>
 
   <autotools id="gnutls" autogen-sh="configure" check-target="false" 
-	     autogenargs="--with-included-libtasn1 --with-included-unistring --without-p11-kit">
+	     autogenargs="--with-included-libtasn1 --with-included-unistring --without-p11-kit"
+	      supports-non-srcdir-builds="no">
     <branch module="gnutls/v3.5/gnutls-3.5.9.tar.xz"
             repo="gnupg.org" version="3.5.9"/>
     <dependencies>
@@ -552,13 +560,27 @@
     </after>
   </tarball>
 
-  <waf id="pycairo" waf-command="./waf">
+  <autotools id="libmypaint" autogenargs="--enable-gegl">
+    <branch repo="releases.github.com" module="mypaint/libmypaint/releases/download/v1.3.0/libmypaint-1.3.0.tar.xz" version="1.3.0" />
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="gegl"/>
+      <dep package="gobject-introspection"/>
+      <dep package="json-c"/>
+    </dependencies>
+  </autotools>
+
+
+  <distutils id="pycairo">
+    <!--
     <branch repo="cairo.org" module="releases/pycairo-1.10.0.tar.bz2" version="1.10.0">
+    -->
+    <branch repo="releases.github.com" module="pygobject/pycairo/releases/download/v1.13.1/pycairo-1.13.1.tar.gz" version="1.13.1">
     </branch>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
-  </waf>
+  </distutils>
 
   <autotools id="ptlib" check-target="false" supports-non-srcdir-builds="no">
     <branch module="ptlib/2.8/ptlib-2.8.1.tar.bz2" repo="gnome.org"
@@ -1387,21 +1409,14 @@
     />
   </autotools>
 
-  <autotools id="libmypaint">
-    <branch repo="releases.github.com" module="mypaint/libmypaint/releases/download/v1.3.0/libmypaint-1.3.0.tar.xz" version="1.3.0" />
-    <dependencies>
-      <dep package="glib"/>
-      <dep package="gobject-introspection"/>
-      <dep package="json-c"/>
-    </dependencies>
-  </autotools>
-
-
+  <repository type="tarball" name="json-c-releases"
+      href="https://s3.amazonaws.com/json-c_releases/releases/"/>
   <autotools id="json-c">
     <branch
-      repo="github.com"
-      module="json-c/json-c.git"
-      revision="json-c-0.12.1-20160607"
+      repo="json-c-releases"
+      module="json-c-0.12.1-nodoc.tar.gz"
+      version="0.12.1" checkoutdir="json-c-0.12.1"
+      hash="sha256:5a617da9aade997938197ef0f8aabd7f97b670c216dc173977e1d56eef9e1291"
     />
   </autotools>
 
@@ -1411,9 +1426,9 @@
     <branch repo="bzip.org" module="1.0.6/bzip2-1.0.6.tar.gz" version="1.0.6"/>
   </autotools>
 
-  <repository type="git" name="tukaani.org" 
-    href="https://git.tukaani.org"/>
+  <repository type="tarball" name="tukaani.org" 
+    href="https://tukaani.org/"/>
   <autotools id="liblzma" autogen-sh="configure">
-    <branch repo="tukaani.org" module="xz.git" revision="v5.2.3"/>
+    <branch repo="tukaani.org" module="xz/xz-5.2.3.tar.gz" version="5.2.3"/>
   </autotools>
 </moduleset>

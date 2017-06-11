@@ -1,0 +1,103 @@
+#!/bin/bash
+
+DIR="`dirname \"$0\"`" 
+DIR="`( cd \"$DIR\" && readlink -f $(pwd) )`"
+echo "DIR: $DIR"
+export APPDIR=$DIR
+
+export APPIMAGE_ORIGINAL_LD_PRELOAD=$LD_PRELOAD
+export LD_PRELOAD=$DIR/usr/lib/exec_wrapper.so
+export APPIMAGE_STARTUP_LD_PRELOAD=$LD_PRELOAD
+
+
+
+export APPIMAGE_ORIGINAL_QML2_IMPORT_PATH=$QML2_IMPORT_PATH
+export QML2_IMPORT_PATH=$DIR/usr/lib/qml:$QML2_IMPORT_PATH
+export APPIMAGE_STARTUP_QML2_IMPORT_PATH=$QML2_IMPORT_PATH
+
+export APPIMAGE_ORIGINAL_QT_PLUGIN_PATH=$QT_PLUGIN_PATH
+export QT_PLUGIN_PATH=$DIR/usr/lib/qt5/plugins/
+export APPIMAGE_STARTUP_QT_PLUGIN_PATH=$QT_PLUGIN_PATH
+
+export APPIMAGE_ORIGINAL_GTK_PATH=$GTK_PATH
+export GTK_PATH=$DIR/usr/lib/gtk-2.0:$GTK_PATH
+echo "GTK_PATH=${GTK_PATH}"
+export APPIMAGE_STARTUP_GTK_PATH=$GTK_PATH
+
+export APPIMAGE_ORIGINAL_PANGO_LIBDIR=$PANGO_LIBDIR
+export PANGO_LIBDIR=$DIR/usr/lib
+echo "PANGO_LIBDIR=${PANGO_LIBDIR}"
+export APPIMAGE_STARTUP_PANGO_LIBDIR=$PANGO_LIBDIR
+
+export APPIMAGE_ORIGINAL_PYTHONHOME=$PYTHONHOME
+export PYTHONHOME=$DIR/usr/
+export APPIMAGE_STARTUP_PYTHONHOME=$PYTHONHOME
+
+export APPIMAGE_ORIGINAL_PATH=$PATH
+export PATH=$DIR/usr/bin:$DIR/usr/sbin/:$DIR/usr/games/:$DIR/bin/:$DIR/sbin/:$PATH
+export APPIMAGE_STARTUP_PATH=$PATH
+
+export APPIMAGE_ORIGINAL_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$DIR/usr/lib/:$DIR/usr/lib/i386-linux-gnu/:$DIR/usr/lib/x86_64-linux-gnu/:$DIR/usr/lib32/:$DIR/usr/lib64/:$DIR/lib/:$DIR/lib/i386-linux-gnu/:$DIR/lib/x86_64-linux-gnu/:$DIR/lib32/:$DIR/lib64/:$LD_LIBRARY_PATH
+export APPIMAGE_STARTUP_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+
+export APPIMAGE_ORIGINAL_PYTHONPATH=$PYTHONPATH
+export PYTHONPATH=$DIR/usr/share/pyshared/:$PYTHONPATH
+export APPIMAGE_STARTUP_PYTHONPATH=$PYTHONPATH
+
+export APPIMAGE_ORIGINAL_XDG_DATA_DIRS=$XDG_DATA_DIRS
+export XDG_DATA_DIRS=$DIR/usr/share/:$XDG_DATA_DIRS
+export APPIMAGE_STARTUP_XDG_DATA_DIRS=$XDG_DATA_DIRS
+
+export APPIMAGE_ORIGINAL_PERLLIB=$PERLLIB
+export PERLLIB=$DIR/usr/share/perl5/:$DIR/usr/lib/perl5/:$PERLLIB
+export APPIMAGE_STARTUP_PERLLIB=$PERLLIB
+
+export APPIMAGE_ORIGINAL_GSETTINGS_SCHEMA_DIR=$GSETTINGS_SCHEMA_DIR
+export GSETTINGS_SCHEMA_DIR=$DIR/usr/share/glib-2.0/schemas/:$GSETTINGS_SCHEMA_DIR
+export APPIMAGE_STARTUP_GSETTINGS_SCHEMA_DIR=$GSETTINGS_SCHEMA_DIR
+
+export QT_PLUGIN_PATH=$DIR/usr/lib/qt4/plugins/:$DIR/usr/lib/i386-linux-gnu/qt4/plugins/:$DIR/usr/lib/x86_64-linux-gnu/qt4/plugins/:$DIR/usr/lib32/qt4/plugins/:$DIR/usr/lib64/qt4/plugins/:$DIR/usr/lib/qt5/plugins/:$DIR/usr/lib/i386-linux-gnu/qt5/plugins/:$DIR/usr/lib/x86_64-linux-gnu/qt5/plugins/:$DIR/usr/lib32/qt5/plugins/:$DIR/usr/lib64/qt5/plugins/:$QT_PLUGIN_PATH
+export APPIMAGE_STARTUP_QT_PLUGIN_PATH=$QT_PLUGIN_PATH
+
+export APPIMAGE_ORIGINAL_GDK_PIXBUF_MODULEDIR=$GDK_PIXBUF_MODULEDIR
+export GDK_PIXBUF_MODULEDIR=$DIR/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders
+export APPIMAGE_STARTUP_GDK_PIXBUF_MODULEDIR=$GDK_PIXBUF_MODULEDIR
+
+export APPIMAGE_ORIGINAL_GDK_PIXBUF_MODULE_FILE=$GDK_PIXBUF_MODULE_FILE
+export GDK_PIXBUF_MODULE_FILE=$DIR/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+export APPIMAGE_STARTUP_GDK_PIXBUF_MODULE_FILE=$GDK_PIXBUF_MODULE_FILE
+echo "GDK_PIXBUF_MODULEDIR: $GDK_PIXBUF_MODULEDIR"
+echo "GDK_PIXBUF_MODULE_FILE: $GDK_PIXBUF_MODULE_FILE"
+cat $GDK_PIXBUF_MODULE_FILE
+
+export APPIMAGE_ORIGINAL_GIMP2_PLUGINDIR=$GIMP2_PLUGINDIR
+export GIMP2_PLUGINDIR=$(readlink -f "$DIR/usr/lib/gimp/2.0")
+export APPIMAGE_STARTUP_GIMP2_PLUGINDIR=$GIMP2_PLUGINDIR
+echo "GIMP2_PLUGINDIR: $GIMP2_PLUGINDIR"
+
+export KDE_FORK_SLAVES=1
+
+export KDEV_DISABLE_PLUGINS=KDevWelcomePage
+
+rm -f /tmp/.gimp-appimage
+ln -s $DIR/usr /tmp/.gimp-appimage
+
+cd $DIR/usr
+
+#bin/gimp "$@"; exit
+
+echo "Input parameters: \"$@\""
+echo ""
+echo "Input File: $1"
+ldd bin/gimp.bin
+echo ""
+echo "$HERE/gimp.bin --pdb-compat-mode=on \"$@\""
+#gdb -ex "run --pdb-compat-mode=on \"$@\"" $HERE/gimp.bin
+#gdb $HERE/gimp.bin
+which python
+#GDB=$(which gdb)
+#echo "Starting GDB ($GDB)"
+#$GDB
+#echo "GDB finished"
+bin/gimp.bin --pdb-compat-mode=on "$@"

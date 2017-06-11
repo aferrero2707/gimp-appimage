@@ -27,6 +27,7 @@
       <dep package="libjpeg-turbo"/>
       <dep package="exiv2"/>
       <dep package="lcms"/>
+      <dep package="python2"/>
     </dependencies>
   </metamodule>
 
@@ -38,7 +39,7 @@
     </dependencies>
   </metamodule>
 
-  <autotools id="gimp" autogenargs="--without-gnomevfs --disable-python --with-gimpdir=GIMP-AppImage"
+  <autotools id="gimp" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage"
              supports-non-srcdir-builds="no">
     <branch/>
     <dependencies>
@@ -57,10 +58,73 @@
       <dep package="lcms"/>
       <dep package="libmypaint"/>
       <dep package="at-spi2-atk"/>
+      <dep package="pygtk"/>
     </dependencies>
     <suggests>
       <dep package="iso-codes"/>
-      <dep package="pygtk_"/>
+    </suggests>
+  </autotools>
+
+
+
+  <autotools id="babl-cce">
+    <branch
+      repo="github-git"
+      module="https://github.com/ellelstone/babl.git"
+      version="0.1"
+      revision="master"
+    />
+  </autotools>
+
+  <autotools id="gegl-cce" autogenargs="--without-libavformat">
+    <branch
+      repo="github-git"
+      module="https://github.com/ellelstone/gegl.git"
+      version="0.1"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="babl-cce"/>
+      <dep package="glib"/>
+      <dep package="json-glib"/>
+      <dep package="cairo"/>
+      <dep package="pango"/>
+      <dep package="gtk+"/>
+      <dep package="librsvg"/>
+      <dep package="ilmbase"/>
+      <dep package="openexr"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gimp-cce" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage"
+             supports-non-srcdir-builds="no">
+    <branch
+      repo="github-git"
+      module="https://github.com/ellelstone/gimp.git"
+      version="0.1"
+      revision="master"
+    >
+    </branch>
+    <dependencies>
+      <dep package="bzip2_"/>
+      <dep package="liblzma"/>
+      <dep package="gtk+"/>
+      <dep package="intltool"/>
+      <dep package="gegl-cce"/>
+      <dep package="glib-networking"/>
+      <dep package="gexiv2"/>
+      <dep package="librsvg"/>
+      <dep package="poppler"/>
+      <dep package="gnome-keyring"/>
+      <dep package="dbus-glib"/>
+      <dep package="openexr"/>
+      <dep package="lcms"/>
+      <dep package="libmypaint"/>
+      <dep package="at-spi2-atk"/>
+      <dep package="pygtk"/>
+    </dependencies>
+    <suggests>
+      <dep package="iso-codes"/>
     </suggests>
   </autotools>
 
@@ -88,7 +152,7 @@
   <autotools id="gtkimageview" supports-non-srcdir-builds="yes">
     <branch
       repo="github-git"
-      module="GNOME/gtkimageview.git"
+      module="aferrero2707/gtkimageview.git"
       version="1.6.4"
       revision="master"
     />
@@ -101,6 +165,7 @@
     <branch repo="sourceforge.net"
             module="nufraw/nufraw-0.39.tar.gz" version="0.39"/>
     <dependencies>
+      <dep package="gimp"/>
       <dep package="gtk+"/>
       <dep package="gtkimageview"/>
     </dependencies>
