@@ -1,13 +1,25 @@
 # How to build
 
-Two commands are needed to build and create the AppImage:
+The build environment for the GIMP AppImage is based on [jhbuild](https://github.com/GNOME/jhbuild).
+However, there is no need to manually install jhbuild, as the build sripts will take care of that automatically.
+
+The creation of the AppImage proceeds in three steps:
+
+1. installation of Pythin 2.7 and jhbuild:
+
+    ./bootstrap.sh
+    
+The bootstrap.sh command will ask for the root password in order to create the special /zzz folder under which all software will be installed
+
+2. compilation of GIMP, all its dependencies and all plug-ins with jhbuild:
 
     ./build.sh gimp-appimage
+
+3. creation of the AppImage itself:
+
     ./mkappimage
     
-This will download the source code on work/sources, install them under /zzz, and save the AppImage package in out/
-
-The root password is needed the first time to create the /zzz folder if it does not exist.
+The last two steps will download the source code on work/sources, install them under /zzz, and save the AppImage package in out/
 
 # Dependencies
 
