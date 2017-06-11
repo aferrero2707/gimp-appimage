@@ -1,7 +1,8 @@
 # How to build
 
 The build environment for the GIMP AppImage is based on [jhbuild](https://github.com/GNOME/jhbuild).
-However, there is no need to manually install jhbuild, as the build sripts will take care of that automatically.
+
+However, there is no need to manually install jhbuild, as the build scripts will take care of that automatically.
 
 The creation of the AppImage proceeds in three steps:
 
