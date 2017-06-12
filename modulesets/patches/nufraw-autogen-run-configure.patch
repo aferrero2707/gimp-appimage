@@ -1,0 +1,8 @@
+*** nufraw-0.39/autogen.sh	2016-09-14 14:35:24.000000000 +0200
+--- nufraw-0.39-new/autogen.sh	2017-06-12 17:47:00.367171128 +0200
+***************
+*** 18,19 ****
+--- 18,20 ----
+  
+  echo "now run './configure --enable-contrast && make'"
++ ./configure --enable-contrast

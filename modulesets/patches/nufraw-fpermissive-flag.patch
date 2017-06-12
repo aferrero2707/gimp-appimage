@@ -1,0 +1,15 @@
+*** nufraw-0.39/Makefile.am	2016-09-14 16:51:16.000000000 +0200
+--- nufraw-0.39-new/Makefile.am	2017-06-12 17:53:07.471171128 +0200
+***************
+*** 53,57 ****
+      nufraw-setup.jpg autogen.sh mkinstalldirs doc/MANIFEST nufraw.pod nufraw.1
+  
+! AM_CPPFLAGS = $(NUFRAW_CPPFLAGS) -DDCRAW_NOMAIN -DNUFRAW_LOCALEDIR=\"$(datadir)/locale\"
+  LDADD = libnufraw.a $(NUFRAW_ICON) $(NUFRAW_LDADD)
+  LINK = $(CXXLINK)
+--- 53,57 ----
+      nufraw-setup.jpg autogen.sh mkinstalldirs doc/MANIFEST nufraw.pod nufraw.1
+  
+! AM_CPPFLAGS = $(NUFRAW_CPPFLAGS) -fpermissive -DDCRAW_NOMAIN -DNUFRAW_LOCALEDIR=\"$(datadir)/locale\"
+  LDADD = libnufraw.a $(NUFRAW_ICON) $(NUFRAW_LDADD)
+  LINK = $(CXXLINK)

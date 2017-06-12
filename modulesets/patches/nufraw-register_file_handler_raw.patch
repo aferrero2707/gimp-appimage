@@ -1,0 +1,10 @@
+*** nufraw-0.39/nufraw_main-gimp.c	2017-02-14 15:45:01.000000000 +0100
+--- nufraw-0.39-new/nufraw_main-gimp.c	2017-06-12 20:14:06.212033315 +0200
+***************
+*** 81,84 ****
+--- 81,85 ----
+  
+  #if HAVE_GIMP_2_9
++     gimp_register_file_handler_raw ("file_nufraw_load");
+      gimp_register_magic_load_handler("file_nufraw_load",
+                                       (char *)raw_ext,

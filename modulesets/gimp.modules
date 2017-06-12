@@ -31,6 +31,25 @@
     </dependencies>
   </metamodule>
 
+  <metamodule id="babl">
+    <dependencies>
+      <dep package="babl-cce"/>
+     </dependencies>
+  </metamodule>
+
+  <metamodule id="gegl">
+    <dependencies>
+      <dep package="gegl-cce"/>
+     </dependencies>
+  </metamodule>
+
+  <metamodule id="gimp">
+    <dependencies>
+      <dep package="gimp-cce"/>
+     </dependencies>
+  </metamodule>
+
+
   <metamodule id="gimp-appimage">
     <dependencies>
       <dep package="gimp"/>
@@ -39,7 +58,7 @@
     </dependencies>
   </metamodule>
 
-  <autotools id="gimp" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage"
+  <autotools id="gimp-std" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage"
              supports-non-srcdir-builds="no">
     <branch/>
     <dependencies>
@@ -67,7 +86,7 @@
 
 
 
-  <autotools id="babl-cce">
+  <autotools id="babl-cce" supports-non-srcdir-builds="yes">
     <branch
       repo="github-git"
       module="https://github.com/ellelstone/babl.git"
@@ -76,7 +95,7 @@
     />
   </autotools>
 
-  <autotools id="gegl-cce" autogenargs="--without-libavformat">
+  <autotools id="gegl-cce" autogenargs="--without-libavformat" supports-non-srcdir-builds="yes">
     <branch
       repo="github-git"
       module="https://github.com/ellelstone/gegl.git"
@@ -161,9 +180,13 @@
     </dependencies>
   </autotools>
 
-  <autotools id="nufraw" supports-non-srcdir-builds="no" autogen-sh="configure">
+  <autotools id="nufraw" supports-non-srcdir-builds="no">
     <branch repo="sourceforge.net"
-            module="nufraw/nufraw-0.39.tar.gz" version="0.39"/>
+            module="nufraw/nufraw-0.39.tar.gz" version="0.39">
+      <patch file="nufraw-autogen-run-configure.patch" strip="1"/>
+      <patch file="nufraw-register_file_handler_raw.patch" strip="1"/>
+      <patch file="nufraw-fpermissive-flag.patch" strip="1"/>
+    </branch>
     <dependencies>
       <dep package="gimp"/>
       <dep package="gtk+"/>

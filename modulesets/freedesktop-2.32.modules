@@ -170,7 +170,7 @@
   </autotools>
 
   <autotools id="dbus-glib">
-    <branch repo="git.freedesktop.org" module="dbus/dbus-glib"/>
+    <branch repo="git.freedesktop.org" module="dbus/dbus-glib"  supports-non-srcdir-builds="yes"/>
     <dependencies>
       <dep package="libxml2"/>
       <dep package="dbus"/>
