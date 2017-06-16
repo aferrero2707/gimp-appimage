@@ -35,14 +35,13 @@ fix_pango()
 
 
 export APPIMAGEBASE=$(pwd)
-#wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./functions.sh
-#. ./functions.sh
-. ./functions-local.sh
+wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./functions.sh
+. ./functions.sh
+#. ./functions-local.sh
 
 #cat_file_from_url https://github.com/probonopd/AppImages/raw/master/excludelist | sed '/^\s*$/d' | sed '/^#.*$/d' > blacklisted
 
 APP=gimp
-VERSION=2.9.5-cce
 LOWERAPP=${APP,,} 
 
 rm -rf out $APP
@@ -229,7 +228,7 @@ strip_binaries
 
 
 #VER1=$(pkg-config --modversion gimp-2.0)-test
-VER1=$(pkg-config --modversion gimp-2.0)-cce-$(date +%Y%m%d)
+VER1=$(pkg-config --modversion gimp-2.0)-$(date +%Y%m%d)
 if [ x"$FULL_BUNDLING" = "x1" ]; then
     VER1="${VER1}-full"
 fi
@@ -253,5 +252,5 @@ echo "Building AppImage..."
 pwd
 
 ARCH="x86_64"
-generate_appimage
-#generate_type2_appimage
+#generate_appimage
+generate_type2_appimage

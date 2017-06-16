@@ -33,19 +33,19 @@
 
   <metamodule id="babl">
     <dependencies>
-      <dep package="babl-cce"/>
+      <dep package="babl-std"/>
      </dependencies>
   </metamodule>
 
   <metamodule id="gegl">
     <dependencies>
-      <dep package="gegl-cce"/>
+      <dep package="gegl-std"/>
      </dependencies>
   </metamodule>
 
   <metamodule id="gimp">
     <dependencies>
-      <dep package="gimp-cce"/>
+      <dep package="gimp-std"/>
      </dependencies>
   </metamodule>
 
@@ -54,37 +54,9 @@
     <dependencies>
       <dep package="gimp"/>
       <dep package="phfgimp"/>
-      <dep package="nufraw_"/>
+      <dep package="nufraw"/>
     </dependencies>
   </metamodule>
-
-  <autotools id="gimp-std" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage"
-             supports-non-srcdir-builds="no">
-    <branch/>
-    <dependencies>
-      <dep package="bzip2_"/>
-      <dep package="liblzma"/>
-      <dep package="gtk+"/>
-      <dep package="intltool"/>
-      <dep package="gegl"/>
-      <dep package="glib-networking"/>
-      <dep package="gexiv2"/>
-      <dep package="librsvg"/>
-      <dep package="poppler"/>
-      <dep package="gnome-keyring"/>
-      <dep package="dbus-glib"/>
-      <dep package="openexr"/>
-      <dep package="lcms"/>
-      <dep package="libmypaint"/>
-      <dep package="at-spi2-atk"/>
-      <dep package="pygtk"/>
-    </dependencies>
-    <suggests>
-      <dep package="iso-codes"/>
-    </suggests>
-  </autotools>
-
-
 
   <autotools id="babl-cce" supports-non-srcdir-builds="yes">
     <branch
@@ -92,6 +64,7 @@
       module="https://github.com/ellelstone/babl.git"
       version="0.1"
       revision="master"
+      checkoutdir="babl-cce"
     />
   </autotools>
 
@@ -101,6 +74,7 @@
       module="https://github.com/ellelstone/gegl.git"
       version="0.1"
       revision="master"
+      checkoutdir="gegl-cce"
     />
     <dependencies>
       <dep package="babl-cce"/>
@@ -115,13 +89,14 @@
     </dependencies>
   </autotools>
 
-  <autotools id="gimp-cce" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage"
+  <autotools id="gimp-cce" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-CCE-AppImage"
              supports-non-srcdir-builds="no">
     <branch
       repo="github-git"
       module="https://github.com/ellelstone/gimp.git"
       version="0.1"
       revision="master"
+      checkoutdir="gimp-cce"
     >
     </branch>
     <dependencies>

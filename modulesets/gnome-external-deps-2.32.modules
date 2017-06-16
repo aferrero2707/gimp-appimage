@@ -1355,6 +1355,7 @@
 	    repo="sourceforge.net">
     </branch>
     <dependencies>
+      <dep package="libpng"/>
       <dep package="zlib"/>
     </dependencies>
   </autotools>
@@ -1366,6 +1367,7 @@
     </branch>
     <dependencies>
       <dep package="harfbuzz"/>
+      <dep package="libpng"/>
       <dep package="zlib"/>
     </dependencies>
   </autotools>

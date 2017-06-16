@@ -20,7 +20,7 @@
 
 # what directory should the source be checked out to?
 checkoutroot = os.environ['CHECKOUTROOT']
-buildroot = os.environ['CHECKOUTROOT']
+buildroot = os.environ['BUILDROOT']
 
 # the prefix to configure/install modules to (must have write access)
 prefix = '/zzz'

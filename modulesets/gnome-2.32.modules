@@ -249,12 +249,15 @@
     </dependencies>
   </autotools>
 
-  <autotools id="gimp" autogenargs="--without-gnomevfs --disable-python --with-gimpdir=GIMP-AppImage">
-    <branch/>
+  <autotools id="gimp-std" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage" 
+             supports-non-srcdir-builds="no">
+    <branch module="gimp.git" checkoutdir="gimp-std"/>
     <dependencies>
+      <dep package="bzip2_"/>
+      <dep package="liblzma"/>
       <dep package="gtk+"/>
       <dep package="intltool"/>
-      <dep package="gegl"/>
+      <dep package="gegl-std"/>
       <dep package="glib-networking"/>
       <dep package="gexiv2"/>
       <dep package="librsvg"/>
@@ -264,12 +267,13 @@
       <dep package="openexr"/>
       <dep package="lcms"/>
       <dep package="libmypaint"/>
+      <dep package="at-spi2-atk"/>
+      <dep package="pygtk"/>
     </dependencies>
     <suggests>
       <dep package="iso-codes"/>
-      <dep package="pygtk_"/>
     </suggests>
-  </autotools>
+ </autotools>
 
   <autotools id="glade">
     <branch/>
@@ -1351,7 +1355,7 @@
   </autotools>
 
   <autotools id="babl-std">
-    <branch/>
+    <branch module="babl.git" checkoutdir="babl-std"/>
   </autotools>
 
   <!-- Other useful deps that you can install are:  -->
@@ -1363,9 +1367,9 @@
   <!--   libavcodec                                 -->
   <!-- Those are not managed by jhbuild             -->
   <autotools id="gegl-std" autogenargs="--without-libavformat --enable-docs=no --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no">
-    <branch/>
+    <branch module="gegl.git" checkoutdir="gegl-std"/>
     <dependencies>
-      <dep package="babl"/>
+      <dep package="babl-std"/>
       <dep package="glib"/>
       <dep package="json-glib"/>
       <dep package="cairo"/>

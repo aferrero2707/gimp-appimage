@@ -18,7 +18,7 @@ export LD_LIBRARY_PATH=/zzz/lib:$prefix/lib:$LD_LIBRARY_PATH
 
 if [ ! -e "$prefix/bin" ]; then
     (rm -rf Python-2.7.13* && wget https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tar.xz && tar xJvf Python-2.7.13.tar.xz && cd Python-2.7.13 && ./configure --prefix=/zzz --enable-shared --enable-unicode=ucs2 && make && make install)
-    (rm -rf jhbuild && cp -a jhbuild.git jhbuild && cd jhbuild && ./autogen.sh --prefix=$prefix && make && make install)
+    (rm -rf jhbuild && git clone https://github.com/GNOME/jhbuild.git && cd jhbuild && ./autogen.sh --prefix=$prefix && make && make install)
 fi
 
 (cd "$prefix/bin" && rm -f automake-1.11 && ln -s $(which automake) automake-1.11)
@@ -26,6 +26,7 @@ fi
 
 
 export CHECKOUTROOT=$WD/sources
+export BUILDROOT=$WD/build
 
 jhbuild -f "$WD/../gimp.jhbuildrc" -m "$WD/../modulesets/gimp.modules" build gettext
 #jhbuild -f "$WD/../gimp.jhbuildrc" -m "$WD/../modulesets/gimp.modules" build python2
