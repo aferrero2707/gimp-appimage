@@ -1416,9 +1416,8 @@
   <autotools id="json-c">
     <branch
       repo="json-c-releases"
-      module="json-c-0.12.1-nodoc.tar.gz"
+      module="json-c-0.12.1.tar.gz"
       version="0.12.1" checkoutdir="json-c-0.12.1"
-      hash="sha256:5a617da9aade997938197ef0f8aabd7f97b670c216dc173977e1d56eef9e1291"
     />
   </autotools>
 
