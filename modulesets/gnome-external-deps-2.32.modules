@@ -1413,7 +1413,7 @@
 
   <repository type="tarball" name="json-c-releases"
       href="https://s3.amazonaws.com/json-c_releases/releases/"/>
-  <autotools id="json-c">
+  <autotools id="json-c" supports-non-srcdir-builds="no">
     <branch
       repo="json-c-releases"
       module="json-c-0.12.1.tar.gz"
