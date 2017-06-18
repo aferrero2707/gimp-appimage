@@ -20,7 +20,7 @@
       <dep package="json-c"/>
       <dep package="openexr"/>
       <dep package="libpng"/>
-      <dep package="librsvg"/>
+      <dep package="librsvg_"/>
       <dep package="tiff"/>
       <dep package="gettext"/>
       <dep package="jpeg"/>
@@ -83,7 +83,7 @@
       <dep package="cairo"/>
       <dep package="pango"/>
       <dep package="gtk+"/>
-      <dep package="librsvg"/>
+      <dep package="librsvg_"/>
       <dep package="ilmbase"/>
       <dep package="openexr"/>
     </dependencies>
@@ -109,7 +109,7 @@
       <dep package="gexiv2"/>
       <dep package="librsvg"/>
       <dep package="poppler"/>
-      <dep package="gnome-keyring"/>
+      <!-- <dep package="gnome-keyring"/> -->
       <dep package="dbus-glib"/>
       <dep package="openexr"/>
       <dep package="lcms"/>
