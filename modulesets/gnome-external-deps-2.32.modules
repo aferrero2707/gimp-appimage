@@ -406,6 +406,7 @@
             hash="sha256:496f907c5324de75367ec61c63bfeed1309ef0bc64845dc20b3597731abd9e40"
             md5sum="cc2017ad09b4543f8b3b5e9a53cfd89d" size="1148382">
       <patch file="libgcrypt-1.4.5-ImplicitDSOLinking.patch" strip="1"/>
+      <patch file="libgcrypt-1.4.5-fix-mpi-inline-attr.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="libgpg-error" />

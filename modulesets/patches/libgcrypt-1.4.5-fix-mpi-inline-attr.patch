@@ -1,0 +1,24 @@
+*** libgcrypt-1.4.5/mpi/mpi-inline.h	2009-04-02 11:25:32.000000000 +0200
+--- libgcrypt-1.4.5-new/mpi/mpi-inline.h	2017-06-19 15:33:19.139517989 +0200
+***************
+*** 29,34 ****
+  #define G10_MPI_INLINE_H
+  
+  #ifndef G10_MPI_INLINE_DECL
+! #define G10_MPI_INLINE_DECL  extern __inline__
+  #endif
+  
+--- 29,41 ----
+  #define G10_MPI_INLINE_H
+  
++ /* Starting with gcc 4.3 "extern inline" conforms in c99 mode to the
++    c99 semantics.  To keep the useful old semantics we use an
++    attribute.  */
+  #ifndef G10_MPI_INLINE_DECL
+! # ifdef __GNUC_STDC_INLINE__
+! #  define G10_MPI_INLINE_DECL  extern inline __attribute__ ((__gnu_inline__))
+! # else
+! #  define G10_MPI_INLINE_DECL  extern __inline__
+! # endif
+  #endif
+  
