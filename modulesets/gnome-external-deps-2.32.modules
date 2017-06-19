@@ -394,7 +394,10 @@
     <branch module="libgpg-error/libgpg-error-1.8.tar.bz2"
             repo="gnupg.org" version="1.8"
             hash="sha256:bdfbf2677147239d2d26d4e37f44635d9fd97c133c9ef9fd9793a12a059508c5"
-            md5sum="1d2005268a2f096db28cf9cf77b3229a" size="435341" />
+            md5sum="1d2005268a2f096db28cf9cf77b3229a" size="435341">
+      <patch file="libgpg-error-fix-mkerrorcodes-1.patch" strip="1"/>
+      <patch file="libgpg-error-fix-mkerrorcodes-2.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="libgcrypt" autogen-sh="configure" check-target="false"  supports-non-srcdir-builds="no">

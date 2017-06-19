@@ -1,0 +1,15 @@
+*** libgpg-error-1.8/src/Makefile.in	2010-05-06 15:14:16.000000000 +0200
+--- libgpg-error-1.8-new/src/Makefile.in	2017-06-19 10:16:13.371524000 +0200
+***************
+*** 842,846 ****
+  mkerrcodes.h: Makefile mkerrcodes.awk $(gpg_extra_headers)
+  	$(AWK) -f $(srcdir)/mkerrcodes1.awk $(srcdir)/errnos.in >_$@
+! 	$(CPP) $(extra_cppflags) _$@ | grep GPG_ERR_ | \
+                 $(AWK) -f $(srcdir)/mkerrcodes.awk >$@
+  	-rm _$@
+--- 842,846 ----
+  mkerrcodes.h: Makefile mkerrcodes.awk $(gpg_extra_headers)
+  	$(AWK) -f $(srcdir)/mkerrcodes1.awk $(srcdir)/errnos.in >_$@
+! 	$(CPP) $(extra_cppflags) -P _$@ | grep GPG_ERR_ | \
+                 $(AWK) -f $(srcdir)/mkerrcodes.awk >$@
+  	-rm _$@
