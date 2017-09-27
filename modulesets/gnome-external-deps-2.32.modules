@@ -114,8 +114,10 @@
     >
     <branch
       repo="exiv2"
-      module="exiv2-0.25.tar.gz"
-      version="0.25"
+      module="builds/exiv2-0.26-trunk.tar.gz"
+      version="0.26" 
+      checkoutdir="exiv2-trunk"
+      source-subdir="exiv2-trunk"
     />
   </autotools>
 
@@ -126,8 +128,8 @@
     >
     <branch
       repo="gexiv2"
-      module="0.10/gexiv2-0.10.4.tar.xz"
-      version="0.10.4"
+      module="0.10/gexiv2-0.10.6.tar.xz"
+      version="0.10.6"
     />
     <dependencies>
       <dep package="glib"/>

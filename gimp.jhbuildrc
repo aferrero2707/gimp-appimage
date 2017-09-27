@@ -35,3 +35,5 @@ autogenargs='--enable-introspection=no --disable-static --disable-gtk-doc'
 # A string listing additional arguments to be passed to make.
 # Set makeargs to 'V=1' for verbose build output.
 makeargs = '-j 1 V=1'
+
+module_makeargs['gimp'] = 'CFLAGS="-std=gnu99"'

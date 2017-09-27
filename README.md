@@ -28,13 +28,18 @@ zlib (zlib1g-dev in Ubuntu),
 python (libpython-all-dev in Ubuntu),
 python-dev (for python-config)
 libffi (libffi-dev in Ubuntu),
+nasm,
 libpcre3-dev,
 lzma-dev,
 libjbig-dev,
 libicu-dev,
+flex,
 bison + libbison-dev,
 libgmp-dev,
 libbzip2-dev
+libxkbcommon-dev
+libxkbcommon-x11-dev
+libxcb-xkb-dev
 
 # Credits
 

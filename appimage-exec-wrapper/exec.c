@@ -81,12 +81,6 @@ typedef struct {
     char** values;
 } environment;
 
-environment environment_alloc(size_t envc) {
-    environment env;
-    env.names = calloc(envc+1, sizeof(char*));
-    env.values = calloc(envc+1, sizeof(char*));
-    return env;
-}
 
 int arr_len(char* const x[]) {
     int len = 0;
@@ -95,17 +89,36 @@ int arr_len(char* const x[]) {
     }
     return len;
 }
+environment environment_alloc(size_t envc) {
+    environment env;
+    env.names = calloc(envc+1, sizeof(char*));
+    env.values = calloc(envc+1, sizeof(char*));
+    for( int i = 0; i <= envc; i++ ) {
+      env.names[i] = NULL;
+      env.values[i] = NULL;
+    }
+    /* printf("environment_alloc(): arr_len(env.names)=%d\n",arr_len(env.names)); */
+    /* printf("environment_alloc(): arr_len(env.values)=%d\n",arr_len(env.values)); */
+    return env;
+}
 
 void stringlist_free(char* const envp[]) {
     if ( envp ) {
+      /* printf("stringlist_free(): arr_len(envp)=%d\n",arr_len(envp)); */
         for ( int i = 0; i < arr_len(envp); i++ ) {
+	  /* printf("stringlist_free(): before free(envp[i])\n"); */
             free(envp[i]);
+	  /* printf("stringlist_free(): after free(envp[i])\n"); */
         }
     }
 }
 
 char** stringlist_alloc(int size) {
-    char** ret = calloc(size, sizeof(char*));
+    char** ret = calloc(size+1, sizeof(char*));
+    for(int i = 0; i <= size; i++) {
+      ret[i] = NULL;
+    }
+    /* printf("stringlist_alloc(): arr_len(ret)=%d\n",arr_len(ret)); */
     return ret;
 }
 
@@ -114,8 +127,10 @@ int environment_len(const environment env) {
 }
 
 void environment_free(environment env) {
+  /* printf("environment_free(): begin\n"); */
     stringlist_free(env.names);
     stringlist_free(env.values);
+  /* printf("environment_free(): end\n"); */
 }
 
 void environment_append_item(environment env, char* name, int name_size, char* val, int val_size) {
@@ -183,7 +198,7 @@ char** adjusted_environment(const char* filename, char* const envp[]) {
         }
     }
 
-    printf("appdir=\"%s\",  filename=\"%s\"\n",appdir,filename);
+    /* printf("appdir=\"%s\",  filename=\"%s\"\n",appdir,filename); */
     environment new_env = environment_alloc(envc);
     char* appdir2 = "/tmp/.gimp-appimage";
     if ( appdir && strncmp(filename, appdir, strlen(appdir))  && strncmp(filename, appdir2, strlen(appdir2)) ) {
@@ -245,7 +260,9 @@ char** adjusted_environment(const char* filename, char* const envp[]) {
                 else {
                     // none of the above methods matched
                     // assume the value changed completely and simply keep what the application set
+		  /* printf("adjusted_environment(): before free(use_value) [1]\n"); */
                     free(use_value);
+		  /* printf("adjusted_environment(): after free(use_value) [1]\n"); */
                     use_value = NULL;
                 }
             }
@@ -254,11 +271,13 @@ char** adjusted_environment(const char* filename, char* const envp[]) {
             }
             else {
                 environment_append_item(new_env, line, name_size, use_value, strlen(use_value));
+		/* printf("adjusted_environment(): before free(use_value) [2]\n"); */
                 free(use_value);
+		/* printf("adjusted_environment(): after free(use_value) [2]\n"); */
             }
         }
-    } else {
-      printf("  not updating environment\n");
+    /* } else { */
+    /*   printf("  not updating environment\n"); */
     }
 
     char** ret = NULL;
@@ -277,7 +296,9 @@ char** adjusted_environment(const char* filename, char* const envp[]) {
     environment_free(orig);
     environment_free(startup);
     environment_free(new_env);
+    /* printf("adjusted_environment(): before free(appdir)\n"); */
     free(appdir);
+    /* printf("adjusted_environment(): after free(appdir)\n"); */
     return ret;
 }
 
@@ -285,8 +306,13 @@ int execve(const char* filename, char* const argv[], char* const envp[]) {
   printf("Calling custom execve(%s) function\n", filename);
     char** new_envp = adjusted_environment(filename, envp);
     old_execve = dlsym(RTLD_NEXT, "execve");
+    printf("execve(): old_execve=%p\n", (void*)old_execve);
+    printf("execve(): arr_len(new_envp)=%d\n", arr_len(new_envp));
     int ret = old_execve(filename, argv, new_envp);
+    printf("execve(): ret=%d\n", ret);
+    printf("execve(): before stringlist_free(new_envp), size=%d\n", arr_len(new_envp));
     stringlist_free(new_envp);
+    printf("execve(): after stringlist_free(new_envp)\n");
     return ret;
 }
 
@@ -294,8 +320,12 @@ int execv(const char* filename, char* const argv[]) {
   printf("Calling custom execv(%s) function\n", filename);
     char** new_envp = adjusted_environment(filename, environ);
     old_execve = dlsym(RTLD_NEXT, "execve");
+    printf("execv(): old_execve=%p\n", (void*)old_execve);
+    printf("execv(): arr_len(new_envp)=%d\n", arr_len(new_envp));
     int ret = old_execve(filename, argv, new_envp);
+    printf("execv(): before stringlist_free(new_envp), size=%d\n", arr_len(new_envp));
     stringlist_free(new_envp);
+    printf("execv(): after stringlist_free(new_envp)\n");
     return ret;
 }
 
@@ -305,7 +335,9 @@ int execvpe(const char* filename, char* const argv[], char* const envp[]) {
     char** new_envp = adjusted_environment(filename, envp);
     old_execvpe = dlsym(RTLD_NEXT, "execvpe");
     int ret = old_execvpe(filename, argv, new_envp);
+    printf("execvpe(): before stringlist_free(new_envp), size=%d\n", arr_len(new_envp));
     stringlist_free(new_envp);
+    printf("execvpe(): afetr stringlist_free(new_envp)\n");
     return ret;
 }
 
@@ -315,6 +347,8 @@ int execvp(const char* filename, char* const argv[]) {
     char** new_envp = adjusted_environment(filename, environ);
     old_execvpe = dlsym(RTLD_NEXT, "execvpe");
     int ret = old_execvpe(filename, argv, new_envp);
+    printf("execvp(): before stringlist_free(new_envp), size=%d\n", arr_len(new_envp));
     stringlist_free(new_envp);
+    printf("execvp(): afetr stringlist_free(new_envp)\n");
     return ret;
 }

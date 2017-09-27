@@ -2,6 +2,9 @@
 
 FULL_BUNDLING=0
 
+VER_SUFFIX=""
+#VER_SUFFIX="-cce"
+
 PREFIX=zzz
 
 # Move blacklisted files to a special folder
@@ -47,8 +50,6 @@ LOWERAPP=${APP,,}
 rm -rf out $APP
 
 WD=$(pwd)
-
-(cd appimage-exec-wrapper && make && cp -a exec.so /$PREFIX/lib/exec_wrapper.so)
 
 export PATH=/$PREFIX/bin:$PATH
 export LD_LIBRARY_PATH=/$PREFIX/lib:$LD_LIBRARY_PATH
@@ -166,7 +167,7 @@ move_blacklisted
 #cp -a /$PREFIX/lib/libatk-bridge* usr/lib
 #cp -a /$PREFIX/lib/libatspi.* usr/lib
 
-cp -a ../../appimage-exec-wrapper/exec.so usr/lib
+#cp -a ../../appimage-exec-wrapper/exec.so usr/lib
 
 if [ ! -e ../../work/sources/mypaint ]; then
 #rm -rf ../../work/sources/mypaint
@@ -210,10 +211,15 @@ find ./usr/share/icons -path *512* -name gimp.png -exec cp {} $LOWERAPP.png  \; 
 cp $(ldconfig -p | grep libgdk-x11-2.0.so.0 | cut -d ">" -f 2 | xargs) ./usr/lib/
 cp $(ldconfig -p | grep libgtk-x11-2.0.so.0 | cut -d ">" -f 2 | xargs) ./usr/lib/
 
-
-# Strip binaries.
 appdir=$(pwd)
 echo "appdir: $appdir"
+
+pwd
+(cd $WD/appimage-exec-wrapper && make && cp -a exec.so $appdir/usr/lib/exec_wrapper.so)
+#read dummy
+
+
+# Strip binaries.
 strip_binaries()
 {
   chmod u+w -R "$appdir"
@@ -223,12 +229,13 @@ strip_binaries()
     find "$appdir" -type f -regex '.*\.so\(\.[0-9.]+\)?$' -print0
   } | xargs -0 --no-run-if-empty --verbose -n1 strip
 }
-strip_binaries
+#strip_binaries
 
 
 
 #VER1=$(pkg-config --modversion gimp-2.0)-test
-VER1=$(pkg-config --modversion gimp-2.0)-$(date +%Y%m%d)
+#VER1=$(pkg-config --modversion gimp-2.0)-$(date +%Y%m%d)
+VER1=$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}-$(date +%Y%m%d)
 if [ x"$FULL_BUNDLING" = "x1" ]; then
     VER1="${VER1}-full"
 fi
@@ -238,7 +245,7 @@ VERSION=$VER1
 echo $VERSION
 
 get_desktopintegration $LOWERAPP
-cp -a ../../$LOWERAPP.wrapper ./usr/bin/$LOWERAPP.wrapper
+#cp -a ../../$LOWERAPP.wrapper ./usr/bin/$LOWERAPP.wrapper
 #cp -a ../../desktopintegration ./usr/bin/$LOWERAPP.wrapper
 #chmod a+x ./usr/bin/$LOWERAPP.wrapper
 #sed -i -e "s|Exec=$LOWERAPP|Exec=$LOWERAPP.wrapper|g" $LOWERAPP.desktop
@@ -252,5 +259,5 @@ echo "Building AppImage..."
 pwd
 
 ARCH="x86_64"
-#generate_appimage
-generate_type2_appimage
+generate_appimage
+#generate_type2_appimage

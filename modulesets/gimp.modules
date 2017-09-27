@@ -11,8 +11,11 @@
     href="http://github.com/"/>
   <repository type="tarball" name="sourceforge.net"
     href="http://prdownloads.sourceforge.net/sourceforge/"/>
+  <repository type="tarball" name="gnu.org"
+    href="https://ftp.gnu.org/gnu/"/>
 
   <include href="gnome-2.32.modules"/>
+  <include href="gimp-std.modules"/>
 
   <metamodule id="gimp-bootstrap">
     <dependencies>
@@ -31,96 +34,32 @@
     </dependencies>
   </metamodule>
 
-  <metamodule id="babl">
-    <dependencies>
-      <dep package="babl-std"/>
-     </dependencies>
-  </metamodule>
-
-  <metamodule id="gegl">
-    <dependencies>
-      <dep package="gegl-std"/>
-     </dependencies>
-  </metamodule>
-
-  <metamodule id="gimp">
-    <dependencies>
-      <dep package="gimp-std"/>
-     </dependencies>
-  </metamodule>
-
 
   <metamodule id="gimp-appimage">
     <dependencies>
       <dep package="gimp"/>
       <dep package="phfgimp"/>
       <dep package="nufraw"/>
+      <dep package="resynthesizer"/>
+      <dep package="gimp-lqr-plugin"/>
     </dependencies>
   </metamodule>
 
-  <autotools id="babl-cce" supports-non-srcdir-builds="yes">
-    <branch
-      repo="github-git"
-      module="https://github.com/ellelstone/babl.git"
-      version="0.1"
-      revision="master"
-      checkoutdir="babl-cce"
-    />
-  </autotools>
 
-  <autotools id="gegl-cce" autogenargs="--without-libavformat" supports-non-srcdir-builds="yes">
+
+
+  <!-- GDB -->
+  <autotools id="gdb" supports-non-srcdir-builds="no">
     <branch
-      repo="github-git"
-      module="https://github.com/ellelstone/gegl.git"
-      version="0.1"
-      revision="master"
-      checkoutdir="gegl-cce"
+      repo="gnu.org"
+      module="gdb/gdb-8.0.tar.xz"
+      version="8.0"
     />
     <dependencies>
-      <dep package="babl-cce"/>
-      <dep package="glib"/>
-      <dep package="json-glib"/>
-      <dep package="cairo"/>
-      <dep package="pango"/>
-      <dep package="gtk+"/>
-      <dep package="librsvg_"/>
-      <dep package="ilmbase"/>
-      <dep package="openexr"/>
     </dependencies>
   </autotools>
 
-  <autotools id="gimp-cce" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-CCE-AppImage"
-             supports-non-srcdir-builds="no">
-    <branch
-      repo="github-git"
-      module="https://github.com/ellelstone/gimp.git"
-      version="0.1"
-      revision="master"
-      checkoutdir="gimp-cce"
-    >
-    </branch>
-    <dependencies>
-      <dep package="bzip2_"/>
-      <dep package="liblzma"/>
-      <dep package="gtk+"/>
-      <dep package="intltool"/>
-      <dep package="gegl-cce"/>
-      <dep package="glib-networking"/>
-      <dep package="gexiv2"/>
-      <dep package="librsvg"/>
-      <dep package="poppler"/>
-      <!-- <dep package="gnome-keyring"/> -->
-      <dep package="dbus-glib"/>
-      <dep package="openexr"/>
-      <dep package="lcms"/>
-      <dep package="libmypaint"/>
-      <dep package="at-spi2-atk"/>
-      <dep package="pygtk"/>
-    </dependencies>
-    <suggests>
-      <dep package="iso-codes"/>
-    </suggests>
-  </autotools>
+
 
 <!-- GIMP plug-ins -->
 
@@ -143,6 +82,49 @@
     </dependencies>
   </cmake>
 
+
+  <!-- Resithesizer plug-in -->
+  <autotools id="resynthesizer" supports-non-srcdir-builds="no">
+    <branch
+      repo="github-git"
+      module="bootchk/resynthesizer.git"
+      version="1.0.0"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="gimp"/>
+    </dependencies>
+  </autotools>
+
+
+  <!-- Liquid rescale plug-in -->
+  <autotools id="liblqr" supports-non-srcdir-builds="no" autogen-sh="configure">
+    <branch
+      repo="github-git"
+      module="carlobaldassi/liblqr.git"
+      version="1.0.0"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="gimp"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gimp-lqr-plugin" supports-non-srcdir-builds="no" autogen-sh="configure">
+    <branch
+      repo="github-git"
+      module="carlobaldassi/gimp-lqr-plugin.git"
+      version="1.0.0"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="liblqr"/>
+      <dep package="gimp"/>
+    </dependencies>
+  </autotools>
+
+
+  <!-- nuFraw plug-in -->
   <autotools id="gtkimageview" supports-non-srcdir-builds="yes">
     <branch
       repo="github-git"

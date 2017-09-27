@@ -5,6 +5,8 @@
 <moduleset>
   <repository type="git" name="git.gnome.org" default="yes"
       href="git://git.gnome.org/"/>
+  <repository type="git" name="gitlab.gnome.org"
+      href="https://gitlab.gnome.org/GNOME"/>
   <repository type="git" name="gstreamer.freedesktop.org"
       href="git://anongit.freedesktop.org/gstreamer/"/>
   <repository type="git" name="git.freedesktop.org"
@@ -96,7 +98,9 @@
   </autotools>
 
   <autotools id="json-glib">
-    <branch revision="json-glib-1-0"/>
+    <branch 
+        repo="gitlab.gnome.org"
+        revision="json-glib-1-0"/>
     <dependencies>
       <dep package="glib"/>
     </dependencies>
@@ -1216,6 +1220,9 @@
       <dep package="gdk-pixbuf"/>
       <dep package="gnome-common"/>
       <dep package="libcroco"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-atk"/>
+      <dep package="pango"/>
     </dependencies>
   </autotools>
 

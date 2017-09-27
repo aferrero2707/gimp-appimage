@@ -1,0 +1,177 @@
+<?xml version="1.0"?><!--*- mode: nxml; indent-tabs-mode: nil -*-->
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<!-- vim:set ts=2 expandtab: -->
+<moduleset>
+  <repository type="git" name="git.gnome.org" default="yes"
+      href="git://git.gnome.org/"/>
+  <repository type="cvs" name="cvs.cairographics.org"
+      cvsroot=":pserver:anonymous@cvs.cairographics.org:/cvs/cairo"
+      password=""/>
+  <repository type="cvs" name="cairo.freedesktop.org"
+      cvsroot=":pserver:anoncvs@anoncvs.freedesktop.org:/cvs/cairo"
+      password=""/>
+  <repository type="git" name="gstreamer.freedesktop.org"
+      href="git://anongit.freedesktop.org/gstreamer/"/>
+  <repository type="cvs" name="elysium-project.sf.net"
+      cvsroot=":pserver:anonymous@elysium-project.cvs.sourceforge.net:/cvsroot/elysium-project"
+      password=""/>
+  <repository type="cvs" name="refdbg.sf.net"
+      cvsroot=":pserver:anonymous@refdbg.cvs.sourceforge.net:/cvsroot/refdbg"
+      password=""/>
+  <repository type="svn" name="inkscape.sf.net"
+      href="https://inkscape.svn.sourceforge.net/svnroot/inkscape/"/>
+  <repository type="svn" name="osiris.chipx86.com"
+      href="http://osiris.chipx86.com/svn/osiris-misc/"/>
+  <repository type="svn" name="svn.debian.org"
+      href="svn://svn.debian.org/"/>
+  <repository type="svn" name="svn.navi.cx"
+      href="http://svn.navi.cx/" />
+  <repository type="svn" name="svn.abisource.com"
+      href="http://svn.abisource.com/"/>
+  <repository type="svn" name="svn.gna.org"
+      href="svn://svn.gna.org/svn/"/>
+  <repository type="git" name="git.imendio.com"
+    href="git://git.imendio.com/"/>
+  <repository type="git" name="github.com"
+    href="git://github.com/"/>
+  <repository type="svn" name="svn.tinymail.org"
+    href="https://svn.tinymail.org/svn/tinymail/" />
+  <repository type="git" name="git.maemo.org"
+    href="https://git.maemo.org/" />
+  <repository type="svn" name="svn.o-hand.com"
+      href="http://svn.o-hand.com/repos/"/>
+  <repository type="git" name="git.clutter-project.org"
+      href="git://git.clutter-project.org/"/>
+  <repository type="git" name="git.freedesktop.org"
+      href="git://anongit.freedesktop.org/git/"/>
+  <repository type="bzr" name="launchpad.net"
+      href="http://code.launchpad.net/"/>
+  <repository type="bzr" name="launchpad.net-lp"
+      href=""/>
+  <repository type="bzr" name="bzr.burtonini.com"
+      href="http://burtonini.com/bzr/"/>
+  <repository type="svn" name="elisa.code.fluendo.com"
+      href="https://code.fluendo.com/elisa/svn/"/>
+  <repository type="svn" name="pigment.code.fluendo.com"
+      href="https://code.fluendo.com/pigment/svn/"/>
+  <repository type="svn" name="rc.code.fluendo.com"
+      href="https://code.fluendo.com/remotecontrol/svn/"/>
+  <repository type="git" name="git.kernel.org"
+      href="git://git.kernel.org/pub/scm/"/>
+  <repository type="mtn" name="pidgin.im"
+      server="pidgin.im" database="pidgin.im.mtn"
+      defbranch="im.pidgin.pidgin"/>
+  <repository type="git" name="git.savannah.nongnu.org"
+      href="git://git.savannah.nongnu.org/"/>
+  <repository type="svn" name="svn.fluendo.com"
+      href="https://core.fluendo.com/gstreamer/svn/"
+      trunk-template="trunk/%(module)s"
+      branches-template="branches/%(branch)"
+      tags-template="tags/%(tag)" />
+  <repository type="svn" name="svn.thomas.apestaart.org"
+      href="http://thomas.apestaart.org/moap/svn/"/>
+  <repository type="git" name="git.capuchin.gnome.org"
+    href="http://www.gnome.org/~sebp/git/"/>
+  <repository type="svn" name="hotwire.googlecode.com"
+      href="http://hotwire-shell.googlecode.com/svn/"/>
+  <repository type="svn" name="labyrinth.googlecode.com"
+      href="http://labyrinth.googlecode.com/svn/"/>
+  <repository type="git" name="git.fedoraproject.org"
+    href="git://git.fedoraproject.org/git/hosted/"/>
+  <repository type="hg" name="hg.circular-chaos.org"
+    href="http://hg.circular-chaos.org" />
+  <repository type="svn" name="transmissionbt.com"
+    href="svn://svn.m0k.org/Transmission/" />
+  <repository type="cvs" name="ldtp.freedesktop.org"
+      cvsroot=":pserver:anoncvs@anoncvs.freedesktop.org:/cvs/ldtp"
+      password=""/>
+  <repository type="svn" name="svn.async.com.br"
+      href="svn://svn.async.com.br/"/>
+  <repository type="svn" name="flumotion.code.fluendo.com"
+      href="https://code.fluendo.com/flumotion/svn/"/>
+  <repository type="tarball" name="matchbox-project.org"
+      href="http://matchbox-project.org/sources/"/>
+  <repository type="git" name="fishsoup.net"
+      href="git://git.fishsoup.net/"/>
+  <repository type="git" name="diracvideo.org"
+    href="git://diracvideo.org/git/"/>
+  <repository type="git" name="git.collabora"
+      href="git://git.collabora.co.uk/git/"/>
+  <repository type="tarball" name="people.suug.ch/~tgr/libnl/"
+      href="http://www.gnome.org/~fpeters/libnl/"/>
+  <repository type="svn" name="liferea.svn.sourceforge.net"
+      href="http://liferea.svn.sourceforge.net/svnroot/"/>
+  <repository type="cvs" name="cvs.claws-mail"
+      cvsroot=":ext:cvs@scm.dotsrc.org:/srv/cvs/claws-mail"
+      password=""/>
+  <repository type="git" name="git.xfce.org"
+      href="git://git.xfce.org"/>
+  <repository type="git" name="git.dronelabs.com"
+      href="git://git.dronelabs.com"/>
+  <repository type="git" name="git.moblin.org"
+      href="git://git.moblin.org"/>
+  <repository type="svn" name="svn.ardour.org"
+      href="http://subversion.ardour.org/svn/"/>
+  <repository type="tarball" name="launchpad.net/tarball"
+      href="https://launchpad.net/"/>
+  <repository type="git" name="gitorious.org"
+      href="git://gitorious.org/"/>
+  <repository type="tarball" name="gnome.org"
+      href="http://download.gnome.org/sources/"/>
+
+  <autotools id="babl">
+    <branch module="babl.git" checkoutdir="babl-std"/>
+  </autotools>
+
+  <!-- Other useful deps that you can install are:  -->
+  <!--   libjpeg                                    -->
+  <!--   libpng                                     -->
+  <!--   OpenEXR (see http://www.openexr.com/)      -->
+  <!--   libsdl                                     -->
+  <!--   enscript                                   -->
+  <!--   libavcodec                                 -->
+  <!-- Those are not managed by jhbuild             -->
+  <autotools id="gegl" autogenargs="--without-libavformat --enable-docs=no --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no">
+    <branch module="gegl.git" checkoutdir="gegl-std"/>
+    <dependencies>
+      <dep package="babl"/>
+      <dep package="glib"/>
+      <dep package="json-glib"/>
+      <dep package="cairo"/>
+      <dep package="pango"/>
+      <dep package="gtk+"/>
+      <dep package="librsvg_"/>
+      <dep package="ilmbase"/>
+      <dep package="openexr"/>
+    </dependencies>
+  </autotools>
+
+
+  <autotools id="gimp" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage" 
+             supports-non-srcdir-builds="no">
+    <branch module="gimp.git" checkoutdir="gimp-std"/>
+    <dependencies>
+      <dep package="bzip2_"/>
+      <dep package="liblzma"/>
+      <dep package="gtk+"/>
+      <dep package="intltool"/>
+      <dep package="gegl"/>
+      <dep package="glib-networking"/>
+      <dep package="gexiv2"/>
+      <dep package="librsvg"/>
+      <dep package="poppler"/>
+      <!-- <dep package="gnome-keyring"/> -->
+      <dep package="dbus-glib"/>
+      <dep package="openexr"/>
+      <dep package="lcms"/>
+      <dep package="libmypaint"/>
+      <dep package="at-spi2-atk"/>
+      <dep package="pygtk"/>
+    </dependencies>
+    <suggests>
+      <dep package="iso-codes"/>
+    </suggests>
+ </autotools>
+
+</moduleset>

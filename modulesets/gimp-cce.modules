@@ -1,0 +1,81 @@
+<?xml version="1.0"?><!--*- mode: nxml; indent-tabs-mode: nil -*-->
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<!-- vim:set ts=2 expandtab: -->
+<moduleset>
+  <repository type="git" name="git.gnome.org" default="yes"
+      href="git://git.gnome.org/"/>
+  <repository type="git" name="git.freedesktop.org"
+      href="git://anongit.freedesktop.org/git/"/>
+  <repository type="git" name="github-git" 
+    href="http://github.com/"/>
+  <repository type="tarball" name="sourceforge.net"
+    href="http://prdownloads.sourceforge.net/sourceforge/"/>
+
+  <include href="gnome-2.32.modules"/>
+
+  <autotools id="babl" supports-non-srcdir-builds="yes">
+    <branch
+      repo="github-git"
+      module="https://github.com/ellelstone/babl.git"
+      version="0.1"
+      revision="master"
+      checkoutdir="babl-cce"
+    />
+  </autotools>
+
+  <autotools id="gegl" autogenargs="--without-libavformat" supports-non-srcdir-builds="yes">
+    <branch
+      repo="github-git"
+      module="https://github.com/ellelstone/gegl.git"
+      version="0.1"
+      revision="master"
+      checkoutdir="gegl-cce"
+    />
+    <dependencies>
+      <dep package="babl"/>
+      <dep package="glib"/>
+      <dep package="json-glib"/>
+      <dep package="cairo"/>
+      <dep package="pango"/>
+      <dep package="gtk+"/>
+      <dep package="librsvg_"/>
+      <dep package="ilmbase"/>
+      <dep package="openexr"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gimp" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-CCE-AppImage"
+             supports-non-srcdir-builds="no">
+    <branch
+      repo="github-git"
+      module="https://github.com/ellelstone/gimp.git"
+      version="0.1"
+      revision="master"
+      checkoutdir="gimp-cce"
+    >
+    </branch>
+    <dependencies>
+      <dep package="bzip2_"/>
+      <dep package="liblzma"/>
+      <dep package="gtk+"/>
+      <dep package="intltool"/>
+      <dep package="gegl"/>
+      <dep package="glib-networking"/>
+      <dep package="gexiv2"/>
+      <dep package="librsvg"/>
+      <dep package="poppler"/>
+      <!-- <dep package="gnome-keyring"/> -->
+      <dep package="dbus-glib"/>
+      <dep package="openexr"/>
+      <dep package="lcms"/>
+      <dep package="libmypaint"/>
+      <dep package="at-spi2-atk"/>
+      <dep package="pygtk"/>
+    </dependencies>
+    <suggests>
+      <dep package="iso-codes"/>
+    </suggests>
+  </autotools>
+
+</moduleset>
