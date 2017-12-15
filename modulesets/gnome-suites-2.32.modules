@@ -54,7 +54,7 @@
   </autotools>
 
   <autotools id="at-spi2-core">
-    <branch/>
+    <branch revision="gnome-3-6"/>
     <dependencies>
       <dep package="dbus"/>
       <dep package="glib"/>
@@ -1213,7 +1213,7 @@
   </autotools>
 
   <autotools id="librsvg" supports-non-srcdir-builds="no">
-    <branch revision="2.40.16"/>
+    <branch  repo="gitlab.gnome.org" module="librsvg" revision="2.40.16"/>
     <dependencies>
       <dep package="libxml2"/>
       <dep package="glib"/>

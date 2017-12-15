@@ -51,6 +51,9 @@
     href="git://github.com/"/>
 <repository type="tarball" name="releases.github.com"
     href="https://github.com/"/>
+<repository type="tarball" name="gmplib.org"
+    href="https://gmplib.org/download/"/>
+
 
 
   <!-- the turbo one is 2x to 4x faster 
@@ -108,18 +111,15 @@
     </dependencies>
   </autotools>
 
-  <autotools id="exiv2"
-    autogen-sh="configure"
-    supports-non-srcdir-builds="no"
+  <cmake id="exiv2"
+    supports-non-srcdir-builds="yes"
     >
     <branch
-      repo="exiv2"
-      module="builds/exiv2-0.26-trunk.tar.gz"
+      repo="releases.github.com" module="Exiv2/exiv2/archive/v0.26.tar.gz"
       version="0.26" 
-      checkoutdir="exiv2-trunk"
-      source-subdir="exiv2-trunk"
+      checkoutdir="exiv2-0.26"
     />
-  </autotools>
+  </cmake>
 
 
   <autotools id="gexiv2"
@@ -414,10 +414,19 @@
       <dep package="libgpg-error" />
     </dependencies>
   </autotools>
+  
+  
+  <autotools id="gmplib">
+    <branch module="gmp/gmp-6.1.2.tar.xz"
+            repo="gmplib.org" version="6.1.2"/>
+  </autotools>
 
   <autotools id="nettle">
     <branch module="nettle/nettle-3.3.tar.gz"
             repo="ftp.gnu.org" version="3.3"/>
+    <dependencies>
+      <dep package="gmplib" />
+    </dependencies>
   </autotools>
 
   <autotools id="gettext" autogen-sh="configure" autogenargs="--without-emacs">
@@ -550,6 +559,18 @@
             repo="cairo.org">
     </branch>
   </autotools>
+
+
+  <repository type="tarball" name="poppler.freedesktop.org"
+	      href="http://poppler.freedesktop.org/"/>
+  <autotools id="poppler-data" skip-autogen="true"
+	  makeargs=""  makeinstallargs="install prefix=${prefix}"
+	  check-target="false" supports-non-srcdir-builds="no">
+    <branch repo="poppler.freedesktop.org"
+	    module="poppler-data-0.4.7.tar.gz" version="0.4.7">
+    </branch>
+  </autotools> 
+
 
   <tarball id="poppler" version="0.54.0">
     <source href="http://poppler.freedesktop.org/poppler-0.54.0.tar.xz"/>

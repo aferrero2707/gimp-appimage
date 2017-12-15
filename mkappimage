@@ -5,7 +5,7 @@ FULL_BUNDLING=0
 VER_SUFFIX=""
 #VER_SUFFIX="-cce"
 
-PREFIX=zzz
+PREFIX=app
 
 # Move blacklisted files to a special folder
 move_blacklisted()

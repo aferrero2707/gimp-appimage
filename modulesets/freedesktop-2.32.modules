@@ -145,18 +145,6 @@
     </dependencies>
   </autotools>
 
-  <repository type="tarball" name="poppler.freedesktop.org"
-	      href="http://poppler.freedesktop.org/"/>
-  <autotools id="poppler-data" skip-autogen="true"
-	  makeargs=""  makeinstallargs="install prefix=${prefix}"
-	  check-target="false" supports-non-srcdir-builds="no">
-    <branch repo="poppler.freedesktop.org"
-	    module="poppler-data-0.2.1.tar.gz" version="0.2.1"
-            hash="sha256:890dbadf44aee07999c050fcbe0c4ea8b32fba0e8b573c439dd7de8476a1a660"
-            md5sum="bca78b8786746c7b48b324283992d658" size="4067562">
-    </branch>
-  </autotools> 
-
   <autotools id="exempi" autogenargs="--enable-unittest=no">
     <branch repo="git.freedesktop.org"/>
   </autotools>

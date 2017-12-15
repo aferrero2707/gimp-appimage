@@ -1,0 +1,27 @@
+language: generic
+
+#env:
+matrix:
+    allow_failures:
+        - env: TARGET_SYSTEM=OSX
+    include:
+        - os: linux
+          dist: trusty
+          compiler: g++
+          sudo: required
+          services: docker
+          env: TARGET_SYSTEM=Linux
+          before_script:
+            - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-trusty-gimp
+            - sudo docker run -it -v $(pwd):/sources photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
+          after_success:
+            - cd $TRAVIS_BUILD_DIR
+            - ls -lh
+            - bash mkappimage
+            - ls out/*
+            - wget -c https://github.com/aferrero2707/uploadtool/raw/master/upload_rotate.sh
+branches:
+  except:
+    - # Do not build tags that we create when we upload to GitHub Releases
+    - /^(?i:continuous)$/
+    - /^(?i:unstable)$/
