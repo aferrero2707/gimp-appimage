@@ -12,6 +12,6 @@ jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --e
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --exit-on-error buildone libmypaint && \
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --exit-on-error buildone gimp && \
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --exit-on-error buildone phfgimp && \
-jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --exit-on-error buildone nufraw && \
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --exit-on-error buildone resynthesizer && \
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --exit-on-error buildone gimp-lqr-plugin
+#jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --exit-on-error buildone nufraw && \
