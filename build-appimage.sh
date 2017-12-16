@@ -2,7 +2,8 @@
 
 PKG_CONFIG_PATH=/app/share/pkgconfig:$PKG_CONFIG_PATH
 
-jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" build json-glib poppler-data
+jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" build -t json-glib json-glib 
+jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" build -t poppler-data poppler-data
 
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" build -t babl babl
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" build -t gegl gegl
