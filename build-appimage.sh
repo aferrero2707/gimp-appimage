@@ -1,6 +1,7 @@
 #! /bin/bash
 
-PKG_CONFIG_PATH=/app/share/pkgconfig:$PKG_CONFIG_PATH
+export PKG_CONFIG_PATH=/app/share/pkgconfig:$PKG_CONFIG_PATH
+export ACLOCAL_PATH=/app/share/aclocal:$ACLOCAL_PATH
 
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" build -t json-glib json-glib 
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" build -t poppler-data poppler-data
