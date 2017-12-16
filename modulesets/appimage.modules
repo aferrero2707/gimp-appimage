@@ -1,0 +1,154 @@
+<?xml version="1.0"?><!--*- mode: nxml; indent-tabs-mode: nil -*-->
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<!-- vim:set ts=2 expandtab: -->
+<moduleset>
+  <repository type="git" name="git.gnome.org" default="yes"
+      href="git://git.gnome.org/"/>
+  <repository type="git" name="git.freedesktop.org"
+      href="git://anongit.freedesktop.org/git/"/>
+  <repository type="git" name="github-git" 
+    href="http://github.com/"/>
+  <repository type="tarball" name="sourceforge.net"
+    href="http://prdownloads.sourceforge.net/sourceforge/"/>
+  <repository type="tarball" name="gnu.org"
+    href="https://ftp.gnu.org/gnu/"/>
+
+  <include href="gnome-2.32.modules"/>
+  <include href="gimp.modules"/>
+
+  <metamodule id="gimp-bootstrap">
+    <dependencies>
+      <dep package="liblzma"/>
+      <dep package="json-c"/>
+      <dep package="openexr"/>
+      <dep package="libpng"/>
+      <dep package="librsvg_"/>
+      <dep package="tiff"/>
+      <dep package="gettext"/>
+      <dep package="jpeg"/>
+      <dep package="libjpeg-turbo"/>
+      <dep package="exiv2"/>
+      <dep package="lcms"/>
+      <dep package="python2"/>
+    </dependencies>
+  </metamodule>
+
+
+  <metamodule id="gimp-appimage">
+    <dependencies>
+      <dep package="gimp"/>
+      <dep package="phfgimp"/>
+      <dep package="nufraw"/>
+      <dep package="resynthesizer"/>
+      <dep package="gimp-lqr-plugin"/>
+    </dependencies>
+  </metamodule>
+
+
+
+
+  <!-- GDB -->
+  <autotools id="gdb" supports-non-srcdir-builds="no">
+    <branch
+      repo="gnu.org"
+      module="gdb/gdb-8.0.tar.xz"
+      version="8.0"
+    />
+    <dependencies>
+    </dependencies>
+  </autotools>
+
+
+
+<!-- GIMP plug-ins -->
+
+  <cmake id="phfgimp"
+    cmakeargs="-DBABL_FLIPS_DISABLED=OFF -DCMAKE_BUILD_TYPE=Release"
+    makeargs="VERBOSE=1"
+    supports-non-srcdir-builds="yes"
+    use-ninja="no"
+    >
+    <branch
+      repo="github-git"
+      module="https://github.com/aferrero2707/PhFGimp.git"
+      version="0.1"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="gimp"/>
+      <dep package="tiff"/>
+      <dep package="lcms"/>
+    </dependencies>
+  </cmake>
+
+
+  <!-- Resithesizer plug-in -->
+  <autotools id="resynthesizer" supports-non-srcdir-builds="no">
+    <branch
+      repo="github-git"
+      module="bootchk/resynthesizer.git"
+      version="1.0.0"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="gimp"/>
+    </dependencies>
+  </autotools>
+
+
+  <!-- Liquid rescale plug-in -->
+  <autotools id="liblqr" supports-non-srcdir-builds="no" autogen-sh="configure">
+    <branch
+      repo="github-git"
+      module="carlobaldassi/liblqr.git"
+      version="1.0.0"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="gimp"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gimp-lqr-plugin" supports-non-srcdir-builds="no" autogen-sh="configure">
+    <branch
+      repo="github-git"
+      module="carlobaldassi/gimp-lqr-plugin.git"
+      version="1.0.0"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="liblqr"/>
+      <dep package="gimp"/>
+    </dependencies>
+  </autotools>
+
+
+  <!-- nuFraw plug-in -->
+  <autotools id="gtkimageview" supports-non-srcdir-builds="yes">
+    <branch
+      repo="github-git"
+      module="aferrero2707/gtkimageview.git"
+      version="1.6.4"
+      revision="master"
+    />
+    <dependencies>
+      <dep package="gtk+"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="nufraw" supports-non-srcdir-builds="no">
+    <branch repo="sourceforge.net"
+            module="nufraw/nufraw-0.39.tar.gz" version="0.39">
+      <patch file="nufraw-autogen-run-configure.patch" strip="1"/>
+      <patch file="nufraw-register_file_handler_raw.patch" strip="1"/>
+      <patch file="nufraw-fpermissive-flag.patch" strip="1"/>
+    </branch>
+    <dependencies>
+      <dep package="gimp"/>
+      <dep package="gtk+"/>
+      <dep package="gtkimageview"/>
+    </dependencies>
+  </autotools>
+
+</moduleset>
