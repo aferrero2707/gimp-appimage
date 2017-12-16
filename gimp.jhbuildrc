@@ -23,7 +23,7 @@ checkoutroot = os.environ['CHECKOUTROOT']
 buildroot = os.environ['BUILDROOT']
 
 # the prefix to configure/install modules to (must have write access)
-prefix = '/zzz'
+prefix = '/app'
 
 # custom CFLAGS / environment pieces for the build
 # os.environ['CFLAGS'] = '-Wall -g -O0'
@@ -34,6 +34,6 @@ autogenargs='--enable-introspection=no --disable-static --disable-gtk-doc'
 
 # A string listing additional arguments to be passed to make.
 # Set makeargs to 'V=1' for verbose build output.
-makeargs = '-j 1 V=1'
+makeargs = '-j 1'
 
 module_makeargs['gimp'] = 'CFLAGS="-std=gnu99"'
