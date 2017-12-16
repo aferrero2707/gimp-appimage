@@ -23,7 +23,7 @@ checkoutroot = os.environ['CHECKOUTROOT']
 buildroot = os.environ['BUILDROOT']
 
 # the prefix to configure/install modules to (must have write access)
-prefix = '/zzz'
+prefix = '/app'
 
 # custom CFLAGS / environment pieces for the build
 # os.environ['CFLAGS'] = '-Wall -g -O0'
