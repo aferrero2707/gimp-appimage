@@ -36,5 +36,5 @@ autogenargs='--enable-introspection=no --disable-static --disable-gtk-doc'
 # Set makeargs to 'V=1' for verbose build output.
 makeargs = '-j 1'
 
-module_makeargs['gegl'] = '-j 1 V="1"'
+module_makeargs['gegl'] = 'CFLAGS="-g -O2" -j 1 V="1"'
 module_makeargs['gimp'] = 'CFLAGS="-std=gnu99"'
