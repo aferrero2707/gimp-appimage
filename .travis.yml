@@ -18,7 +18,7 @@ matrix:
             - cd $TRAVIS_BUILD_DIR
             - ls -lh
             - bash mkappimage
-            - ls out/*
+            - ls out/* 
             - wget -c https://github.com/aferrero2707/uploadtool/raw/master/upload_rotate.sh
 branches:
   except:
