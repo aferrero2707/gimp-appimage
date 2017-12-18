@@ -271,10 +271,10 @@ get_desktopintegration $LOWERAPP
 #chmod a+x ./usr/bin/$LOWERAPP.wrapper
 #sed -i -e "s|Exec=$LOWERAPP|Exec=$LOWERAPP.wrapper|g" $LOWERAPP.desktop
 
+exit
+
 # Go out of AppImage
 cd ..
-
-#exit
 
 echo "Building AppImage..."
 pwd
