@@ -7,6 +7,9 @@ VER_SUFFIX=""
 
 PREFIX=app
 
+APP=gimp
+LOWERAPP=${APP,,} 
+
 # Move blacklisted files to a special folder
 move_blacklisted()
 {
@@ -22,8 +25,8 @@ fi
     FOUND=$(find . -type f -name "${FILE}" 2>/dev/null)
     if [ ! -z "$FOUND" ] ; then
       echo "Moving blacklisted ${FOUND}"
-      #rm -f "${FOUND}"
-      mv "${FOUND}" ./usr/lib-blacklisted
+      rm -f "${FOUND}"
+      #mv "${FOUND}" ./usr/lib-blacklisted
     fi
   done
 }
@@ -37,19 +40,16 @@ fix_pango()
 }
 
 
+cd /sources
+rm -rf out $APP
+WD=$(pwd)
+
 export APPIMAGEBASE=$(pwd)
 wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./functions.sh
 . ./functions.sh
 #. ./functions-local.sh
 
 #cat_file_from_url https://github.com/probonopd/AppImages/raw/master/excludelist | sed '/^\s*$/d' | sed '/^#.*$/d' > blacklisted
-
-APP=gimp
-LOWERAPP=${APP,,} 
-
-rm -rf out $APP
-
-WD=$(pwd)
 
 export PATH=/$PREFIX/bin:$PATH
 export LD_LIBRARY_PATH=/$PREFIX/lib:$LD_LIBRARY_PATH
@@ -105,6 +105,26 @@ export GIMP2_PLUGINDIR=$(readlink -f "$HERE/../lib/gimp/2.0")
 #export PYTHONHOME=
 echo "HERE: $HERE"
 echo "GIMP2_PLUGINDIR: $GIMP2_PLUGINDIR"
+
+if [ -e /etc/fonts/fonts.conf ]; then
+  export FONTCONFIG_PATH=/etc/fonts
+fi
+# libstdc++ version detection
+stdcxxlib=$(ldconfig -p | grep 'libstdc++.so.6 (libc6,x86-64)'| awk 'NR==1{print $NF}')
+echo "System stdc++ library: \"$stdcxxlib\""
+stdcxxver1=$(strings "$stdcxxlib" | grep '^GLIBCXX_[0-9].[0-9]*' | cut -d"_" -f 2 | sort -V | tail -n 1)
+echo "System stdc++ library version: \"$stdcxxver1\""
+stdcxxver2=$(strings "$HERE/../optional/libstdc++/libstdc++.so.6" | grep '^GLIBCXX_[0-9].[0-9]*' | cut -d"_" -f 2 | sort -V | tail -n 1)
+echo "Bundled stdc++ library version: \"$stdcxxver2\""
+stdcxxnewest=$(echo "$stdcxxver1 $stdcxxver2" | tr " " "\n" | sort -V | tail -n 1)
+echo "Newest stdc++ library version: \"$stdcxxnewest\""
+if [ x"$stdcxxnewest" = x"$stdcxxver1" ]; then
+   echo "Using system stdc++ library"
+else
+   echo "Using bundled stdc++ library"
+   export LD_LIBRARY_PATH=$HERE/../optional/libstdc++:$LD_LIBRARY_PATH
+fi
+
 echo "Input parameters: \"$@\""
 echo ""
 echo "Input File: $1"
@@ -127,7 +147,7 @@ mkdir -p usr/share
 cp -a /usr/share/mime usr/share
 
 #get_apprun
-cp -a ../../AppRun-gimp AppRun
+cp -a $WD/AppRun-gimp AppRun
 
 # The original desktop file is a bit strange, hence we provide our own
 cat > $LOWERAPP.desktop <<\EOF
@@ -169,19 +189,20 @@ move_blacklisted
 
 #cp -a ../../appimage-exec-wrapper/exec.so usr/lib
 
-if [ ! -e ../../work/sources/mypaint ]; then
-#rm -rf ../../work/sources/mypaint
-    git clone https://github.com/mypaint/mypaint.git ../../work/sources/mypaint
-else
-    (cd ../../work/sources/mypaint && git pull origin master)
-fi
-mkdir -p usr/share/mypaint/brushes
+#if [ ! -e ../../work/sources/mypaint ]; then
+#    git clone https://github.com/mypaint/mypaint.git ../../work/sources/mypaint
+#else
+#    (cd ../../work/sources/mypaint && git pull origin master)
+#fi
+#mkdir -p usr/share/mypaint/brushes
 #for brush in classic deevad experimental kaerhon_v1 ramon tanda; do
 #    cp -r ../../work/sources/mypaint/brushes/$brush usr/share/mypaint/brushes
 #done
 
+echo "Fixing pango modules cache"
 fix_pango
 
+echo "Patching absolute paths"
 # patch_usr
 # Patching only the executable files seems not to be enough for darktable
 find usr/ -type f -exec sed -i -e "s|/$PREFIX|././|g" {} \;

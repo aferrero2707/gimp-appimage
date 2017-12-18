@@ -17,9 +17,10 @@ matrix:
           after_success:
             - cd $TRAVIS_BUILD_DIR
             - ls -lh
-            - bash mkappimage
+            - bash package-appimage.sh
             - ls out/* 
             - wget -c https://github.com/aferrero2707/uploadtool/raw/master/upload_rotate.sh
+            - bash  ./upload_rotate.sh "continuous" out/*
 branches:
   except:
     - # Do not build tags that we create when we upload to GitHub Releases
