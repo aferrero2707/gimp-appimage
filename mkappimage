@@ -170,6 +170,12 @@ sed -i -e "s|LOWERAPP|$LOWERAPP|g" $LOWERAPP.desktop
 # Copy in the indirect dependencies
 copy_deps ; copy_deps ; copy_deps # Three runs to ensure we catch indirect ones
 
+cp -L ./lib/x86_64-linux-gnu/*.* ./usr/lib; rm -rf ./lib/x86_64-linux-gnu
+cp -L ./lib/*.* ./usr/lib; rm -rf ./lib;
+cp -L ./usr/lib/x86_64-linux-gnu/*.* ./usr/lib; rm -rf ./usr/lib/x86_64-linux-gnu;
+cp -L ./$PREFIX/lib/x86_64-linux-gnu/*.* ./usr/lib; rm -rf ./$PREFIX/lib/x86_64-linux-gnu;
+cp -L ./$PREFIX/lib/*.* ./usr/lib; rm -rf ./$PREFIX/lib;
+
 #exit
 
 cp -a $PREFIX/lib/* usr/lib
