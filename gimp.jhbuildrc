@@ -38,3 +38,4 @@ makeargs = '-j 1'
 
 module_makeargs['gegl'] = 'CFLAGS="-g -O2" -j 1'
 module_makeargs['gimp'] = 'CFLAGS="-std=gnu99 -Wno-deprecated-declarations"'
+module_makeargs['gtkimageview'] = 'CFLAGS="-Wno-error=misleading-indentation"'

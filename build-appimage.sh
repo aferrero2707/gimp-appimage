@@ -12,15 +12,15 @@ jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules"
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone libmypaint && \
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone gimp && \
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone phfgimp && \
-jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone resynthesizer && \
+#jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone resynthesizer && \
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone gimp-lqr-plugin && \
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --exit-on-error buildone gtkimageview) || exit 1
 
-cd /work && wget https://sourceforge.net/projects/nufraw/files/nufraw-0.40.tar.gz && rm -rf nufraw-* && tar xzvf nufraw-0.40.tar.gz
+cd /work && rm -rf nufraw-* && wget https://sourceforge.net/projects/nufraw/files/nufraw-0.40.tar.gz && tar xzvf nufraw-0.40.tar.gz
 cd nufraw-0.40
 patch -p1 < /work/conf/modulesets/nufraw-autogen-run-configure.patch
 patch -p1 < /work/conf/modulesets/nufraw-register_file_handler_raw.patch
 patch -p1 < /work/conf/modulesets/nufraw-fpermissive-flag.patch
-(./configure --prefix=/app && make install) || exit 1
+(./autogen.sh --prefix=/app && make install) || exit 1
 
 bash /sources/mkappimage
