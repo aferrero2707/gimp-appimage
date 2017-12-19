@@ -16,4 +16,11 @@ jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules"
 jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone gimp-lqr-plugin
 #jhbuild -f "/sources/gimp.jhbuildrc" -m "/work/conf/modulesets/gimp.modules" --exit-on-error buildone nufraw && \
 
+cd /work && wget https://sourceforge.net/projects/nufraw/files/nufraw-0.40.tar.gz && rm -rf nufraw-* && tar xzvf nufraw-0.40.tar.gz
+cd nufraw-0.40
+patch -p1 < /work/conf/modulesets/nufraw-autogen-run-configure.patch
+patch -p1 < /work/conf/modulesets/nufraw-register_file_handler_raw.patch
+patch -p1 < /work/conf/modulesets/nufraw-fpermissive-flag.patch
+(./configure --prefix=/app && make install) || exit 1
+
 bash /sources/mkappimage
