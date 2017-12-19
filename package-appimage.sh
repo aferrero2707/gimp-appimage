@@ -31,7 +31,7 @@ pwd
 
 #VER1=$(pkg-config --modversion gimp-2.0)-test
 #VER1=$(pkg-config --modversion gimp-2.0)-$(date +%Y%m%d)
-VER1=$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}-$(date +%Y%m%d)
+VER1=$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}-$(date +%Y%m%d)_$(date +%H%M)
 if [ x"$FULL_BUNDLING" = "x1" ]; then
     VER1="${VER1}-full"
 fi
