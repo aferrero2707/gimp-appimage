@@ -208,6 +208,10 @@ move_blacklisted
 echo "Fixing pango modules cache"
 fix_pango
 
+gtk_binary_version=$(pkg-config --variable=gtk_binary_version gtk+-2.0)
+#gtk-query-immodules-2.0 > /$PREFIX/lib/gtk-2.0/${gtk_binary_version}/immodules.cache
+gtk-query-immodules-2.0 > /$PREFIX/lib/gtk-2.0/immodules.cache
+
 echo "Patching absolute paths"
 # patch_usr
 # Patching only the executable files seems not to be enough for darktable
