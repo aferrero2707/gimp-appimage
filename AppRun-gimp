@@ -20,7 +20,7 @@ export QT_PLUGIN_PATH=$DIR/usr/lib/qt5/plugins/
 export APPIMAGE_STARTUP_QT_PLUGIN_PATH=$QT_PLUGIN_PATH
 
 export APPIMAGE_ORIGINAL_GTK_PATH=$GTK_PATH
-export GTK_PATH=$DIR/usr/lib/gtk-2.0:$GTK_PATH
+export GTK_PATH=$DIR/usr/lib/gtk-2.0 #:$GTK_PATH
 echo "GTK_PATH=${GTK_PATH}"
 export APPIMAGE_STARTUP_GTK_PATH=$GTK_PATH
 
@@ -43,7 +43,23 @@ export PATH=$DIR/usr/bin:$DIR/usr/sbin/:$DIR/usr/games/:$DIR/bin/:$DIR/sbin/:$PA
 export APPIMAGE_STARTUP_PATH=$PATH
 
 export APPIMAGE_ORIGINAL_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=$DIR/usr/lib/:$DIR/usr/lib/i386-linux-gnu/:$DIR/usr/lib/x86_64-linux-gnu/:$DIR/usr/lib32/:$DIR/usr/lib64/:$DIR/lib/:$DIR/lib/i386-linux-gnu/:$DIR/lib/x86_64-linux-gnu/:$DIR/lib32/:$DIR/lib64/:$LD_LIBRARY_PATH
+#export LD_LIBRARY_PATH=$DIR/usr/lib/:$DIR/usr/lib/i386-linux-gnu/:$DIR/usr/lib/x86_64-linux-gnu/:$DIR/usr/lib32/:$DIR/usr/lib64/:$DIR/lib/:$DIR/lib/i386-linux-gnu/:$DIR/lib/x86_64-linux-gnu/:$DIR/lib32/:$DIR/lib64/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$DIR/usr/lib/:$LD_LIBRARY_PATH
+# libstdc++ version detection
+stdcxxlib=$(ldconfig -p | grep 'libstdc++.so.6 (libc6,x86-64)'| awk 'NR==1{print $NF}')
+echo "System stdc++ library: \"$stdcxxlib\""
+stdcxxver1=$(strings "$stdcxxlib" | grep '^GLIBCXX_[0-9].[0-9]*' | cut -d"_" -f 2 | sort -V | tail -n 1)
+echo "System stdc++ library version: \"$stdcxxver1\""
+stdcxxver2=$(strings "$DIR/../optional/libstdc++/libstdc++.so.6" | grep '^GLIBCXX_[0-9].[0-9]*' | cut -d"_" -f 2 | sort -V | tail -n 1)
+echo "Bundled stdc++ library version: \"$stdcxxver2\""
+stdcxxnewest=$(echo "$stdcxxver1 $stdcxxver2" | tr " " "\n" | sort -V | tail -n 1)
+echo "Newest stdc++ library version: \"$stdcxxnewest\""
+if [ x"$stdcxxnewest" = x"$stdcxxver1" ]; then
+   echo "Using system stdc++ library"
+else
+   echo "Using bundled stdc++ library"
+   export LD_LIBRARY_PATH=$DIR/../optional/libstdc++:$LD_LIBRARY_PATH
+fi
 export APPIMAGE_STARTUP_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 
 export APPIMAGE_ORIGINAL_PYTHONPATH=$PYTHONPATH
@@ -80,6 +96,10 @@ export APPIMAGE_ORIGINAL_GIMP2_PLUGINDIR=$GIMP2_PLUGINDIR
 export GIMP2_PLUGINDIR=$(readlink -f "$DIR/usr/lib/gimp/2.0")
 export APPIMAGE_STARTUP_GIMP2_PLUGINDIR=$GIMP2_PLUGINDIR
 echo "GIMP2_PLUGINDIR: $GIMP2_PLUGINDIR"
+
+if [ -e /etc/fonts/fonts.conf ]; then
+  export FONTCONFIG_PATH=/etc/fonts
+fi
 
 export KDE_FORK_SLAVES=1
 
