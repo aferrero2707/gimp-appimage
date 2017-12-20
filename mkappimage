@@ -205,6 +205,31 @@ move_blacklisted
 #    cp -r ../../work/sources/mypaint/brushes/$brush usr/share/mypaint/brushes
 #done
 
+
+
+
+########################################################################
+# Copy libstdc++.so.6 and libgomp.so.1 into the AppImage
+# They will be used if they are newer than those of the host
+# system in which the AppImage will be executed
+########################################################################
+
+stdcxxlib=$(ldconfig -p | grep 'libstdc++.so.6 (libc6,x86-64)'| awk 'NR==1{print $NF}')
+echo "stdcxxlib: $stdcxxlib"
+if [ x"$stdcxxlib" != "x" ]; then
+    mkdir -p usr/optional/libstdc++
+	cp -L "$stdcxxlib" usr/optional/libstdc++
+fi
+
+gomplib=$(ldconfig -p | grep 'libgomp.so.1 (libc6,x86-64)'| awk 'NR==1{print $NF}')
+echo "gomplib: $gomplib"
+if [ x"$gomplib" != "x" ]; then
+    mkdir -p usr/optional/libstdc++
+	cp -L "$gomplib" usr/optional/libstdc++
+fi
+
+
+
 echo "Fixing pango modules cache"
 fix_pango
 
