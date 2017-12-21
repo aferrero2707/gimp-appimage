@@ -201,6 +201,8 @@ char** adjusted_environment(const char* filename, char* const envp[]) {
     /* printf("appdir=\"%s\",  filename=\"%s\"\n",appdir,filename); */
     environment new_env = environment_alloc(envc);
     char* appdir2 = "/tmp/.gimp-appimage";
+    printf("adjusted_environment():\n  filename=\"%s\"\n  appdir=\"%s\"\n  appdir2=\"%s\"\n",
+      filename, appdir, appdir2);
     if ( appdir && strncmp(filename, appdir, strlen(appdir))  && strncmp(filename, appdir2, strlen(appdir2)) ) {
         // we have a value for $APPDIR and are leaving it -- perform replacement
         for ( int i = 0; i < envc; i++ ) {
