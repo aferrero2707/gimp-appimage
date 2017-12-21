@@ -50,7 +50,7 @@ stdcxxlib=$(ldconfig -p | grep 'libstdc++.so.6 (libc6,x86-64)'| awk 'NR==1{print
 echo "System stdc++ library: \"$stdcxxlib\""
 stdcxxver1=$(strings "$stdcxxlib" | grep '^GLIBCXX_[0-9].[0-9]*' | cut -d"_" -f 2 | sort -V | tail -n 1)
 echo "System stdc++ library version: \"$stdcxxver1\""
-stdcxxver2=$(strings "$DIR/../optional/libstdc++/libstdc++.so.6" | grep '^GLIBCXX_[0-9].[0-9]*' | cut -d"_" -f 2 | sort -V | tail -n 1)
+stdcxxver2=$(strings "$DIR/usr/optional/libstdc++/libstdc++.so.6" | grep '^GLIBCXX_[0-9].[0-9]*' | cut -d"_" -f 2 | sort -V | tail -n 1)
 echo "Bundled stdc++ library version: \"$stdcxxver2\""
 stdcxxnewest=$(echo "$stdcxxver1 $stdcxxver2" | tr " " "\n" | sort -V | tail -n 1)
 echo "Newest stdc++ library version: \"$stdcxxnewest\""
@@ -58,7 +58,7 @@ if [ x"$stdcxxnewest" = x"$stdcxxver1" ]; then
    echo "Using system stdc++ library"
 else
    echo "Using bundled stdc++ library"
-   export LD_LIBRARY_PATH=$DIR/../optional/libstdc++:$LD_LIBRARY_PATH
+   export LD_LIBRARY_PATH=$DIR/usr/optional/libstdc++:$LD_LIBRARY_PATH
 fi
 export APPIMAGE_STARTUP_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 
