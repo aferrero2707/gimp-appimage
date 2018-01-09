@@ -28,4 +28,4 @@ patch -p1 < /work/conf/modulesets/nufraw-register_file_handler_raw.patch
 patch -p1 < /work/conf/modulesets/nufraw-fpermissive-flag.patch
 (./autogen.sh --prefix=/zyx && make install) || exit 1
 
-#bash /sources/mkappimage
+bash /sources/mkappimage
