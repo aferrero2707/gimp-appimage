@@ -5,7 +5,7 @@ FULL_BUNDLING=0
 VER_SUFFIX=""
 #VER_SUFFIX="-cce"
 
-PREFIX=app
+PREFIX=zyx
 
 APP=gimp
 LOWERAPP=${APP,,} 
@@ -54,7 +54,7 @@ wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./func
 export PATH=/$PREFIX/bin:$PATH
 export LD_LIBRARY_PATH=/$PREFIX/lib:$LD_LIBRARY_PATH
 export XDG_DATA_DIRS=/$PREFIX/share:$XDG_DATA_DIRS
-export PKG_CONFIG_PATH=/$PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
+export PKG_CONFIG_PATH=/$PREFIX/lib/pkgconfig:/$PREFIX/share/pkgconfig:$PKG_CONFIG_PATH
 
 
 pwd
@@ -251,6 +251,9 @@ sed -i -e "s|/usr|/tmp/.gimp-appimage|g" usr/lib/gimp/2.0/interpreters/pygimp.in
 
 # The fonts configuration should not be patched, copy back original one
 cp /$PREFIX/etc/fonts/fonts.conf usr/etc/fonts/fonts.conf
+
+# The gimp icons should not be patched, copy back original one
+cp -a /$PREFIX/share/gimp/2.0/icons usr/share/gimp/2.0
 
 find ./usr/share/icons -path *256* -name gimp.png -exec cp {} $LOWERAPP.png  \; || true
 find ./usr/share/icons -path *512* -name gimp.png -exec cp {} $LOWERAPP.png  \; || true
