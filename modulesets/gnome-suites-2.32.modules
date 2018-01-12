@@ -86,9 +86,10 @@
     </dependencies>
   </autotools>
 
-  <autotools id="glib" supports-non-srcdir-builds="no">
-    <branch revision="glib-2-48"/>
-    <!-- <branch repo="gnome.org" module="glib/2.44/glib-2.44.0.tar.xz" version="2.44.0"/> -->
+  <autotools id="glib" 
+             autogenargs="--enable-libmount=no --disable-libmount"
+             supports-non-srcdir-builds="no">
+    <branch revision="glib-2-54"/>
     <dependencies>
       <dep package="gtk-doc"/>
     </dependencies>
@@ -107,7 +108,7 @@
   </autotools>
 
  <autotools id="glib-networking" supports-non-srcdir-builds="no">
-    <branch revision="glib-2-48"/>
+    <branch revision="glib-2-54"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="gnutls"/>
