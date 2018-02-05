@@ -288,7 +288,8 @@ strip_binaries()
     find "$appdir" -type f -regex '.*\.so\(\.[0-9.]+\)?$' -print0
   } | xargs -0 --no-run-if-empty --verbose -n1 strip
 }
-#strip_binaries
+
+strip_binaries
 
 
 
