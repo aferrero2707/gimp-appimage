@@ -5,6 +5,7 @@ export ACLOCAL_PATH=/zyx/share/aclocal:$ACLOCAL_PATH
 
 #cp /sources/modulesets/gnome-external-deps-2.32.modules /work/conf/modulesets
 cp /sources/modulesets/gimp.modules /work/conf/modulesets
+#cp /sources/modulesets/appimage.modules /work/conf/modulesets
 
 (cd /work && rm -rf libcanberra* && wget http://0pointer.de/lennart/projects/libcanberra/libcanberra-0.30.tar.xz && tar xJvf libcanberra-0.30.tar.xz && cd libcanberra-0.30 && ./configure --prefix=/zyx --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no && make -j 2 && make install && rm -rf libcanberra-0.30) || exit 1
 
@@ -27,5 +28,17 @@ patch -p1 < /work/conf/modulesets/nufraw-autogen-run-configure.patch
 patch -p1 < /work/conf/modulesets/nufraw-register_file_handler_raw.patch
 patch -p1 < /work/conf/modulesets/nufraw-fpermissive-flag.patch
 (./autogen.sh --prefix=/zyx && make install) || exit 1
+
+apt-get install -y qtbase5-dev qttools5-dev wget
+(cd /work && rm -rf gmic gmic-qt && \
+git clone https://github.com/dtschump/gmic.git && git clone https://github.com/c-koi/gmic-qt.git && \
+make -C gmic/src CImg.h gmic_stdlib.h && cd gmic-qt && mkdir -p build && cd build && \
+cmake .. -DGMIC_QT_HOST=gimp -DCMAKE_BUILD_TYPE=Release && make) || exit 1
+
+gimplibdir=$(pkg-config --variable=gimplibdir gimp-2.0)
+echo "gimplibdir: $gimplibdir"
+if [ -z "$gimplibdir" ]; then exit 1; fi
+
+cp -a /work/gmic-qt/build/gmic_gimp_qt "$gimplibdir/plug-ins"
 
 bash /sources/mkappimage

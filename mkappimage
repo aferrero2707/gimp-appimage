@@ -59,6 +59,7 @@ export PKG_CONFIG_PATH=/$PREFIX/lib/pkgconfig:/$PREFIX/share/pkgconfig:$PKG_CONF
 
 pwd
 
+echo "Start copying prefix..."
 mkdir -p $APP/$APP.AppDir
 cd $APP/$APP.AppDir
 mkdir -p usr/bin
@@ -70,6 +71,7 @@ cp -a /$PREFIX/bin/python* usr/bin
 cp -a /$PREFIX/lib usr
 cp -a /$PREFIX/etc usr
 cp -a /$PREFIX/share usr
+echo "... prefix copy completed"
 
 
 #cp -a ../../$LOWERAPP.launcher usr/bin/$LOWERAPP
