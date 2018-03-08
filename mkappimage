@@ -34,7 +34,6 @@ fi
 
 fix_pango()
 {
-    
     version=$(pango-querymodules --version | tail -n 1 | tr -d " " | cut -d':' -f 2)
     cat /$PREFIX/lib/pango/$version/modules.cache | sed "s|/$PREFIX/lib/pango/$version/modules/||g" > usr/lib/pango/$version/modules.cache
 }
