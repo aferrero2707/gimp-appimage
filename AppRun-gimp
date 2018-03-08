@@ -78,7 +78,8 @@ export APPIMAGE_ORIGINAL_GSETTINGS_SCHEMA_DIR=$GSETTINGS_SCHEMA_DIR
 export GSETTINGS_SCHEMA_DIR=$DIR/usr/share/glib-2.0/schemas/:$GSETTINGS_SCHEMA_DIR
 export APPIMAGE_STARTUP_GSETTINGS_SCHEMA_DIR=$GSETTINGS_SCHEMA_DIR
 
-export QT_PLUGIN_PATH=$DIR/usr/lib/qt4/plugins/:$DIR/usr/lib/i386-linux-gnu/qt4/plugins/:$DIR/usr/lib/x86_64-linux-gnu/qt4/plugins/:$DIR/usr/lib32/qt4/plugins/:$DIR/usr/lib64/qt4/plugins/:$DIR/usr/lib/qt5/plugins/:$DIR/usr/lib/i386-linux-gnu/qt5/plugins/:$DIR/usr/lib/x86_64-linux-gnu/qt5/plugins/:$DIR/usr/lib32/qt5/plugins/:$DIR/usr/lib64/qt5/plugins/:$QT_PLUGIN_PATH
+#export QT_PLUGIN_PATH=$DIR/usr/lib/qt4/plugins/:$DIR/usr/lib/i386-linux-gnu/qt4/plugins/:$DIR/usr/lib/x86_64-linux-gnu/qt4/plugins/:$DIR/usr/lib32/qt4/plugins/:$DIR/usr/lib64/qt4/plugins/:$DIR/usr/lib/qt5/plugins/:$DIR/usr/lib/i386-linux-gnu/qt5/plugins/:$DIR/usr/lib/x86_64-linux-gnu/qt5/plugins/:$DIR/usr/lib32/qt5/plugins/:$DIR/usr/lib64/qt5/plugins/:$QT_PLUGIN_PATH
+export QT_PLUGIN_PATH=$DIR/usr/lib/qt5/plugins:$QT_PLUGIN_PATH
 export APPIMAGE_STARTUP_QT_PLUGIN_PATH=$QT_PLUGIN_PATH
 
 export APPIMAGE_ORIGINAL_GDK_PIXBUF_MODULEDIR=$GDK_PIXBUF_MODULEDIR

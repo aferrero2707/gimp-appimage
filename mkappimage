@@ -168,6 +168,9 @@ MimeType=image/bmp;image/g3fax;image/gif;image/x-fits;image/x-pcx;image/x-portab
 EOF
 sed -i -e "s|LOWERAPP|$LOWERAPP|g" $LOWERAPP.desktop
 
+mkdir -p ./usr/lib/qt5/plugins
+cp -a /usr/lib/x86_64-linux-gnu/qt5/plugins/* ./usr/lib/qt5/plugins
+
 # Copy in the indirect dependencies
 copy_deps ; copy_deps ; copy_deps # Three runs to ensure we catch indirect ones
 
