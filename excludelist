@@ -60,6 +60,17 @@ libX11.so.6
 # symbol lookup error: ./lib/libX11.so.6: undefined symbol: xcb_wait_for_reply64
 # Uncertain if this is required to be bundled for some distributions - if so we need to write a version check script and use LD_PRELOAD to load the system version if it is newer
 
+libxkbcommon.so.0
+libxkbcommon-x11.so.0
+# Workaround for:
+# xkbcommon: ERROR: failed to add default include path ././/share/X11/xkb
+
+libdbus-1.so.3.6.0
+libdbus-1.so.3
+libdbus-1.so
+# Workaround for:
+# D-Bus library appears to be incorrectly set up; failed to read machine uuid: Failed to open "././/var/lib/dbus/machine-id": No such file or directory
+
 #libgio-2.0.so.0
 # Workaround for:
 # On Ubuntu, "symbol lookup error: /usr/lib/x86_64-linux-gnu/gtk-2.0/modules/liboverlay-scrollbar.so: undefined symbol: g_settings_new"
@@ -93,6 +104,7 @@ libexpat.so.1
 libgcc_s.so.1
 #libglib-2.0.so.0
 libgpg-error.so.0
+libgpg-error.so.0.6.0
 libgssapi_krb5.so.2 # Disputed, seemingly needed by Arch Linux since Kerberos is named differently there
 # libgssapi.so.3 # Seemingly needed when running Ubuntu 14.04 binaries on Fedora 23
 libhcrypto.so.4
