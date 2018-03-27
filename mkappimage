@@ -63,7 +63,10 @@ mkdir -p $APP/$APP.AppDir
 cd $APP/$APP.AppDir
 mkdir -p usr/bin
 cp -a /$PREFIX/bin/gimp* usr/bin
-mv usr/bin/gimp-2.9 usr/bin/$LOWERAPP.bin
+gimp_exe_name=$(cat /$PREFIX/share/applications/gimp.desktop | grep "^Exec=" | cut -d"=" -f 2 | cut -d" " -f 1)
+rm -f usr/bin/$LOWERAPP.bin
+echo "mv usr/bin/${gimp_exe_name} usr/bin/$LOWERAPP.bin"
+mv usr/bin/${gimp_exe_name} usr/bin/$LOWERAPP.bin
 cp -a /$PREFIX/bin/python* usr/bin
 
 #mkdir -p usr/lib
