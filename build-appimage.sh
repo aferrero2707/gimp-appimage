@@ -11,6 +11,8 @@ cp /sources/modulesets/gimp.modules /work/conf/modulesets
 
 (cd /work && rm -rf mypaint-brushes && git clone -b v1.3.x https://github.com/Jehan/mypaint-brushes && cd mypaint-brushes && ./autogen.sh && ./configure --prefix=/zyx && make && make install && rm -rf mypaint-brushes) || exit 1
 
+apt-get install -y libsuitesparse-dev || exit 1
+
 #jhbuild -f "/work/conf/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone json-glib && \
 #jhbuild -f "/work/conf/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone poppler-data && \
 (jhbuild -f "/work/conf/gimp.jhbuildrc" -m "/work/conf/modulesets/appimage.modules" --exit-on-error buildone babl && \
