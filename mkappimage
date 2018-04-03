@@ -171,6 +171,9 @@ sed -i -e "s|LOWERAPP|$LOWERAPP|g" $LOWERAPP.desktop
 mkdir -p ./usr/lib/qt5/plugins
 cp -a /usr/lib/x86_64-linux-gnu/qt5/plugins/* ./usr/lib/qt5/plugins
 
+# manually copy libssl, as it seems not to be picked by the copy_deps function
+cp -L /lib/x86_64-linux-gnu/libssl.so.1.0.0 ./usr/lib
+
 # Copy in the indirect dependencies
 copy_deps ; copy_deps ; copy_deps # Three runs to ensure we catch indirect ones
 
