@@ -121,7 +121,7 @@
       href="http://download.gnome.org/sources/"/>
 
   <autotools id="babl">
-    <branch module="babl.git" checkoutdir="babl-std"/>
+    <branch module="babl.git" checkoutdir="babl-std" revision="BABL_0_1_46"/>
   </autotools>
 
   <!-- Other useful deps that you can install are:  -->
@@ -133,7 +133,7 @@
   <!--   libavcodec                                 -->
   <!-- Those are not managed by jhbuild             -->
   <autotools id="gegl" autogenargs="--without-libavformat --enable-docs=no --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no">
-    <branch module="gegl.git" checkoutdir="gegl-std"/>
+    <branch module="gegl.git" checkoutdir="gegl-std" revision="GEGL_0_3_34"/>
     <dependencies>
       <dep package="babl"/>
       <dep package="glib"/>
@@ -150,7 +150,7 @@
 
   <autotools id="gimp" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage" 
              supports-non-srcdir-builds="no">
-    <branch module="gimp.git" checkoutdir="gimp-std"/>
+    <branch module="gimp.git" checkoutdir="gimp-std" revision="GIMP_2_10_0"/>
     <dependencies>
       <dep package="bzip2_"/>
       <dep package="liblzma"/>
