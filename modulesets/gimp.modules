@@ -133,7 +133,7 @@
   <!--   libavcodec                                 -->
   <!-- Those are not managed by jhbuild             -->
   <autotools id="gegl" autogenargs="--without-libavformat --enable-docs=no --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no">
-    <branch module="gegl.git" checkoutdir="gegl-std" revision="GEGL_0_4_0"/>
+    <branch module="gegl.git" checkoutdir="gegl-std" revision="GEGL_0_3_34"/>
     <dependencies>
       <dep package="babl"/>
       <dep package="glib"/>
