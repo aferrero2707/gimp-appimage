@@ -3,7 +3,7 @@
 export PKG_CONFIG_PATH=/zyx/lib/pkgconfig:/zyx/share/pkgconfig:$PKG_CONFIG_PATH
 export ACLOCAL_PATH=/zyx/share/aclocal:$ACLOCAL_PATH
 
-#cp /sources/modulesets/gnome-external-deps-2.32.modules /work/conf/modulesets
+cp /sources/modulesets/gnome-external-deps-2.32.modules /work/conf/modulesets
 cp /sources/modulesets/gimp.modules /work/conf/modulesets
 #cp /sources/modulesets/appimage.modules /work/conf/modulesets
 
