@@ -30,7 +30,16 @@ export PKG_CONFIG_PATH=$APPDIR/usr/lib/pkgconfig:$PKG_CONFIG_PATH
 pwd
 
 #VER1=$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}-$(date +%Y%m%d)_$(date +%H%M)
-VER1=$(pkg-config --modversion gimp-2.0)
+#VER1=$(pkg-config --modversion gimp-2.0)
+echo "GIMP_GIT_TAG = \"$GIMP_GIT_TAG\""
+if [ x"$GIMP_GIT_TAG" = "x" ]; then
+	VER1=git-$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}-$(date +%Y%m%d)
+else
+	VER1=release-$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}
+fi
+if [ x"$FULL_BUNDLING" = "x1" ]; then
+    VER1="${VER1}-full"
+fi
 if [ x"$FULL_BUNDLING" = "x1" ]; then
     VER1="${VER1}-full"
 fi
