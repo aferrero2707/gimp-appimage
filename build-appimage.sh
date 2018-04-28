@@ -7,6 +7,24 @@ cp /sources/modulesets/gnome-external-deps-2.32.modules /work/conf/modulesets
 cp /sources/modulesets/gimp.modules /work/conf/modulesets
 #cp /sources/modulesets/appimage.modules /work/conf/modulesets
 
+if [ x"$BABL_GIT_TAG" = "x" ]; then
+	sed -i -e "s/BABL_GIT_TAG/master/g" /work/conf/modulesets/gimp.modules
+else
+	sed -i -e "s/BABL_GIT_TAG/$BABL_GIT_TAG/g" /work/conf/modulesets/gimp.modules
+fi
+
+if [ x"$GEGL_GIT_TAG" = "x" ]; then
+	sed -i -e "s/GEGL_GIT_TAG/master/g" /work/conf/modulesets/gimp.modules
+else
+	sed -i -e "s/GEGL_GIT_TAG/$GEGL_GIT_TAG/g" /work/conf/modulesets/gimp.modules
+fi
+
+if [ x"$GIMP_GIT_TAG" = "x" ]; then
+	sed -i -e "s/GIMP_GIT_TAG/master/g" /work/conf/modulesets/gimp.modules
+else
+	sed -i -e "s/GIMP_GIT_TAG/$GIMP_GIT_TAG/g" /work/conf/modulesets/gimp.modules
+fi
+
 (cd /work && rm -rf libcanberra* && wget http://0pointer.de/lennart/projects/libcanberra/libcanberra-0.30.tar.xz && tar xJvf libcanberra-0.30.tar.xz && cd libcanberra-0.30 && ./configure --prefix=/zyx --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no && make -j 2 && make install && rm -rf libcanberra-0.30) || exit 1
 
 (cd /work && rm -rf mypaint-brushes && git clone -b v1.3.x https://github.com/Jehan/mypaint-brushes && cd mypaint-brushes && ./autogen.sh && ./configure --prefix=/zyx && make && make install && rm -rf mypaint-brushes) || exit 1

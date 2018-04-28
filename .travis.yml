@@ -10,10 +10,14 @@ matrix:
           compiler: g++
           sudo: required
           services: docker
-          env: TARGET_SYSTEM=Linux
+          env:
+            - TARGET_SYSTEM=Linux
+            #- BABL_GIT_TAG=BABL_0_1_46
+            #- GEGL_GIT_TAG=GEGL_0_4_0
+            #- GIMP_GIT_TAG=GIMP_2_10_0
           before_script:
             - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-trusty-gimp
-            - sudo docker run -it -v $(pwd):/sources photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
+            - sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
           after_success:
             - cd $TRAVIS_BUILD_DIR
             - ls -lh

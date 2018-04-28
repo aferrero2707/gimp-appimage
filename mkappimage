@@ -305,7 +305,11 @@ strip_binaries
 
 #VER1=$(pkg-config --modversion gimp-2.0)-test
 #VER1=$(pkg-config --modversion gimp-2.0)-$(date +%Y%m%d)
-VER1=$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}-$(date +%Y%m%d)
+if [ x"$GIMP_GIT_TAG" = "x" ]; then
+	VER1=git-$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}-$(date +%Y%m%d)
+else
+	VER1=release-$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}
+fi
 if [ x"$FULL_BUNDLING" = "x1" ]; then
     VER1="${VER1}-full"
 fi
