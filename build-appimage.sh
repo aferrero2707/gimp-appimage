@@ -8,7 +8,7 @@ cp /sources/modulesets/gimp.modules /work/conf/modulesets
 #cp /sources/modulesets/appimage.modules /work/conf/modulesets
 
 cat /sources/mkappimage
-exit 0
+#exit 0
 
 if [ x"$BABL_GIT_TAG" = "x" ]; then
 	sed -i -e "s/BABL_GIT_TAG/master/g" /work/conf/modulesets/gimp.modules
