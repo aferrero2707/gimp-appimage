@@ -587,7 +587,7 @@
     </after>
   </tarball>
 
-  <autotools id="libmypaint" autogenargs="--enable-gegl">
+  <autotools id="libmypaint" autogenargs="--disable-gegl">
     <branch repo="releases.github.com" module="mypaint/libmypaint/releases/download/v1.3.0/libmypaint-1.3.0.tar.xz" version="1.3.0" />
     <dependencies>
       <dep package="glib"/>
