@@ -302,6 +302,13 @@ strip_binaries()
 strip_binaries
 
 
+echo "Installing the GIMP scripts"
+(cd /work && rm -rf gimp-scripts && mkdir -p gimp-scripts && cd gimp-scripts && \
+wget https://github.com/pixlsus/GIMP-Scripts/archive/master.zip && \
+unzip master.zip && mkdir -p $appdir/usr/share/gimp/2.0/scripts && \
+cp *.scm $appdir/usr/share/gimp/2.0/scripts) || true
+
+
 
 #VER1=$(pkg-config --modversion gimp-2.0)-test
 #VER1=$(pkg-config --modversion gimp-2.0)-$(date +%Y%m%d)
