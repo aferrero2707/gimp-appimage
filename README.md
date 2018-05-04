@@ -1,45 +1,10 @@
-# How to build
+# Introduction
 
-The build environment for the GIMP AppImage is based on [jhbuild](https://github.com/GNOME/jhbuild).
+The GIMP AppImage is built on Ubuntu 14.04, using a custom [Docker container](https://github.com/aferrero2707/docker-trusty-gimp) that provides all the required up-to-date dependencies. The build environment in the Docker container is based on [jhbuild](https://github.com/GNOME/jhbuild).
 
-However, there is no need to manually install jhbuild, as the build scripts will take care of that automatically.
+The compilation of the BABL/GEGL/GIMP code under Docker is performed by the [build-appimage.sh](https://github.com/aferrero2707/gimp-appimage/blob/master/build-appimage.sh), which takes care of compiling the programs and then invokes the [mkappimage](https://github.com/aferrero2707/gimp-appimage/blob/master/mkappimage) script for creatig the AppImage bundle.
 
-The creation of the AppImage proceeds in three steps:
-
-1. installation of Python 2.7 and jhbuild:
-
-    ./bootstrap.sh
-    
-The bootstrap.sh command will ask for the root password in order to create the special /zzz folder under which all software will be installed
-
-2. compilation of GIMP, all its dependencies and all plug-ins with jhbuild:
-
-    ./build.sh gimp-appimage
-
-3. creation of the AppImage itself:
-
-    ./mkappimage
-    
-The last two steps will download the source code on work/sources, install them under /zzz, and save the AppImage package in out/
-
-# Dependencies
-
-zlib (zlib1g-dev in Ubuntu),
-python (libpython-all-dev in Ubuntu),
-python-dev (for python-config)
-libffi (libffi-dev in Ubuntu),
-nasm,
-libpcre3-dev,
-lzma-dev,
-libjbig-dev,
-libicu-dev,
-flex,
-bison + libbison-dev,
-libgmp-dev,
-libbzip2-dev
-libxkbcommon-dev
-libxkbcommon-x11-dev
-libxcb-xkb-dev
+The final packaging of the AppImage is performed by [package-appimage.sh](https://github.com/aferrero2707/gimp-appimage/blob/master/package-appimage.sh), which gets executed outside of the Docker container.
 
 # Credits
 
