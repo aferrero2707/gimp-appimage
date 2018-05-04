@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/aferrero2707/gimp-appimage.svg?branch=master)](https://travis-ci.org/aferrero2707/gimp-appimage)
+
 # Introduction
 
 The GIMP AppImage is built on Ubuntu 14.04, using a custom [Docker container](https://github.com/aferrero2707/docker-trusty-gimp) that provides all the required up-to-date dependencies. The build environment in the Docker container is based on [jhbuild](https://github.com/GNOME/jhbuild).
