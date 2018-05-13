@@ -206,6 +206,7 @@ char** adjusted_environment(const char* filename, char* const envp[]) {
       filename, appdir, appdir2);
     if ( appdir && strncmp(filename, appdir, strlen(appdir))  && strncmp(filename, appdir2, strlen(appdir2)) && strstr(filename,appdir3)==NULL ) {
         // we have a value for $APPDIR and are leaving it -- perform replacement
+        printf("  restoring original environment\n");
         for ( int i = 0; i < envc; i++ ) {
             char* line = envp[i];
             if ( !strncmp(line, APPIMAGE_ORIG_PREFIX, strlen(APPIMAGE_ORIG_PREFIX)) ||
