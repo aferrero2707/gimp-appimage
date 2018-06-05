@@ -12,9 +12,9 @@ matrix:
           services: docker
           env:
             - TARGET_SYSTEM=Linux
-            - BABL_GIT_TAG=BABL_0_1_50
-            - GEGL_GIT_TAG=GEGL_0_4_2
-            - GIMP_GIT_TAG=GIMP_2_10_2
+            #- BABL_GIT_TAG=BABL_0_1_50
+            #- GEGL_GIT_TAG=GEGL_0_4_2
+            #- GIMP_GIT_TAG=GIMP_2_10_2
           before_script:
             - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-trusty-gimp
             - sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
