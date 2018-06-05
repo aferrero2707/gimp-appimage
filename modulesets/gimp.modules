@@ -148,7 +148,7 @@
   </autotools>
 
 
-  <autotools id="gimp" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage" 
+  <autotools id="gimp" autogenargs="--without-gnomevfs --with-gimpdir=GIMP-AppImage --enable-binreloc" 
              supports-non-srcdir-builds="no">
     <branch module="gimp.git" checkoutdir="gimp-std" revision="GIMP_GIT_TAG"/>
     <dependencies>
