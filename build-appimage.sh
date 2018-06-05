@@ -20,7 +20,7 @@ else
 fi
 
 if [ x"$GIMP_GIT_TAG" = "x" ]; then
-	sed -i -e "s/GIMP_GIT_TAG/master/g" /work/conf/modulesets/gimp.modules
+	sed -i -e "s/GIMP_GIT_TAG/GIMP_2_10_2/g" /work/conf/modulesets/gimp.modules
 else
 	sed -i -e "s/GIMP_GIT_TAG/$GIMP_GIT_TAG/g" /work/conf/modulesets/gimp.modules
 fi
