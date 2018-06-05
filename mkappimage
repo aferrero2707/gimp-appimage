@@ -247,11 +247,11 @@ gtk_binary_version=$(pkg-config --variable=gtk_binary_version gtk+-2.0)
 #gtk-query-immodules-2.0 > /$PREFIX/lib/gtk-2.0/${gtk_binary_version}/immodules.cache
 gtk-query-immodules-2.0 > /$PREFIX/lib/gtk-2.0/immodules.cache
 
-echo "Patching absolute paths"
+#echo "Patching absolute paths"
 # patch_usr
 # Patching only the executable files seems not to be enough for darktable
-find usr/ -type f -exec sed -i -e "s|/$PREFIX|././|g" {} \;
-find usr/ -type f -exec sed -i -e "s|/usr|././|g" {} \;
+#find usr/ -type f -exec sed -i -e "s|/$PREFIX|././|g" {} \;
+#find usr/ -type f -exec sed -i -e "s|/usr|././|g" {} \;
 
 # patch for using system-supplied python interpreter
 cp /$PREFIX/lib/gimp/2.0/interpreters/pygimp.interp usr/lib/gimp/2.0/interpreters/pygimp.interp
