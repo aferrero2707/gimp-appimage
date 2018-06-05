@@ -109,16 +109,16 @@ export KDEV_DISABLE_PLUGINS=KDevWelcomePage
 rm -f /tmp/.gimp-appimage
 ln -s $DIR/usr /tmp/.gimp-appimage
 
-cd $DIR/usr
+#cd $DIR/usr
 
 #bin/gimp "$@"; exit
 
 echo "Input parameters: \"$@\""
 echo ""
 echo "Input File: $1"
-ldd bin/gimp.bin
+ldd $DIR/usr/bin/gimp.bin
 echo ""
-echo "$HERE/gimp.bin --pdb-compat-mode=on \"$@\""
+echo "$DIR/usr/bin/gimp.bin --pdb-compat-mode=on \"$@\""
 #gdb -ex "run --pdb-compat-mode=on \"$@\"" $HERE/gimp.bin
 #gdb $HERE/gimp.bin
 which python
@@ -126,4 +126,4 @@ which python
 #echo "Starting GDB ($GDB)"
 #$GDB
 #echo "GDB finished"
-bin/gimp.bin --pdb-compat-mode=on "$@"
+$DIR/usr/bin/gimp.bin --pdb-compat-mode=on "$@"
