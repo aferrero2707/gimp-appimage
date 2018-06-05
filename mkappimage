@@ -76,77 +76,6 @@ cp -a /$PREFIX/share usr
 echo "... prefix copy completed"
 
 
-#cp -a ../../$LOWERAPP.launcher usr/bin/$LOWERAPP
-cat > usr/bin/$LOWERAPP <<\EOF
-#! /bin/bash
-pwd
-echo "Environment:"
-echo "--------------------------"
-env
-echo "--------------------------"
-#read dummy
-HERE="$(dirname "$(readlink -f "${0}")")"
-echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-export XDG_DATA_DIRS=$HERE/../share/mime:$XDG_DATA_DIRS
-echo "XDG_DATA_DIRS=$XDG_DATA_DIRS"
-export GTK_PATH=$HERE/../lib/gtk-2.0:$GTK_PATH
-echo "GTK_PATH=${GTK_PATH}"
-
-rm -f /tmp/.gimp-appimage
-ln -s $HERE/.. /tmp/.gimp-appimage
-
-export PANGO_LIBDIR=$HERE/../lib
-echo "PANGO_LIBDIR=${PANGO_LIBDIR}"
-
-GDK_PIXBUF_MODULEDIR=$HERE/../lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders
-GDK_PIXBUF_MODULE_FILE=$HERE/../lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache
-echo "GDK_PIXBUF_MODULEDIR: $GDK_PIXBUF_MODULEDIR"
-echo "GDK_PIXBUF_MODULE_FILE: $GDK_PIXBUF_MODULE_FILE"
-cat $GDK_PIXBUF_MODULE_FILE
-#export PF_DATA_DIR=$HERE/../share
-export GIMP2_PLUGINDIR=$(readlink -f "$HERE/../lib/gimp/2.0")
-#export PYTHONPATH=
-#export PYTHONHOME=
-echo "HERE: $HERE"
-echo "GIMP2_PLUGINDIR: $GIMP2_PLUGINDIR"
-
-if [ -e /etc/fonts/fonts.conf ]; then
-  export FONTCONFIG_PATH=/etc/fonts
-fi
-# libstdc++ version detection
-stdcxxlib=$(ldconfig -p | grep 'libstdc++.so.6 (libc6,x86-64)'| awk 'NR==1{print $NF}')
-echo "System stdc++ library: \"$stdcxxlib\""
-stdcxxver1=$(strings "$stdcxxlib" | grep '^GLIBCXX_[0-9].[0-9]*' | cut -d"_" -f 2 | sort -V | tail -n 1)
-echo "System stdc++ library version: \"$stdcxxver1\""
-stdcxxver2=$(strings "$HERE/../optional/libstdc++/libstdc++.so.6" | grep '^GLIBCXX_[0-9].[0-9]*' | cut -d"_" -f 2 | sort -V | tail -n 1)
-echo "Bundled stdc++ library version: \"$stdcxxver2\""
-stdcxxnewest=$(echo "$stdcxxver1 $stdcxxver2" | tr " " "\n" | sort -V | tail -n 1)
-echo "Newest stdc++ library version: \"$stdcxxnewest\""
-if [ x"$stdcxxnewest" = x"$stdcxxver1" ]; then
-   echo "Using system stdc++ library"
-else
-   echo "Using bundled stdc++ library"
-   export LD_LIBRARY_PATH=$HERE/../optional/libstdc++:$LD_LIBRARY_PATH
-fi
-
-echo "Input parameters: \"$@\""
-echo ""
-echo "Input File: $1"
-ldd $HERE/LOWERAPP.bin
-echo ""
-echo "$HERE/LOWERAPP.bin --pdb-compat-mode=on \"$@\""
-#gdb -ex "run --pdb-compat-mode=on \"$@\"" $HERE/LOWERAPP.bin
-#gdb $HERE/LOWERAPP.bin
-which python
-#GDB=$(which gdb)
-#echo "Starting GDB ($GDB)"
-#$GDB
-#echo "GDB finished"
-$HERE/LOWERAPP.bin --pdb-compat-mode=on "$@"
-EOF
-sed -i -e "s|LOWERAPP|$LOWERAPP|g" usr/bin/$LOWERAPP
-chmod u+x usr/bin/$LOWERAPP
-
 mkdir -p usr/share
 cp -a /usr/share/mime usr/share
 
@@ -246,6 +175,10 @@ fix_pango
 gtk_binary_version=$(pkg-config --variable=gtk_binary_version gtk+-2.0)
 #gtk-query-immodules-2.0 > /$PREFIX/lib/gtk-2.0/${gtk_binary_version}/immodules.cache
 gtk-query-immodules-2.0 > /$PREFIX/lib/gtk-2.0/immodules.cache
+
+sed -i -e "s|/$PREFIX/lib/gdk-pixbuf-2.0/2.10.0/loaders/||g" usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+
+
 
 #echo "Patching absolute paths"
 # patch_usr
