@@ -193,7 +193,12 @@ sed -i -e "s|/usr|/tmp/.gimp-appimage|g" usr/lib/gimp/2.0/interpreters/pygimp.in
 #exit
 
 # The fonts configuration should not be patched, copy back original one
-cp /$PREFIX/etc/fonts/fonts.conf usr/etc/fonts/fonts.conf
+#cp /$PREFIX/etc/fonts/fonts.conf usr/etc/fonts/fonts.conf
+mkdir -p usr/share
+cp -a /$PREFIX/share/fontconfig usr/share
+cp /$PREFIX/etc/fonts/fonts.conf usr/share/fontconfig/fonts.conf
+(cd usr/share/fontconfig && rm -f conf.d && ln -s conf.avail conf.d)
+
 
 # The gimp icons should not be patched, copy back original one
 cp -a /$PREFIX/share/gimp/2.0/icons usr/share/gimp/2.0
