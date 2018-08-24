@@ -16,12 +16,13 @@ matrix:
             #- GEGL_GIT_TAG=GEGL_0_4_2
             #- GIMP_GIT_TAG=GIMP_2_10_2
           before_script:
-            - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-trusty-gimp
-            - sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
+            - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-centos7-gtk3
+            #- sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
+            - sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-centos7-gtk3 bash /sources/build-appimage-centos7.sh
           after_success:
             - cd $TRAVIS_BUILD_DIR
             - ls -lh
-            - bash package-appimage.sh
+            #- bash package-appimage.sh
             - ls out/* 
             - wget -c https://github.com/aferrero2707/uploadtool/raw/master/upload_rotate.sh
             - bash  ./upload_rotate.sh "continuous" out/* >& /dev/null

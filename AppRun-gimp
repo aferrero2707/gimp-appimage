@@ -5,6 +5,16 @@ DIR="`( cd \"$DIR\" && readlink -f $(pwd) )`"
 echo "DIR: $DIR"
 export APPDIR=$DIR
 
+source "$APPDIR/apprun-helper.sh"
+make_temp_libdir
+link_libraries
+echo "AILIBDIR=$AILIBDIR"
+export APPDIR2=$AILIBDIR
+fix_libxcb_dri3
+fix_stdlibcxx
+fix_fontconfig
+
+
 export APPIMAGE_ORIGINAL_LD_PRELOAD=$LD_PRELOAD
 export LD_PRELOAD=$DIR/usr/lib/exec_wrapper.so
 export APPIMAGE_STARTUP_LD_PRELOAD=$LD_PRELOAD
@@ -43,11 +53,11 @@ export PATH=$DIR/usr/bin:$DIR/usr/sbin/:$DIR/usr/games/:$DIR/bin/:$DIR/sbin/:$PA
 export APPIMAGE_STARTUP_PATH=$PATH
 
 export APPIMAGE_ORIGINAL_GDK_PIXBUF_MODULEDIR=$GDK_PIXBUF_MODULEDIR
-export GDK_PIXBUF_MODULEDIR=$DIR/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders
+export GDK_PIXBUF_MODULEDIR=$DIR/usr/lib/gdk-pixbuf-2.0/loaders
 export APPIMAGE_STARTUP_GDK_PIXBUF_MODULEDIR=$GDK_PIXBUF_MODULEDIR
 
 export APPIMAGE_ORIGINAL_GDK_PIXBUF_MODULE_FILE=$GDK_PIXBUF_MODULE_FILE
-export GDK_PIXBUF_MODULE_FILE=$DIR/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+export GDK_PIXBUF_MODULE_FILE=$DIR/usr/lib/gdk-pixbuf-2.0/loaders.cache
 export APPIMAGE_STARTUP_GDK_PIXBUF_MODULE_FILE=$GDK_PIXBUF_MODULE_FILE
 echo "GDK_PIXBUF_MODULEDIR: $GDK_PIXBUF_MODULEDIR"
 echo "GDK_PIXBUF_MODULE_FILE: $GDK_PIXBUF_MODULE_FILE"
@@ -74,7 +84,7 @@ fi
 export APPIMAGE_STARTUP_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 
 export APPIMAGE_ORIGINAL_PYTHONPATH=$PYTHONPATH
-export PYTHONPATH=$DIR/usr/share/pyshared/:$PYTHONPATH
+export PYTHONPATH=$DIR/usr/share/pyshared/:$(readlink -f "$DIR/usr/lib/gimp/2.0/python"):$PYTHONPATH
 export APPIMAGE_STARTUP_PYTHONPATH=$PYTHONPATH
 
 export APPIMAGE_ORIGINAL_XDG_CONFIG_DIRS=$XDG_CONFIG_DIRS
@@ -107,8 +117,15 @@ export GEGL_PATH=$(readlink -f "$DIR/usr/lib/gegl-0.4")
 export APPIMAGE_STARTUP_GEGL_PATH=$GEGL_PATH
 echo "GEGL_PATH $GEGL_PATH"
 
+mkdir -p "$AILIBDIR/gimp/2.0"
+ln -s $(readlink -f "$DIR/usr/lib/gimp/2.0")/* "$AILIBDIR/gimp/2.0"
+rm -rf "$AILIBDIR/gimp/2.0/interpreters"
+cp -a $(readlink -f "$DIR/usr/lib/gimp/2.0")/interpreters "$AILIBDIR/gimp/2.0"
+sed -i -e "s|/usr/bin|$DIR/usr/bin|g" "$AILIBDIR/gimp/2.0/interpreters/pygimp.interp"
+cat "$AILIBDIR/gimp/2.0/interpreters/pygimp.interp"
 export APPIMAGE_ORIGINAL_GIMP2_PLUGINDIR=$GIMP2_PLUGINDIR
-export GIMP2_PLUGINDIR=$(readlink -f "$DIR/usr/lib/gimp/2.0")
+#export GIMP2_PLUGINDIR=$(readlink -f "$DIR/usr/lib/gimp/2.0")
+export GIMP2_PLUGINDIR="$AILIBDIR/gimp/2.0"
 export APPIMAGE_STARTUP_GIMP2_PLUGINDIR=$GIMP2_PLUGINDIR
 echo "GIMP2_PLUGINDIR: $GIMP2_PLUGINDIR"
 
@@ -120,8 +137,8 @@ export KDE_FORK_SLAVES=1
 
 export KDEV_DISABLE_PLUGINS=KDevWelcomePage
 
-rm -f /tmp/.gimp-appimage
-ln -s $DIR/usr /tmp/.gimp-appimage
+#rm -f /tmp/.gimp-appimage
+#ln -s $DIR/usr /tmp/.gimp-appimage
 
 #cd $DIR/usr
 
@@ -141,3 +158,5 @@ which python
 #$GDB
 #echo "GDB finished"
 $DIR/usr/bin/gimp.bin --pdb-compat-mode=on "$@"
+
+rm -rf "$AILIBDIR"

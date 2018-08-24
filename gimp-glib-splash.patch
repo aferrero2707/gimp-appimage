@@ -1,0 +1,21 @@
+*** app/gui/splash.c	Thu Aug 23 12:47:24 2018
+--- app/gui/splash.c.new	Thu Aug 23 12:56:17 2018
+***************
+*** 567,574 ****
+    GFileInputStream   *input;
+    gboolean            is_svg = FALSE;
+  
+!   if (be_verbose)
+!     g_printerr ("Trying splash '%s' ... ", g_file_peek_path (file));
+  
+    info = g_file_query_info (file,
+                              G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+--- 567,574 ----
+    GFileInputStream   *input;
+    gboolean            is_svg = FALSE;
+  
+!   /*if (be_verbose)
+!     g_printerr ("Trying splash '%s' ... ", g_file_peek_path (file));*/
+  
+    info = g_file_query_info (file,
+                              G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,

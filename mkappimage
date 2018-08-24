@@ -34,8 +34,11 @@ fi
 
 fix_pango()
 {
-    version=$(pango-querymodules --version | tail -n 1 | tr -d " " | cut -d':' -f 2)
-    cat /$PREFIX/lib/pango/$version/modules.cache | sed "s|/$PREFIX/lib/pango/$version/modules/||g" > usr/lib/pango/$version/modules.cache
+	test=$(which pango-querymodules)
+	if [ x"$test" != "x" ]; then
+    	version=$(pango-querymodules --version | tail -n 1 | tr -d " " | cut -d':' -f 2)
+    	cat /$PREFIX/lib/pango/$version/modules.cache | sed "s|/$PREFIX/lib/pango/$version/modules/||g" > usr/lib/pango/$version/modules.cache
+    fi
 }
 
 
@@ -44,14 +47,15 @@ rm -rf out $APP
 WD=$(pwd)
 
 export APPIMAGEBASE=$(pwd)
-wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./functions.sh
+#wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./functions.sh
+wget -q https://raw.githubusercontent.com/aferrero2707/appimage-helper-scripts/master/functions.sh -O ./functions.sh
 . ./functions.sh
 #. ./functions-local.sh
 
 #cat_file_from_url https://github.com/probonopd/AppImages/raw/master/excludelist | sed '/^\s*$/d' | sed '/^#.*$/d' > blacklisted
 
 export PATH=/$PREFIX/bin:$PATH
-export LD_LIBRARY_PATH=/$PREFIX/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/$PREFIX/lib64:/$PREFIX/lib:$LD_LIBRARY_PATH
 export XDG_DATA_DIRS=/$PREFIX/share:$XDG_DATA_DIRS
 export PKG_CONFIG_PATH=/$PREFIX/lib/pkgconfig:/$PREFIX/share/pkgconfig:$PKG_CONFIG_PATH
 
@@ -59,15 +63,62 @@ export PKG_CONFIG_PATH=/$PREFIX/lib/pkgconfig:/$PREFIX/share/pkgconfig:$PKG_CONF
 pwd
 
 echo "Start copying prefix..."
-mkdir -p $APP/$APP.AppDir
-cd $APP/$APP.AppDir
+rm -rf /work/appimage/$APP/$APP.AppDir
+mkdir -p /work/appimage/$APP/$APP.AppDir
+cd /work/appimage/$APP/$APP.AppDir
 mkdir -p usr/bin
-cp -a /$PREFIX/bin/gimp* usr/bin
-gimp_exe_name=$(cat /$PREFIX/share/applications/gimp.desktop | grep "^Exec=" | cut -d"=" -f 2 | cut -d" " -f 1)
+
+
+
+
+GIMP_PREFIX=$(pkg-config --variable=prefix gimp-2.0)
+if [ x"${GIMP_PREFIX}" = "x" ]; then
+	echo "Could not determine GIMP installation prefix, exiting."
+	exit 1
+fi
+cp -a ${GIMP_PREFIX}/bin/gimp* usr/bin
+gimp_exe_name=$(cat ${GIMP_PREFIX}/share/applications/gimp.desktop | grep "^Exec=" | cut -d"=" -f 2 | cut -d" " -f 1)
 rm -f usr/bin/$LOWERAPP.bin
 echo "mv usr/bin/${gimp_exe_name} usr/bin/$LOWERAPP.bin"
 mv usr/bin/${gimp_exe_name} usr/bin/$LOWERAPP.bin
-cp -a /$PREFIX/bin/python* usr/bin
+
+
+
+
+PYTHON_PREFIX=$(pkg-config --variable=prefix python)
+PYTHON_LIBDIR=$(pkg-config --variable=libdir python)
+PYTHON_VERSION=$(pkg-config --modversion python)
+if [ x"${PYTHON_PREFIX}" = "x" ]; then
+	echo "Could not determine PYTHON installation prefix, exiting."
+	exit 1
+fi
+if [ x"${PYTHON_LIBDIR}" = "x" ]; then
+	echo "Could not determine PYTHON library path, exiting."
+	exit 1
+fi
+if [ x"${PYTHON_VERSION}" = "x" ]; then
+	echo "Could not determine PYTHON version, exiting."
+	exit 1
+fi
+cp -a "${PYTHON_PREFIX}/bin"/python* usr/bin || exit 1
+rm -rf "usr/lib/python${PYTHON_VERSION}"
+mkdir -p usr/lib
+cp -a "${PYTHON_LIBDIR}/python${PYTHON_VERSION}" usr/lib || exit 1
+PYGLIB_LIBDIR=$(pkg-config --variable=libdir pygobject-2.0)
+if [ x"${PYGLIB_LIBDIR}" = "x" ]; then
+	echo "Could not determine PYGOBJECT library path, exiting."
+	exit 1
+fi
+cp -a "${PYGLIB_LIBDIR}"/libpyglib*.so* usr/lib
+
+
+
+gssapilib=$(ldconfig -p | grep 'libgssapi_krb5.so.2 (libc6,x86-64)'| awk 'NR==1{print $NF}')
+if [ x"$gssapilib" != "x" ]; then
+	gssapilibdir=$(dirname "$gssapilib")
+	cp -a "$gssapilibdir"/libgssapi_krb5*.so* usr/lib
+fi
+
 
 #mkdir -p usr/lib
 cp -a /$PREFIX/lib usr
@@ -81,6 +132,7 @@ cp -a /usr/share/mime usr/share
 
 #get_apprun
 cp -a $WD/AppRun-gimp AppRun
+wget -q https://raw.githubusercontent.com/aferrero2707/appimage-helper-scripts/master/apprun-helper.sh -O ./apprun-helper.sh
 
 # The original desktop file is a bit strange, hence we provide our own
 cat > $LOWERAPP.desktop <<\EOF
@@ -107,19 +159,32 @@ cp -a /usr/lib/x86_64-linux-gnu/qt5/plugins/* ./usr/lib/qt5/plugins
 cp -L /lib/x86_64-linux-gnu/libssl.so.1.0.0 ./usr/lib
 
 # Copy in the indirect dependencies
-copy_deps ; copy_deps ; copy_deps # Three runs to ensure we catch indirect ones
-
-cp -L ./lib/x86_64-linux-gnu/*.* ./usr/lib; rm -rf ./lib/x86_64-linux-gnu
-cp -L ./lib/*.* ./usr/lib; rm -rf ./lib;
-cp -L ./usr/lib/x86_64-linux-gnu/*.* ./usr/lib; rm -rf ./usr/lib/x86_64-linux-gnu;
-cp -L ./$PREFIX/lib/x86_64-linux-gnu/*.* ./usr/lib; rm -rf ./$PREFIX/lib/x86_64-linux-gnu;
-cp -L ./$PREFIX/lib/*.* ./usr/lib; rm -rf ./$PREFIX/lib;
+# Three runs to ensure we catch indirect ones
+copy_deps ; echo "copy_deps 1"; echo ""
+copy_deps ; echo "copy_deps 2"; echo ""
+copy_deps ; echo "copy_deps 3"; echo ""
 
 #exit
 
 cp -a $PREFIX/lib/* usr/lib
-cp -a $PREFIX/lib64/* usr/lib64
-rm -rf $PREFIX
+cp -a $PREFIX/lib64/* usr/lib
+#cp -L $PREFIX/lib/*.so* usr/lib
+#cp -L $PREFIX/lib64/*.so* usr/lib
+#rm -rf $PREFIX
+
+cp -a ./lib/x86_64-linux-gnu/*.* ./usr/lib; rm -rf ./lib/x86_64-linux-gnu
+cp -a ./lib/*.* ./usr/lib; rm -rf ./lib;
+cp -a ./lib64/*.* ./usr/lib; rm -rf ./lib64;
+cp -a ./usr/lib64/*.* ./usr/lib; rm -rf ./usr/lib64;
+cp -a ./usr/lib/x86_64-linux-gnu/*.* ./usr/lib; rm -rf ./usr/lib/x86_64-linux-gnu;
+cp -a ./$PREFIX/lib/x86_64-linux-gnu/*.* ./usr/lib; rm -rf ./$PREFIX/lib/x86_64-linux-gnu;
+cp -a ./$PREFIX/lib/*.* ./usr/lib; rm -rf ./$PREFIX/lib;
+
+#exit
+
+(cd usr && mkdir -p lib64 && cd lib64 && rm -rf python${PYTHON_VERSION} && ln -s ../lib/python${PYTHON_VERSION} .) || exit 1
+ls -l usr/lib64
+
 
 ls usr/lib
 move_lib
@@ -172,11 +237,26 @@ fi
 echo "Fixing pango modules cache"
 fix_pango
 
-gtk_binary_version=$(pkg-config --variable=gtk_binary_version gtk+-2.0)
-#gtk-query-immodules-2.0 > /$PREFIX/lib/gtk-2.0/${gtk_binary_version}/immodules.cache
-gtk-query-immodules-2.0 > /$PREFIX/lib/gtk-2.0/immodules.cache
+#GTK_BINARY_VERSION=$(pkg-config --variable=gtk_binary_version gtk+-2.0)
+#gtk-query-immodules-2.0 > /$PREFIX/lib/gtk-2.0/${GTK_BINARY_VERSION}/immodules.cache
+#gtk-query-immodules-2.0-64 > /$PREFIX/lib/gtk-2.0/immodules.cache
 
-sed -i -e "s|/$PREFIX/lib/gdk-pixbuf-2.0/2.10.0/loaders/||g" usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+
+GDK_PIXBUF_BINARYDIR=$(pkg-config --variable=gdk_pixbuf_binarydir gdk-pixbuf-2.0)
+mkdir -p usr/lib/gdk-pixbuf-2.0
+cp -a "${GDK_PIXBUF_BINARYDIR}"/loaders* usr/lib/gdk-pixbuf-2.0
+#sed -i -e "s|/$PREFIX/lib/gdk-pixbuf-2.0/2.10.0/loaders/||g" usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+sed -i -e "s|$GDK_PIXBUF_BINARYDIR/loaders/||g" usr/lib/gdk-pixbuf-2.0/loaders.cache
+
+
+# Copy the theme engines
+mkdir -p usr/lib/gtk-2.0
+GTK_LIBDIR=$(pkg-config --variable=libdir gtk+-2.0)
+GTK_BINARY_VERSION=$(pkg-config --variable=gtk_binary_version gtk+-2.0)
+cp -a "${GTK_LIBDIR}/gtk-2.0/${GTK_BINARY_VERSION}"/* usr/lib/gtk-2.0
+
+#exit
+
 
 
 
@@ -188,8 +268,8 @@ sed -i -e "s|/$PREFIX/lib/gdk-pixbuf-2.0/2.10.0/loaders/||g" usr/lib/gdk-pixbuf-
 
 # patch for using system-supplied python interpreter
 cp /$PREFIX/lib/gimp/2.0/interpreters/pygimp.interp usr/lib/gimp/2.0/interpreters/pygimp.interp
-sed -i -e "s|/$PREFIX|/tmp/.gimp-appimage|g" usr/lib/gimp/2.0/interpreters/pygimp.interp
-sed -i -e "s|/usr|/tmp/.gimp-appimage|g" usr/lib/gimp/2.0/interpreters/pygimp.interp
+#sed -i -e "s|/$PREFIX|/tmp/.gimp-appimage|g" usr/lib/gimp/2.0/interpreters/pygimp.interp
+#sed -i -e "s|/usr|/tmp/.gimp-appimage|g" usr/lib/gimp/2.0/interpreters/pygimp.interp
 #exit
 
 # The fonts configuration should not be patched, copy back original one
@@ -222,7 +302,7 @@ appdir=$(pwd)
 echo "appdir: $appdir"
 
 pwd
-(cd $WD/appimage-exec-wrapper && make && cp -a exec.so $appdir/usr/lib/exec_wrapper.so)
+(cd /work && rm -rf appimage-exec-wrapper && cp -a /sources/appimage-exec-wrapper . && cd appimage-exec-wrapper && make && cp -a exec.so $appdir/usr/lib/exec_wrapper.so) || exit 1
 #read dummy
 
 
@@ -270,7 +350,7 @@ get_desktopintegration $LOWERAPP
 #chmod a+x ./usr/bin/$LOWERAPP.wrapper
 #sed -i -e "s|Exec=$LOWERAPP|Exec=$LOWERAPP.wrapper|g" $LOWERAPP.desktop
 
-exit
+#exit
 
 # Go out of AppImage
 cd ..
@@ -278,6 +358,11 @@ cd ..
 echo "Building AppImage..."
 pwd
 
-ARCH="x86_64"
-generate_appimage
-#generate_type2_appimage
+export ARCH="x86_64"
+export NO_GLIBC_VERSION=true
+export DOCKER_BUILD=true
+#generate_appimage
+generate_type2_appimage
+
+mkdir -p /sources/out
+cp -a ../out/GIMP_AppImage-${VERSION}-${ARCH}.AppImage /sources/out
