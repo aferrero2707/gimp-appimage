@@ -65,7 +65,8 @@ cat $GDK_PIXBUF_MODULE_FILE
 
 export APPIMAGE_ORIGINAL_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 #export LD_LIBRARY_PATH=$DIR/usr/lib/:$DIR/usr/lib/i386-linux-gnu/:$DIR/usr/lib/x86_64-linux-gnu/:$DIR/usr/lib32/:$DIR/usr/lib64/:$DIR/lib/:$DIR/lib/i386-linux-gnu/:$DIR/lib/x86_64-linux-gnu/:$DIR/lib32/:$DIR/lib64/:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=$GDK_PIXBUF_MODULEDIR:$DIR/usr/lib/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$GDK_PIXBUF_MODULEDIR:$LD_LIBRARY_PATH
+if [ "x" = "y" ]; then
 # libstdc++ version detection
 stdcxxlib=$(ldconfig -p | grep 'libstdc++.so.6 (libc6,x86-64)'| awk 'NR==1{print $NF}')
 echo "System stdc++ library: \"$stdcxxlib\""
@@ -80,6 +81,7 @@ if [ x"$stdcxxnewest" = x"$stdcxxver1" ]; then
 else
    echo "Using bundled stdc++ library"
    export LD_LIBRARY_PATH=$DIR/usr/optional/libstdc++:$LD_LIBRARY_PATH
+fi
 fi
 export APPIMAGE_STARTUP_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 
