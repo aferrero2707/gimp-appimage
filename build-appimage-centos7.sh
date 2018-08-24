@@ -7,7 +7,7 @@ export LD_LIBRARY_PATH=/zyx/lib64:/zyx/lib:$LD_LIBRARY_PATH
 (yum update -y && yum install -y epel-release && yum update -y && yum install -y libtool-ltdl-devel autoconf automake libtools which json-c-devel json-glib-devel gtk-doc gperf libuuid-devel libcroco-devel python-devel python-pip nano) || exit 1
 
 
-DO_BUILD=0
+DO_BUILD=1
 if [ x"$DO_BUILD" = "x1" ]; then
 
 
