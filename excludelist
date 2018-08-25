@@ -45,7 +45,7 @@ libdrm.so.2
 # libGL error: failed to load driver: swrast
 # Unrecognized OpenGL version
 
-libxcb.so.1
+#libxcb.so.1
 # Workaround for:
 # Fedora 23
 # symbol lookup error: /lib64/libxcb-dri3.so.0: undefined symbol: xcb_send_fd
@@ -60,8 +60,8 @@ libX11.so.6
 # symbol lookup error: ./lib/libX11.so.6: undefined symbol: xcb_wait_for_reply64
 # Uncertain if this is required to be bundled for some distributions - if so we need to write a version check script and use LD_PRELOAD to load the system version if it is newer
 
-libxkbcommon.so.0
-libxkbcommon-x11.so.0
+#libxkbcommon.so.0
+#libxkbcommon-x11.so.0
 # Workaround for:
 # xkbcommon: ERROR: failed to add default include path ././/share/X11/xkb
 
@@ -91,7 +91,7 @@ libasound.so.2
 # Workaround for:
 # Application stalls when loading fonts during application launch; e.g., KiCad on ubuntu-mate
 
-libselinux.so.1
+#libselinux.so.1
 # Workaround for:
 # sed: error while loading shared libraries: libpcre.so.3: cannot open shared object file: No such file or directory
 

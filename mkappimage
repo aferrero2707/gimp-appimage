@@ -248,7 +248,7 @@ GDK_PIXBUF_BINARYDIR=$(pkg-config --variable=gdk_pixbuf_binarydir gdk-pixbuf-2.0
 mkdir -p usr/lib/gdk-pixbuf-2.0
 cp -a "${GDK_PIXBUF_BINARYDIR}"/loaders* usr/lib/gdk-pixbuf-2.0
 #sed -i -e "s|/$PREFIX/lib/gdk-pixbuf-2.0/2.10.0/loaders/||g" usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
-sed -i -e "s|$GDK_PIXBUF_BINARYDIR/loaders/||g" usr/lib/gdk-pixbuf-2.0/loaders.cache
+sed -i -e "s|$GDK_PIXBUF_BINARYDIR/loaders|LOADERSDIR|g" usr/lib/gdk-pixbuf-2.0/loaders.cache
 
 
 # Copy the theme engines

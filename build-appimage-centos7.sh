@@ -4,7 +4,7 @@ export PKG_CONFIG_PATH=/zyx/lib64/pkgconfig:/zyx/lib/pkgconfig:/zyx/share/pkgcon
 export ACLOCAL_PATH=/zyx/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=/zyx/lib64:/zyx/lib:$LD_LIBRARY_PATH
 
-(yum update -y && yum install -y epel-release && yum update -y && yum install -y libtool-ltdl-devel autoconf automake libtools which json-c-devel json-glib-devel gtk-doc gperf libuuid-devel libcroco-devel python-devel python-pip nano) || exit 1
+(yum update -y && yum install -y epel-release && yum update -y && yum install -y libtool-ltdl-devel autoconf automake libtools which json-c-devel json-glib-devel gtk-doc gperf libuuid-devel libcroco-devel python-devel python-pip nano OpenEXR-devel) || exit 1
 
 
 DO_BUILD=1
@@ -12,7 +12,7 @@ if [ x"$DO_BUILD" = "x1" ]; then
 
 
 if [ ! -e /work/lcms2-2.9 ]; then
-  (cd /work && rm -rf lcms2* && wget https://sourceforge.net/projects/lcms/files/lcms/2.9/lcms2-2.9.tar.gz && tar xvf lcms2-2.9.tar.gz && cd lcms2-2.9 && ./configure --prefix=/zyx && make install) || exit 1
+  (cd /work && rm -rf lcms2* && wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/lcms2/2.9-2/lcms2_2.9.orig.tar.gz && tar xvf lcms2_2.9.orig.tar.gz && cd lcms2-2.9 && ./configure --prefix=/zyx && make install) || exit 1
 fi
 
 
