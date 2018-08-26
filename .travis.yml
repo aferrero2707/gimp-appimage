@@ -13,7 +13,7 @@ matrix:
           env:
             - TARGET_SYSTEM=Linux
             - BABL_GIT_TAG=BABL_0_1_56
-            - GEGL_GIT_TAG=GEGL_0_4_8
+            #- GEGL_GIT_TAG=GEGL_0_4_8
             - GIMP_GIT_TAG=GIMP_2_10_6
           before_script:
             - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-centos7-gtk3
