@@ -1,0 +1,19 @@
+*** configure.in	Sat Sep  8 14:56:27 2018
+--- configure.in.new	Sat Sep  8 15:14:59 2018
+***************
+*** 40,46 ****
+  ##### Twiddle CFLAGS #################################################
+  ######################################################################
+  if test "x$GCC" = "xyes"; then
+!    CFLAGS="${CFLAGS} -Wall -Werror -Wno-error=deprecated-declarations -std=c99 -Wmissing-prototypes -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE"
+  fi
+  
+  
+--- 40,46 ----
+  ##### Twiddle CFLAGS #################################################
+  ######################################################################
+  if test "x$GCC" = "xyes"; then
+!    CFLAGS="${CFLAGS} -Wall -Wno-error=deprecated-declarations -std=c99 -Wmissing-prototypes -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE"
+  fi
+  
+  
