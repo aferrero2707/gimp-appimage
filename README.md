@@ -2,17 +2,17 @@
 
 # Introduction
 
-The GIMP AppImage is built on Ubuntu 14.04, using a custom [Docker container](https://github.com/aferrero2707/docker-trusty-gimp) that provides all the required up-to-date dependencies. The build environment in the Docker container is based on [jhbuild](https://github.com/GNOME/jhbuild).
+The GIMP AppImage is built on CentOS 7, using a custom [Docker container](https://github.com/aferrero2707/docker-centos7-gimp) that provides all the required up-to-date dependencies.
 
-The compilation of the BABL/GEGL/GIMP code under Docker is performed by the [build-appimage.sh](https://github.com/aferrero2707/gimp-appimage/blob/master/build-appimage.sh) shell script, which takes care of compiling the programs and then invokes the [mkappimage](https://github.com/aferrero2707/gimp-appimage/blob/master/mkappimage) script for creatig the AppImage bundle.
+The compilation of the BABL/GEGL/GIMP code under Docker is performed by the [build-appimage-centos7.sh](https://github.com/aferrero2707/gimp-appimage/blob/master/build-appimage-centos7.sh) shell script, while the [AppImage](https://appimage.org) bundle is created and packaged by the [package-appimage.sh](https://github.com/aferrero2707/gimp-appimage/blob/master/package-appimage.sh) script.
 
-The final packaging of the AppImage is performed by [package-appimage.sh](https://github.com/aferrero2707/gimp-appimage/blob/master/package-appimage.sh), which gets executed outside of the Docker container.
+A second step in the build process compiles a set of useful plug-ins ([build-appimage-plugins-centos7.sh](https://github.com/aferrero2707/gimp-appimage/blob/master/build-appimage-plugins-centos7.sh)), which are then bundled into an additional, full-featured AppImage package.
 
 The whole build process is automated with [Travis CI](https://travis-ci.org/aferrero2707/gimp-appimage), using [this configuration file](https://github.com/aferrero2707/gimp-appimage/blob/master/.travis.yml). A cron job is scheduled to run on a weekly basis and builds the git HEAD version of BABL/GEGL/GIMP. The updated AppImage package is automatically uploaded to the [continuous release page](https://github.com/aferrero2707/gimp-appimage/releases/tag/continuous).
 
 # Included GIMP plug-ins
 
-The AppImages package comes with few useful plug-ins:
+The full-featured AppImages package comes with few useful plug-ins:
 * [Resynthesizer](http://registry.gimp.org/node/25219) - texture synthesis
 * [Liquid rescale](http://liquidrescale.wikidot.com/) - content-aware image resizing based on seam carving
 * [NUfraw](https://sourceforge.net/projects/nufraw/) - RAW image processing
@@ -21,8 +21,8 @@ The AppImages package comes with few useful plug-ins:
 
 # Credits
 
-The AppImage uses the exec-wrapper originally developed by the KDE team:
+The AppImage uses a modified version of the exec-wrapper originally available from here:
 
-    git://anongit.kde.org/scratch/brauch/appimage-exec-wrapper
+    https://github.com/TheAssassin/linuxdeploy-plugin-checkrt
     
 It allows GIMP to spawn external commands with the original shell environment instead of the one proper to the AppImage itself. 
