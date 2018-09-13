@@ -5,6 +5,7 @@ export ACLOCAL_PATH=/zyx/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=/zyx/lib64:/zyx/lib:$LD_LIBRARY_PATH
 
 #(yum update -y && yum install -y epel-release && yum update -y && yum install -y libtool-ltdl-devel autoconf automake libtools which json-c-devel json-glib-devel gtk-doc gperf libuuid-devel libcroco-devel) || exit 1
+(yum update -y && yum install -y suitesparse-devel) || exit 1
 
 if [ ! -e /work/babl ]; then
 if [ x"$BABL_GIT_TAG" = "x" ]; then
