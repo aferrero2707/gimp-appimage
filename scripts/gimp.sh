@@ -9,6 +9,8 @@ if [ x"${GIMP_PREFIX}" = "x" ]; then
 	exit 1
 fi
 
+echo "Copying GIMP executable and desktop file"
+echo "GIMP_PREFIX: ${GIMP_PREFIX}"
 cp -a ${GIMP_PREFIX}/bin/gimp* "$APPDIR/usr/bin" || exit 1
 GIMP_EXE_NAME=$(cat ${GIMP_PREFIX}/share/applications/gimp.desktop | grep "^Exec=" | cut -d"=" -f 2 | cut -d" " -f 1)
 rm -f usr/bin/$LOWERAPP.bin
@@ -17,6 +19,8 @@ rm -f usr/bin/$LOWERAPP.bin
 (mkdir -p "$APPDIR/usr/share" && cp -a ${GIMP_PREFIX}/share/$LOWERAPP "$APPDIR/usr/share") || exit 1
 (mkdir -p "$APPDIR/usr/share/applications" && cp ${GIMP_PREFIX}/share/applications/$LOWERAPP.desktop "$APPDIR/usr/share/applications") || exit 1
 
+echo "Copying GIMP icon"
+pwd
 WD="$(pwd)"
 cd ${GIMP_PREFIX}/share/icons/hicolor
 pwd
@@ -29,6 +33,7 @@ for f in *; do
   fi
 done
 cd "$WD"
+pwd
 
 # Copy the GIMP python interpreter configuration
 (mkdir -p "$APPDIR/usr/lib/gimp" && \
