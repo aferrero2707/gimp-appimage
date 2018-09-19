@@ -1,10 +1,5 @@
-functions.sh
 gimp
 work
 out
 run_gimp
-pass.txt
 upload.sh
-appimage-exec-wrapper/exec.so
-AppImageKit
-AppImageAssistant
