@@ -30,10 +30,10 @@ cd "$APPDIR"
 
 
 # Bundle GTK2 stuff
-/sources/appimage-helper-scripts/bundle-gtk2.sh
+#/sources/appimage-helper-scripts/bundle-gtk2.sh
 
 # Bundle python
-/sources/appimage-helper-scripts/bundle-python.sh
+#/sources/appimage-helper-scripts/bundle-python.sh
 
 
 run_hooks
