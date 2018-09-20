@@ -413,7 +413,7 @@ get_version()
 # Execute user-supplied hook scripts
 run_hooks()
 {
-  for h in "${APPROOT}/scripts"/*.sh; do
+  for h in "${APPDIR}/../scripts"/*.sh; do
     source "$h"
   done
 }
