@@ -127,7 +127,7 @@ fix_library() {
 # Execute user-supplied startup hook scripts
 run_hooks()
 {
-  for h in ./startup_scripts/*.sh; do
+  for h in "$APPDIR/startup_scripts"/*.sh; do
     source "$h"
   done
 }
