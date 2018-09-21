@@ -7,7 +7,7 @@ export LD_LIBRARY_PATH=/zyx/lib64:/zyx/lib:$LD_LIBRARY_PATH
 #(yum update -y && yum install -y epel-release && yum update -y && yum install -y libtool-ltdl-devel autoconf automake libtools which json-c-devel json-glib-devel gtk-doc gperf libuuid-devel libcroco-devel) || exit 1
 (yum-config-manager --add-repo http://www.nasm.us/nasm.repo && yum update -y && yum install -y suitesparse-devel libwebp-devel libunwind-devel libwmf-devel openjpeg2-devel libmng-devel libXpm-devel iso-codes-devel mercurial numactl-devel nasm) || exit 1
 
-if [ "x" = "y" ]; then
+#if [ "x" = "y" ]; then
 
 (cd /work && rm -rf x265 && hg clone http://hg.videolan.org/x265 && \
 cd x265 && mkdir -p build && cd build && \
@@ -27,7 +27,7 @@ wget http://downloads.webmproject.org/releases/webp/libwebp-1.0.0.tar.gz &&\
 md5sum --check libwebp-1.0.0.hash && tar xvf libwebp-1.0.0.tar.gz && \
 cd libwebp-1.0.0 && ./configure --prefix=/zyx --enable-everything && make -j 2 install) || exit 1
 
-fi
+#fi
 
 
 #fi
