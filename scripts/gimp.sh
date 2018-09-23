@@ -39,6 +39,9 @@ pwd
 (mkdir -p "$APPDIR/usr/lib/gimp" && \
 cp -a ${GIMP_PREFIX}/lib/gimp/2.0 "$APPDIR/usr/lib/gimp") || exit 1
 
+(mkdir -p "$APPDIR/usr/share/locale" && \
+cp -a ${GIMP_PREFIX}/share/locale/* "$APPDIR/usr/share/locale") || exit 1
+
 (mkdir -p "$APPDIR/usr/share/gimp" && \
 cp -a ${GIMP_PREFIX}/share/gimp/2.0 "$APPDIR/usr/share/gimp") || exit 1
 
