@@ -11,12 +11,15 @@ make_temp_libdir
 link_libraries
 echo "AILIBDIR=$AILIBDIR"
 #export APPDIR2=$AILIBDIR
-export APPDIRS=$DIR:$AILIBDIR
 fix_libxcb_dri3
 fix_stdlibcxx
 #fix_fontconfig
 fix_library "libfontconfig"
 fix_library "libfreetype"
+
+
+init_environment
+export APPDIRS=$AILIBDIR:$APPDIRS
 
 init_gtk
 
@@ -27,8 +30,6 @@ export PATH=$DIR/usr/bin:$PATH
 export PYTHONPATH=$DIR/usr/share/pyshared/:$(readlink -f "$DIR/usr/lib/gimp/2.0/python"):$PYTHONPATH
 
 #export XDG_CONFIG_DIRS=$DIR/usr/share:$XDG_CONFIG_DIRS
-
-export XDG_DATA_DIRS="${APPDIR}/usr/share/:${APPDIR}/usr/share/:${XDG_DATA_DIRS}: /usr/local/share/:/usr/share/"
 
 export PERLLIB=$DIR/usr/share/perl5/:$DIR/usr/lib/perl5/:$PERLLIB
 
@@ -75,8 +76,7 @@ which python
 #$GDB
 #echo "GDB finished"
 
-#export LD_PRELOAD=$DIR/usr/lib/exec_wrapper.so
-export LD_PRELOAD=$DIR/usr/lib/exec_wrapper2.so
-$DIR/usr/bin/gimp.bin --pdb-compat-mode=on "$@"
+export LD_PRELOAD=$DIR/usr/lib/exec_wrapper.so
+$DIR/usr/bin/gimp.wrapper --pdb-compat-mode=on "$@"
 
 rm -rf "$AILIBDIR"

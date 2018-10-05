@@ -2,6 +2,13 @@
 
 pwd
 
+export GIMPPREFIX=/usr/local/gimp
+export PKG_CONFIG_PATH=${GIMPPREFIX}/lib64/pkgconfig:${GIMPPREFIX}/lib/pkgconfig:${GIMPPREFIX}/share/pkgconfig:$PKG_CONFIG_PATH
+export ACLOCAL_PATH=${GIMPPREFIX}/share/aclocal:$ACLOCAL_PATH
+export LD_LIBRARY_PATH=${GIMPPREFIX}/lib64:${GIMPPREFIX}/lib:$LD_LIBRARY_PATH
+export PATH=${GIMPPREFIX}/bin:$PATH
+
+
 # Copy executable, icon and desktop file
 GIMP_PREFIX=$(pkg-config --variable=prefix gimp-2.0)
 if [ x"${GIMP_PREFIX}" = "x" ]; then
@@ -13,7 +20,6 @@ echo "Copying GIMP executable and desktop file"
 echo "GIMP_PREFIX: ${GIMP_PREFIX}"
 cp -a ${GIMP_PREFIX}/bin/gimp* "$APPDIR/usr/bin" || exit 1
 GIMP_EXE_NAME=$(cat ${GIMP_PREFIX}/share/applications/gimp.desktop | grep "^Exec=" | cut -d"=" -f 2 | cut -d" " -f 1)
-rm -f usr/bin/$LOWERAPP.bin
 (cd "$APPDIR/usr/bin" && rm -f $LOWERAPP.bin && ln -s ${GIMP_EXE_NAME} $LOWERAPP.bin) || exit 1
 
 (mkdir -p "$APPDIR/usr/share" && cp -a ${GIMP_PREFIX}/share/$LOWERAPP "$APPDIR/usr/share") || exit 1
@@ -59,3 +65,15 @@ if [ x"${GEGL_PLUGDIR}" = "x" ]; then
   echo "Cannot determine GEGL pluginsdir, exiting"; exit 1;
 fi
 cp -a "${GEGL_PLUGDIR}" "$APPDIR/usr/lib"
+
+
+
+# Package BABL/GEGL/GIMP header and pkg-config files, 
+# so that the AppImage can be used to compile plug-ins
+mkdir "$APPDIR/usr/include"
+mkdir "$APPDIR/usr/lib/pkgconfig"
+for dir in babl gegl gimp; do
+  cp -a "${GIMP_PREFIX}/include/${dir}-"* "$APPDIR/usr/include"
+  cp -a "${GIMP_PREFIX}/lib/pkgconfig/${dir}-"*.pc "$APPDIR/usr/lib/pkgconfig"
+done
+

@@ -227,7 +227,7 @@ delete_blacklisted2()
         for F in $FLIST; do
           rm -v -f "$F"
         done
-    done < <(cat "../excludelist" | sed '/^[[:space:]]*$/d' | sed '/^#.*$/d')
+    done < <(cat "$APPDIR/../excludelist" | sed '/^[[:space:]]*$/d' | sed '/^#.*$/d')
     # TODO Try this, its cleaner if it works:
     #done < "$APPIMAGEBASE/excludelist" | sed '/^[[:space:]]*$/d' | sed '/^#.*$/d'
 }
@@ -414,9 +414,11 @@ get_version()
 run_hooks()
 {
   for h in "${APPDIR}/../scripts"/*.sh; do
+  	echo ""; echo "Running hook script: \"$h\""; echo "";
     source "$h"
   done
 }
+
 
 # transfer.sh
 transfer() { if [ $# -eq 0 ]; then echo "No arguments specified. Usage:\necho transfer /tmp/test.md\ncat /tmp/test.md | transfer test.md"; return 1; fi
