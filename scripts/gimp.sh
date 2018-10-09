@@ -73,7 +73,7 @@ cp -a "${GEGL_PLUGDIR}" "$APPDIR/usr/lib"
 mkdir "$APPDIR/usr/include"
 mkdir "$APPDIR/usr/lib/pkgconfig"
 for dir in babl gegl gimp; do
-  cp -a "${GIMP_PREFIX}/include/${dir}-"* "$APPDIR/usr/include"
-  cp -a "${GIMP_PREFIX}/lib/pkgconfig/${dir}-"*.pc "$APPDIR/usr/lib/pkgconfig"
+  cp -a "${GIMP_PREFIX}/include/${dir}"* "$APPDIR/usr/include"
+  cp -a "${GIMP_PREFIX}/lib/pkgconfig/${dir}"*.pc "$APPDIR/usr/lib/pkgconfig"
 done
 
