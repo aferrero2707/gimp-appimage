@@ -12,7 +12,7 @@ cp -a /sources/appimage-helper-scripts/bundle-python.sh "${APPROOT}/scripts") ||
 
 # fill and package the AppImage bundle
 bash /sources/package-appimage.sh || exit 1
-exit
+#exit
 
 (mkdir -p "${APPROOT}/scripts" && cp -a /sources/scripts/gmic.sh "${APPROOT}/scripts") || exit 1
 bash /sources/build-appimage-plugins.sh || exit 1
