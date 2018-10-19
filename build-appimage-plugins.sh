@@ -10,6 +10,24 @@ export ACLOCAL_PATH=${GIMPPREFIX}/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=${GIMPPREFIX}/lib64:${GIMPPREFIX}/lib:$LD_LIBRARY_PATH
 
 
+yum install -y qt5-qtbase-devel qt5-linguist
+(cd /work && rm -rf gmic gmic-qt && \
+git clone https://github.com/c-koi/gmic-qt.git && cd gmic-qt && \
+git clone https://github.com/dtschump/gmic.git gmic-clone && \
+make -C gmic-clone/src CImg.h gmic_stdlib.h && \
+qmake QMAKE_CFLAGS+="${CFLAGS} -O2" QMAKE_CXXFLAGS+="${CXXFLAGS} -O2" CONFIG+=Release HOST=gimp GMIC_PATH=gmic-clone/src && \
+make -j 3 && make install) || exit 1
+
+#cmake .. -DGMIC_QT_HOST=gimp -DCMAKE_BUILD_TYPE=Release && make) || exit 1
+
+gimplibdir=$(pkg-config --variable=gimplibdir gimp-2.0)
+echo "gimplibdir: $gimplibdir"
+if [ -z "$gimplibdir" ]; then exit 1; fi
+
+mkdir -p "$gimplibdir/plug-ins" || exit 1
+cp -a /work/gmic-qt/build/gmic_gimp_qt "$gimplibdir/plug-ins" || exit 1
+
+
 yum install -y gnome-common
 (cd /work && rm -rf gtkimageview && git clone https://github.com/aferrero2707/gtkimageview.git && \
 cd gtkimageview && patch -N -p0 < /sources/gtkimageview-Werror.patch && \
@@ -34,24 +52,6 @@ make -j 2 install) || exit 1
 
 (cd /work && rm -rf resynthesizer && git clone https://github.com/bootchk/resynthesizer.git && \
 cd resynthesizer && ./autogen.sh --prefix=/zyx && make -j 2 install) || exit 1
-
-
-yum install -y qt5-qtbase-devel qt5-linguist
-(cd /work && rm -rf gmic gmic-qt && \
-git clone https://github.com/c-koi/gmic-qt.git && cd gmic-qt.git && \
-git clone https://github.com/dtschump/gmic.git gmic-clone && \
-make -C gmic-clone/src CImg.h gmic_stdlib.h && \
-qmake QMAKE_CFLAGS+="${CFLAGS} -O2" QMAKE_CXXFLAGS+="${CXXFLAGS} -O2" CONFIG+=Release HOST=gimp GMIC_PATH=gmic-clone/src && \
-make -j 3 && make install) || exit 1
-
-#cmake .. -DGMIC_QT_HOST=gimp -DCMAKE_BUILD_TYPE=Release && make) || exit 1
-
-gimplibdir=$(pkg-config --variable=gimplibdir gimp-2.0)
-echo "gimplibdir: $gimplibdir"
-if [ -z "$gimplibdir" ]; then exit 1; fi
-
-mkdir -p "$gimplibdir/plug-ins" || exit 1
-cp -a /work/gmic-qt/build/gmic_gimp_qt "$gimplibdir/plug-ins" || exit 1
 
 
 
