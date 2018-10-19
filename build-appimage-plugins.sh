@@ -38,9 +38,13 @@ cd resynthesizer && ./autogen.sh --prefix=/zyx && make -j 2 install) || exit 1
 
 yum install -y qt5-qtbase-devel qt5-linguist
 (cd /work && rm -rf gmic gmic-qt && \
-git clone https://github.com/dtschump/gmic.git && git clone https://github.com/c-koi/gmic-qt.git && \
-make -C gmic/src CImg.h gmic_stdlib.h && cd gmic-qt && mkdir -p build && cd build && \
-cmake .. -DGMIC_QT_HOST=gimp -DCMAKE_BUILD_TYPE=Release && make) || exit 1
+git clone https://github.com/c-koi/gmic-qt.git && cd gmic-qt.git && \
+git clone https://github.com/dtschump/gmic.git gmic-clone && \
+make -C gmic-clone/src CImg.h gmic_stdlib.h && \
+qmake QMAKE_CFLAGS+="${CFLAGS} -O2" QMAKE_CXXFLAGS+="${CXXFLAGS} -O2" CONFIG+=Release HOST=gimp GMIC_PATH=gmic-clone/src && \
+make -j 3 && make install) || exit 1
+
+#cmake .. -DGMIC_QT_HOST=gimp -DCMAKE_BUILD_TYPE=Release && make) || exit 1
 
 gimplibdir=$(pkg-config --variable=gimplibdir gimp-2.0)
 echo "gimplibdir: $gimplibdir"
