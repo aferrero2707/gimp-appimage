@@ -8,6 +8,12 @@ export GIMPPREFIX=/usr/local/gimp
 export PKG_CONFIG_PATH=${GIMPPREFIX}/lib64/pkgconfig:${GIMPPREFIX}/lib/pkgconfig:${GIMPPREFIX}/share/pkgconfig:$PKG_CONFIG_PATH
 export ACLOCAL_PATH=${GIMPPREFIX}/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=${GIMPPREFIX}/lib64:${GIMPPREFIX}/lib:$LD_LIBRARY_PATH
+export PATH=${GIMPPREFIX}/bin:$PATH
+
+
+(cd /work && rm -rf gutenprint* && \
+ wget https://sourceforge.net/projects/gimp-print/files/gutenprint-5.3/5.3.1/gutenprint-5.3.1.tar.xz && \
+ tar xf gutenprint-5.3.1.tar.xz && cd gutenprint-5.3.1 && ./configure --prefix=/zyx && make install) || exit 1
 
 
 yum install -y qt5-qtbase-devel qt5-linguist libcurl-devel || exit 1
