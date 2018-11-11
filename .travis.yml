@@ -14,7 +14,7 @@ matrix:
             - TARGET_SYSTEM=Linux
             #- BABL_GIT_TAG=BABL_0_1_56
             #- GEGL_GIT_TAG=GEGL_0_4_8
-            #- GIMP_GIT_TAG=GIMP_2_10_6
+            - GIMP_GIT_TAG=GIMP_2_10_8
           before_script:
             - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-centos7-gimp
             #- sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
