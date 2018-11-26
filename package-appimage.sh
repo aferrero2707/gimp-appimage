@@ -77,7 +77,7 @@ source /sources/appimage-helper-scripts/bundle-exec-wrapper.sh || exit 1
 
 
 # remove debugging symbols for bundled executables and libraries (saves some space)
-strip_binaries
+#strip_binaries
 
 
 # assemble the version string

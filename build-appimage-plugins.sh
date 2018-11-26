@@ -13,7 +13,7 @@ export PATH=${GIMPPREFIX}/bin:$PATH
 
 #(cd /work && rm -rf gutenprint* && \
 # wget https://sourceforge.net/projects/gimp-print/files/gutenprint-5.3/5.3.1/gutenprint-5.3.1.tar.xz && \
-# tar xf gutenprint-5.3.1.tar.xz && cd gutenprint-5.3.1 && ./configure --prefix=/zyx && make install) || exit 1
+# tar xf gutenprint-5.3.1.tar.xz && cd gutenprint-5.3.1 && ./configure CFLAGS='-g -O2' CXXFLAGS='-g -O2' --prefix=/zyx && make install) || exit 1
 # exit
 
 
