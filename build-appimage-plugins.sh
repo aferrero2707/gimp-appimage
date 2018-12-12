@@ -38,7 +38,7 @@ cp -a /work/gmic-qt/gmic_gimp_qt "$gimplibdir/plug-ins" || exit 1
 yum install -y gnome-common
 (cd /work && rm -rf gtkimageview && git clone https://github.com/aferrero2707/gtkimageview.git && \
 cd gtkimageview && patch -N -p0 < /sources/gtkimageview-Werror.patch && \
-./autogen.sh --prefix=/usr/local && make -j 2 install) || exit 1
+./autogen.sh --prefix=/zyx && make -j 2 install) || exit 1
 (cd /work && rm -rf nufraw* && \
 wget https://launchpad.net/~dhor/+archive/ubuntu/myway/+sourcefiles/nufraw/0.42-1dhor~xenial/nufraw_0.42.orig.tar.xz && \
 tar xvf nufraw_0.42.orig.tar.xz && cd nufraw-0.42 && ./autogen.sh && \
