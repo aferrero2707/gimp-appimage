@@ -45,6 +45,9 @@ done
 cd "$WD"
 pwd
 
+echo "ls {GIMP_PREFIX}/lib/gimp/"
+ls {GIMP_PREFIX}/lib/gimp/
+
 # Copy the GIMP python interpreter configuration
 (mkdir -p "$APPDIR/usr/lib/gimp" && \
 cp -a ${GIMP_PREFIX}/lib/gimp/?.0 "$APPDIR/usr/lib/gimp") || exit 1
