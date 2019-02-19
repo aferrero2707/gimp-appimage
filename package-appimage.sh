@@ -83,10 +83,14 @@ source /sources/appimage-helper-scripts/bundle-exec-wrapper.sh || exit 1
 # assemble the version string
 echo "GIMP_GIT_TAG = \"$GIMP_GIT_TAG\""
 VERSION=""
-if [ x"$GIMP_GIT_TAG" = "x" ]; then
-	VERSION=git-$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}-$(date +%Y%m%d)
+if [ x"${GTK_VERSION}" = "x3" ]; then
+	VERSION=git-$(pkg-config --modversion gimp-3.0)${VER_SUFFIX}-$(date +%Y%m%d)
 else
-	VERSION=release-$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}
+	if [ x"$GIMP_GIT_TAG" = "x" ]; then
+		VERSION=git-$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}-$(date +%Y%m%d)
+	else
+		VERSION=release-$(pkg-config --modversion gimp-2.0)${VER_SUFFIX}
+	fi
 fi
 GLIBC_NEEDED=$(glibc_needed)
 echo $VERSION

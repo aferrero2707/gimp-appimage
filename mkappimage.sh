@@ -1,6 +1,10 @@
 #! /bin/bash
 
-bash /sources/build-appimage.sh || exit 1
+if [ x"${GTK_VERSION}" = "x3" ]; then
+  bash /sources/build-appimage-gtk3.sh || exit 1
+else
+  bash /sources/build-appimage.sh || exit 1
+fi
 
 export APPROOT=/work/appimage
 
@@ -11,7 +15,7 @@ cp -a /sources/appimage-helper-scripts/bundle-gtk2.sh "${APPROOT}/scripts" &&
 cp -a /sources/appimage-helper-scripts/bundle-python.sh "${APPROOT}/scripts") || exit 1
 
 # fill and package the AppImage bundle
-bash /sources/package-appimage.sh || exit 1
+#bash /sources/package-appimage.sh || exit 1
 #exit
 
 (mkdir -p "${APPROOT}/scripts" && cp -a /sources/scripts/gmic.sh "${APPROOT}/scripts") || exit 1
