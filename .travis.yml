@@ -1,11 +1,7 @@
 language: generic
 
 #env:
-matrix:
-    allow_failures:
-        - env: TARGET_SYSTEM=OSX
-    include:
-        - os: linux
+          os: linux
           dist: trusty
           compiler: g++
           sudo: required
