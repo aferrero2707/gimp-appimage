@@ -1,29 +1,27 @@
 language: generic
+os: linux
+dist: trusty
+compiler: g++
+sudo: required
+services: docker
+env:
+  - TARGET_SYSTEM=Linux
+  - GTK_VERSION=2
+  - GTK_VERSION=3
+  #- BABL_GIT_TAG=BABL_0_1_56
+  #- GEGL_GIT_TAG=GEGL_0_4_8
+  #- GIMP_GIT_TAG=GIMP_2_10_8
 
-#env:
-          os: linux
-          dist: trusty
-          compiler: g++
-          sudo: required
-          services: docker
-          env:
-            - TARGET_SYSTEM=Linux
-            - GTK_VERSION=2
-            - GTK_VERSION=3
-            #- BABL_GIT_TAG=BABL_0_1_56
-            #- GEGL_GIT_TAG=GEGL_0_4_8
-            #- GIMP_GIT_TAG=GIMP_2_10_8
-          before_script:
-            - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-centos7-gimp
-            #- sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
-            - sudo docker run -it -v $(pwd):/sources -e GTK_VERSION="${GTK_VERSION}" -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-centos7-gimp bash /sources/mkappimage.sh
-          after_success:
-            - cd $TRAVIS_BUILD_DIR
-            - ls -lh
-            #- bash package-appimage.sh
-            - ls out/* 
-            - wget -c https://github.com/aferrero2707/uploadtool/raw/master/upload_rotate.sh
-            - bash  ./upload_rotate.sh "continuous" out/* >& /dev/null
+before_script:
+  - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-centos7-gimp
+  #- sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
+  - sudo docker run -it -v $(pwd):/sources -e GTK_VERSION="${GTK_VERSION}" -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-centos7-gimp bash /sources/mkappimage.sh
+after_success:
+  - cd $TRAVIS_BUILD_DIR
+  - ls -lh
+  - ls out/* 
+  - wget -c https://github.com/aferrero2707/uploadtool/raw/master/upload_rotate.sh
+  - bash  ./upload_rotate.sh "continuous" out/* >& /dev/null
 branches:
   except:
     - # Do not build tags that we create when we upload to GitHub Releases
