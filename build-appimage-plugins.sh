@@ -42,7 +42,7 @@ cd gtkimageview && patch -N -p0 < /sources/gtkimageview-Werror.patch && \
 (cd /work && rm -rf nufraw* && \
 wget https://launchpad.net/~dhor/+archive/ubuntu/myway/+sourcefiles/nufraw/0.42-1dhor~xenial/nufraw_0.42.orig.tar.xz && \
 tar xvf nufraw_0.42.orig.tar.xz && cd nufraw-0.42 && ./autogen.sh && \
-./configure --enable-contrast --prefix=/zyx && make -j 2 install) || exit 1
+./configure --enable-contrast --prefix=/usr/local && make -j 2 install) || exit 1
 
 
 (cd /work && rm -rf liblqr && git clone https://github.com/carlobaldassi/liblqr.git && \
