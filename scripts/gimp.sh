@@ -10,7 +10,11 @@ export PATH=${GIMPPREFIX}/bin:$PATH
 
 
 # Copy executable, icon and desktop file
-GIMP_PREFIX=$(pkg-config --variable=prefix gimp-2.0)
+if [ x"${GTK_VERSION}" = "x3" ]; then
+	GIMP_PREFIX=$(pkg-config --variable=prefix gimp-3.0)
+else
+	GIMP_PREFIX=$(pkg-config --variable=prefix gimp-2.0)
+fi
 if [ x"${GIMP_PREFIX}" = "x" ]; then
 	echo "Could not determine GIMP installation prefix, exiting."
 	exit 1
@@ -43,16 +47,16 @@ pwd
 
 # Copy the GIMP python interpreter configuration
 (mkdir -p "$APPDIR/usr/lib/gimp" && \
-cp -a ${GIMP_PREFIX}/lib/gimp/2.0 "$APPDIR/usr/lib/gimp") || exit 1
+cp -a ${GIMP_PREFIX}/lib/gimp/?.0 "$APPDIR/usr/lib/gimp") || exit 1
 
 (mkdir -p "$APPDIR/usr/share/locale" && \
 cp -a ${GIMP_PREFIX}/share/locale/* "$APPDIR/usr/share/locale") || exit 1
 
 (mkdir -p "$APPDIR/usr/share/gimp" && \
-cp -a ${GIMP_PREFIX}/share/gimp/2.0 "$APPDIR/usr/share/gimp") || exit 1
+cp -a ${GIMP_PREFIX}/share/gimp/?.0 "$APPDIR/usr/share/gimp") || exit 1
 
 (mkdir -p "$APPDIR/usr/etc/gimp" && \
-cp -a ${GIMP_PREFIX}/etc/gimp/2.0 "$APPDIR/usr/etc/gimp") || exit 1
+cp -a ${GIMP_PREFIX}/etc/gimp/?.0 "$APPDIR/usr/etc/gimp") || exit 1
 
 BABL_LIBDIR=$(pkg-config --variable=libdir babl)
 if [ x"${BABL_LIBDIR}" = "x" ]; then
