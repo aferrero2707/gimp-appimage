@@ -90,7 +90,7 @@ if [[ "$FILENAME" != *.wrapper ]] ; then
   exit 0
 fi
 
-BIN=$(echo "$FILENAME" | sed -e 's|.wrapper||g')
+BIN=$(echo "$FILENAME" | sed -e 's|.wrapper|.bin|g')
 if [[ ! -f "$BIN" ]] ; then
   log "$BIN not found"
   exit 0
