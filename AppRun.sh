@@ -51,6 +51,10 @@ cat "$AILIBDIR/gimp/2.0/interpreters/pygimp.interp"
 export GIMP2_PLUGINDIR="$AILIBDIR/gimp/2.0"
 echo "GIMP2_PLUGINDIR: $GIMP2_PLUGINDIR"
 
+export GIMP2_DATADIR="$DIR/usr/share/gimp/2.0"
+export GIMP2_LOCALEDIR="$DIR/usr/share/locale"
+export GIMP2_SYSCONFDIR="$DIR/usr/etc/gimp/2.0"
+
 if [ -e /etc/fonts/fonts.conf ]; then
   export FONTCONFIG_PATH=/etc/fonts
 fi
