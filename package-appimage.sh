@@ -56,7 +56,12 @@ copy_gcc_libs
 
 
 # copy the startup scripts
-cp -a /sources/AppRun.sh "$APPDIR/AppRun" || exit 1
+if [ x"${GTK_VERSION}" = "x3" ]; then
+  cp -a /sources/AppRun-v3.sh "$APPDIR/AppRun" || exit 1
+else
+  cp -a /sources/AppRun.sh "$APPDIR/AppRun" || exit 1
+fi
+
 cp /sources/appimage-helper-scripts/apprun-helper.sh "$APPDIR/apprun-helper.sh" || exit 1
 
 # bundle the desktop file and application icon

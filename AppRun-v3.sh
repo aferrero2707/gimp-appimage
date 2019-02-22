@@ -41,19 +41,18 @@ echo "BABL_PATH $BABL_PATH"
 export GEGL_PATH=$(readlink -f "$DIR/usr/lib/gegl-0.4")
 echo "GEGL_PATH $GEGL_PATH"
 
-mkdir -p "$AILIBDIR/gimp/2.0"
-ln -s $(readlink -f "$DIR/usr/lib/gimp/2.0")/* "$AILIBDIR/gimp/2.0"
-rm -rf "$AILIBDIR/gimp/2.0/interpreters"
-cp -a $(readlink -f "$DIR/usr/lib/gimp/2.0")/interpreters "$AILIBDIR/gimp/2.0"
-sed -i -e "s|/usr/bin|$DIR/usr/bin|g" "$AILIBDIR/gimp/2.0/interpreters/pygimp.interp"
-cat "$AILIBDIR/gimp/2.0/interpreters/pygimp.interp"
-#export GIMP2_PLUGINDIR=$(readlink -f "$DIR/usr/lib/gimp/2.0")
-export GIMP2_PLUGINDIR="$AILIBDIR/gimp/2.0"
-echo "GIMP2_PLUGINDIR: $GIMP2_PLUGINDIR"
+mkdir -p "$AILIBDIR/gimp/2.99"
+ln -s $(readlink -f "$DIR/usr/lib/gimp/2.99")/* "$AILIBDIR/gimp/2.99"
+rm -rf "$AILIBDIR/gimp/2.99/interpreters"
+cp -a $(readlink -f "$DIR/usr/lib/gimp/2.99")/interpreters "$AILIBDIR/gimp/2.99"
+sed -i -e "s|/usr/bin|$DIR/usr/bin|g" "$AILIBDIR/gimp/2.99/interpreters/pygimp.interp"
+cat "$AILIBDIR/gimp/2.99/interpreters/pygimp.interp"
+export GIMP3_PLUGINDIR="$AILIBDIR/gimp/2.99"
+echo "GIMP3_PLUGINDIR: $GIMP3_PLUGINDIR"
 
-export GIMP2_DATADIR="$DIR/usr/share/gimp/2.0"
-export GIMP2_LOCALEDIR="$DIR/usr/share/locale"
-export GIMP2_SYSCONFDIR="$DIR/usr/etc/gimp/2.0"
+export GIMP3_DATADIR="$DIR/usr/share/gimp/2.99"
+export GIMP3_LOCALEDIR="$DIR/usr/share/locale"
+export GIMP3_SYSCONFDIR="$DIR/usr/etc/gimp/2.99"
 
 if [ -e /etc/fonts/fonts.conf ]; then
   export FONTCONFIG_PATH=/etc/fonts

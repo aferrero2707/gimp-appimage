@@ -49,7 +49,7 @@ ls ${GIMP_PREFIX}/lib/gimp/
 
 # Copy the GIMP python interpreter configuration
 (mkdir -p "$APPDIR/usr/lib/gimp" && \
-cp -a ${GIMP_PREFIX}/lib/gimp/?.*/* "$APPDIR/usr/lib/gimp") || exit 1
+cp -a ${GIMP_PREFIX}/lib/gimp/?.* "$APPDIR/usr/lib/gimp") || exit 1
 echo "ls $APPDIR/usr/lib/gimp"
 ls $APPDIR/usr/lib/gimp
 
@@ -59,12 +59,12 @@ echo "ls $APPDIR/usr/share/locale"
 ls $APPDIR/usr/share/locale
 
 (mkdir -p "$APPDIR/usr/share/gimp" && \
-cp -a ${GIMP_PREFIX}/share/gimp/?.*/* "$APPDIR/usr/share/gimp") || exit 1
+cp -a ${GIMP_PREFIX}/share/gimp/?.* "$APPDIR/usr/share/gimp") || exit 1
 echo "ls $APPDIR/usr/share/gimp"
 ls $APPDIR/usr/share/gimp
 
 (mkdir -p "$APPDIR/usr/etc/gimp" && \
-cp -a ${GIMP_PREFIX}/etc/gimp/?.*/* "$APPDIR/usr/etc/gimp") || exit 1
+cp -a ${GIMP_PREFIX}/etc/gimp/?.* "$APPDIR/usr/etc/gimp") || exit 1
 echo "ls $APPDIR/usr/etc/gimp"
 ls $APPDIR/usr/etc/gimp
 
