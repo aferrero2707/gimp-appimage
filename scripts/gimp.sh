@@ -61,7 +61,7 @@ ls $APPDIR/usr/share/locale
 (mkdir -p "$APPDIR/usr/share/gimp" && \
 cp -a ${GIMP_PREFIX}/share/gimp/?.*/* "$APPDIR/usr/share/gimp") || exit 1
 echo "ls $APPDIR/usr/share/gimp"
-ls $APPDIR/usr/lshare/gimp
+ls $APPDIR/usr/share/gimp
 
 (mkdir -p "$APPDIR/usr/etc/gimp" && \
 cp -a ${GIMP_PREFIX}/etc/gimp/?.*/* "$APPDIR/usr/etc/gimp") || exit 1

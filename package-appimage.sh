@@ -100,6 +100,9 @@ echo $VERSION
 get_desktopintegration $LOWERAPP
 cp -a "/sources/appimage-helper-scripts/app.wrapper" "$APPDIR/usr/bin/$LOWERAPP.wrapper" || exit 1
 
+echo "ls $APPDIR/usr/share/gimp"
+ls $APPDIR/usr/share/gimp
+
 
 # Go out of AppImage
 cd ..
