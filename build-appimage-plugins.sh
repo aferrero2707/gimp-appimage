@@ -28,7 +28,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -DPLUGIN_DIR="$gimplibdir/plug-ins" .. && \
 make -j 2 install) || exit 1
 
 
-yum install -y qt5-qtbase-devel qt5-linguist libcurl-devel || exit 1
+yum install -y qt5-qtbase-devel qt5-linguist libcurl-devel eigen3-devel || exit 1
 (cd /work && rm -rf gmic gmic-qt && \
 git clone https://github.com/c-koi/gmic-qt.git && cd gmic-qt && \
 git clone https://github.com/dtschump/gmic.git gmic-clone && \
