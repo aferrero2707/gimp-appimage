@@ -41,6 +41,7 @@ mkdir -p "$gimplibdir/plug-ins" || exit 1
 cp -a /work/gmic-qt/gmic_gimp_qt "$gimplibdir/plug-ins" || exit 1
 
 if [ "x" = "x" ]; then
+
 (cd /work && rm -rf gimp-focusblur-plugin && git clone https://github.com/JMoerman/gimp-focusblur-plugin.git && \
 mkdir gimp-focusblur-plugin/build && cd gimp-focusblur-plugin/build && \
 cmake -DCMAKE_BUILD_TYPE=Release -DPLUGIN_DIR="$gimplibdir/plug-ins" .. && \
