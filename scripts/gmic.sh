@@ -7,5 +7,7 @@ if [ x"$QT5PLUGINDIR" != "x" ]; then
   cp -a "$QT5PLUGINDIR"/* "$APPDIR/usr/lib/qt5/plugins"
 fi
 
+#(mkdir -p "$APPDIR/usr/etc" && cp -a /etc/pki "$APPDIR/usr/etc") || exit 1
+
 (mkdir -p "$APPDIR/startup_scripts" && \
 cp -a /sources/startup_scripts/gmic.sh "$APPDIR/startup_scripts") || exit 1

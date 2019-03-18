@@ -22,21 +22,29 @@ gimplibdir=$(pkg-config --variable=gimplibdir gimp-2.0)
 echo "gimplibdir: $gimplibdir"
 if [ -z "$gimplibdir" ]; then exit 1; fi
 
+yum install -y qt5-qtbase-devel qt5-linguist libcurl-devel eigen3-devel || exit 1
+if [ ! -e /work/gmic-qt ]; then
+  (cd /work && rm -rf gmic gmic-qt && \
+   git clone https://github.com/c-koi/gmic-qt.git && cd gmic-qt && \
+   git clone https://github.com/dtschump/gmic.git gmic-clone) || exit 1
+   exit 1
+fi
+(cd /work/gmic-qt && \
+make -C gmic-clone/src CImg.h gmic_stdlib.h && \
+sed -i 's|-Ofast|-Ofast|g' gmic_qt.pro && \
+sed -i 's| cimg_use_curl | cimg_use__curl |g' gmic_qt.pro && \
+qmake-qt5 CONFIG+=Release HOST=gimp GMIC_PATH=gmic-clone/src && \
+sed -i 's|^CURL_CFLAGS = \(.*\)|#CURL_CFLAGS = \1|g' gmic-clone/src/Makefile && \
+sed -i 's|^CURL_LIBS = \(.*\)|#CURL_LIBS = \1|g' gmic-clone/src/Makefile && \
+make -j 1 && make install) || exit 1
+mkdir -p "$gimplibdir/plug-ins" || exit 1
+cp -a /work/gmic-qt/gmic_gimp_qt "$gimplibdir/plug-ins" || exit 1
+
+if [ "x" = "x" ]; then
 (cd /work && rm -rf gimp-focusblur-plugin && git clone https://github.com/JMoerman/gimp-focusblur-plugin.git && \
 mkdir gimp-focusblur-plugin/build && cd gimp-focusblur-plugin/build && \
 cmake -DCMAKE_BUILD_TYPE=Release -DPLUGIN_DIR="$gimplibdir/plug-ins" .. && \
 make -j 2 install) || exit 1
-
-
-yum install -y qt5-qtbase-devel qt5-linguist libcurl-devel || exit 1
-(cd /work && rm -rf gmic gmic-qt && \
-git clone https://github.com/c-koi/gmic-qt.git && cd gmic-qt && \
-git clone https://github.com/dtschump/gmic.git gmic-clone && \
-make -C gmic-clone/src CImg.h gmic_stdlib.h && \
-qmake-qt5 QMAKE_CFLAGS+="${CFLAGS} -O2" QMAKE_CXXFLAGS+="${CXXFLAGS} -O2" CONFIG+=Release HOST=gimp GMIC_PATH=gmic-clone/src && \
-make -j 3 && make install) || exit 1
-mkdir -p "$gimplibdir/plug-ins" || exit 1
-cp -a /work/gmic-qt/gmic_gimp_qt "$gimplibdir/plug-ins" || exit 1
 
 (cd /work && rm -rf liblqr && git clone https://github.com/carlobaldassi/liblqr.git && \
 cd liblqr && ./configure --prefix=/zyx && make -j 2 install) || exit 1
@@ -63,6 +71,8 @@ tar xvf nufraw_0.42.orig.tar.xz && cd nufraw-0.42 && ./autogen.sh && \
 
 (cd /work && rm -rf resynthesizer && git clone https://github.com/bootchk/resynthesizer.git && \
 cd resynthesizer && ./autogen.sh --prefix=/zyx && make -j 2 install) || exit 1
+
+fi
 
 fi
 
