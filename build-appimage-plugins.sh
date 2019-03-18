@@ -27,7 +27,7 @@ if [ ! -e /work/gmic-qt ]; then
   (cd /work && rm -rf gmic gmic-qt && \
    git clone https://github.com/c-koi/gmic-qt.git && cd gmic-qt && \
    git clone https://github.com/dtschump/gmic.git gmic-clone) || exit 1
-   exit 1
+   #exit 1
 fi
 (cd /work/gmic-qt && \
 make -C gmic-clone/src CImg.h gmic_stdlib.h && \
