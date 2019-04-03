@@ -14,7 +14,10 @@ cp -a /sources/scripts/gimp.sh "${APPROOT}/scripts" && \
 cp -a /sources/appimage-helper-scripts/bundle-gtk2.sh "${APPROOT}/scripts" &&
 cp -a /sources/appimage-helper-scripts/bundle-python.sh "${APPROOT}/scripts") || exit 1
 
-if [ x"${GTK_VERSION}" = "x3" ]; then
+bash /sources/package-appimage.sh || exit 1
+exit 0
+
+if [ x"${GTK_VERSION}" = "x4" ]; then
 	# fill and package the AppImage bundle
 	bash /sources/package-appimage.sh || exit 1
 	exit 0

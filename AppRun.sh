@@ -19,7 +19,8 @@ fix_library "libfreetype"
 
 
 init_environment
-export APPDIRS=$AILIBDIR:$APPDIRS
+export APPDIRS=$AILIBDIR:$AILIBDIR/gimp/2.0/plug-ins:$HOME/.config/GIMP-AppImage/2.10/plug-ins:$APPDIRS
+echo "APPDIRS: $APPDIRS"
 
 init_gtk
 
@@ -60,6 +61,8 @@ if [ -e /etc/fonts/fonts.conf ]; then
 fi
 
 run_hooks
+
+load_external_plugins
 
 
 #cd $DIR/usr

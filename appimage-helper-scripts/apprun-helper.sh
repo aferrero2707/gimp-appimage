@@ -125,6 +125,23 @@ fix_library() {
 
 
 # Execute user-supplied startup hook scripts
+load_external_plugins()
+{
+  for pd in "$HOME/.config/GIMP-AppImage/2.10/plug-ins"/*/plug-ins; do
+    echo "load_external_plugins: linking plug-ins under $pd"
+  	ln -s "$pd"/* "$GIMP2_PLUGINDIR/plug-ins"
+    if [ -e "$pd"/../scripts/startup.sh ]; then
+    	echo "load_external_plugins: sourcing $pd/../scripts/startup.sh"
+    	source "$pd"/../scripts/startup.sh
+    fi
+  done
+  echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+  echo "QT_PLUGIN_PATH: $QT_PLUGIN_PATH"
+}
+
+
+
+# Execute user-supplied startup hook scripts
 run_hooks()
 {
   for h in "$APPDIR/startup_scripts"/*.sh; do
