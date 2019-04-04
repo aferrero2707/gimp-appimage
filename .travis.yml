@@ -5,7 +5,7 @@ compiler: g++
 sudo: required
 services: docker
 env:
-  #- GTK_VERSION=2
+  - GTK_VERSION=2
   #- GTK_VERSION=3
   #- BABL_GIT_TAG=BABL_0_1_56
   #- GEGL_GIT_TAG=GEGL_0_4_8

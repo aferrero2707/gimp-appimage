@@ -128,6 +128,7 @@ fix_library() {
 load_external_plugins()
 {
   for pd in "$HOME/.config/GIMP-AppImage/2.10/plug-ins"/*/plug-ins; do
+  	if [ ! -e "$pd" ]; then continue; fi
     echo "load_external_plugins: linking plug-ins under $pd"
   	ln -s "$pd"/* "$GIMP2_PLUGINDIR/plug-ins"
     if [ -e "$pd"/../scripts/startup.sh ]; then

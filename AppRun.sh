@@ -43,11 +43,16 @@ export GEGL_PATH=$(readlink -f "$DIR/usr/lib/gegl-0.4")
 echo "GEGL_PATH $GEGL_PATH"
 
 mkdir -p "$AILIBDIR/gimp/2.0"
+
 ln -s $(readlink -f "$DIR/usr/lib/gimp/2.0")/* "$AILIBDIR/gimp/2.0"
-rm -rf "$AILIBDIR/gimp/2.0/interpreters"
+rm -f "$AILIBDIR/gimp/2.0/interpreters"
 cp -a $(readlink -f "$DIR/usr/lib/gimp/2.0")/interpreters "$AILIBDIR/gimp/2.0"
 sed -i -e "s|/usr/bin|$DIR/usr/bin|g" "$AILIBDIR/gimp/2.0/interpreters/pygimp.interp"
 cat "$AILIBDIR/gimp/2.0/interpreters/pygimp.interp"
+
+rm -f "$AILIBDIR/gimp/2.0/plug-ins"
+mkdir -p "$AILIBDIR/gimp/2.0/plug-ins"
+ln -s $(readlink -f "$DIR/usr/lib/gimp/2.0/plug-ins")/* "$AILIBDIR/gimp/2.0/plug-ins"
 #export GIMP2_PLUGINDIR=$(readlink -f "$DIR/usr/lib/gimp/2.0")
 export GIMP2_PLUGINDIR="$AILIBDIR/gimp/2.0"
 echo "GIMP2_PLUGINDIR: $GIMP2_PLUGINDIR"
