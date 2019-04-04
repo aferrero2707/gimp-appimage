@@ -1,5 +1,10 @@
 #! /bin/bash
 
+if [ x"${GTK_VERSION}" = "x" ]; then
+	export GTK_VERSION=2
+fi
+
+
 if [ x"${GTK_VERSION}" = "x3" ]; then
   bash /sources/build-appimage-gtk3.sh || exit 1
 else
