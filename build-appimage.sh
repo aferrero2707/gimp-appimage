@@ -45,6 +45,10 @@ export ACLOCAL_PATH=${GIMPPREFIX}/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=${GIMPPREFIX}/lib64:${GIMPPREFIX}/lib:$LD_LIBRARY_PATH
 export PATH=${GIMPPREFIX}/bin:$PATH
 
+export BABL_GIT_TAG=BABL_0_1_62
+export GEGL_GIT_TAG=GEGL_0_4_14
+
+
 if [ ! -e /work/babl ]; then
 	if [ x"$BABL_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf babl && \
