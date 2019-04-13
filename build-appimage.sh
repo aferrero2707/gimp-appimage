@@ -15,13 +15,13 @@ cd x265 && mkdir -p build && cd build && \
 cmake -DCMAKE_INSTALL_PREFIX=/${AIPREFIX} ../source && make -j 2 install) || exit 1
 
 (cd /work && rm -rf libde265 && \
-git clone -b frame-parallel https://github.com/strukturag/libde265.git && \
+git clone -b frame-parallel --depth=1 https://github.com/strukturag/libde265.git && \
 cd libde265 && mkdir build && ./autogen.sh && ./configure --prefix=/${AIPREFIX} --disable-dec265 --disable-sherlock265 && make -j 2 install)
 touch /work/x265-done
 fi
 
 if [ ! -e /work/heif-done ]; then
-(cd /work && rm -rf libheif && git clone -b v1.3.2 https://github.com/strukturag/libheif.git && \
+(cd /work && rm -rf libheif && git clone -b v1.3.2 --depth=1 https://github.com/strukturag/libheif.git && \
 cd libheif && ./autogen.sh && ./configure --prefix=/${AIPREFIX}  && make -j 2 install) || exit 1
 touch /work/heif-done
 fi
@@ -45,17 +45,17 @@ export ACLOCAL_PATH=${GIMPPREFIX}/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=${GIMPPREFIX}/lib64:${GIMPPREFIX}/lib:$LD_LIBRARY_PATH
 export PATH=${GIMPPREFIX}/bin:$PATH
 
-export BABL_GIT_TAG=BABL_0_1_62
-export GEGL_GIT_TAG=GEGL_0_4_14
+#export BABL_GIT_TAG=BABL_0_1_62
+#export GEGL_GIT_TAG=GEGL_0_4_14
 
 
 if [ ! -e /work/babl ]; then
 	if [ x"$BABL_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf babl && \
-			git clone -b master https://gitlab.gnome.org/GNOME/babl.git) || exit 1
+			git clone -b master --depth=1 https://gitlab.gnome.org/GNOME/babl.git) || exit 1
 	else
 		(cd /work && rm -rf babl && \
-			git clone -b "$BABL_GIT_TAG" https://gitlab.gnome.org/GNOME/babl.git) || exit 1
+			git clone -b "$BABL_GIT_TAG" --depth=1 https://gitlab.gnome.org/GNOME/babl.git) || exit 1
 	fi
 	(cd /work/babl && ./autogen.sh --prefix=${GIMPPREFIX} && make -j 2 install) || exit 1
 fi
@@ -64,10 +64,10 @@ fi
 if [ ! -e /work/gegl ]; then
 	if [ x"$GEGL_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf gegl && \
-			git clone -b master https://gitlab.gnome.org/GNOME/gegl.git) || exit 1
+			git clone -b master --depth=1 https://gitlab.gnome.org/GNOME/gegl.git) || exit 1
 	else
 		(cd /work && rm -rf gegl && \
-			git clone -b "$GEGL_GIT_TAG" https://gitlab.gnome.org/GNOME/gegl.git) || exit 1
+			git clone -b "$GEGL_GIT_TAG" --depth=1 https://gitlab.gnome.org/GNOME/gegl.git) || exit 1
 	fi
 	(cd /work/gegl && ./autogen.sh --prefix=${GIMPPREFIX} --without-libavformat --enable-docs=no --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no && make -j 2 install) || exit 1
 fi
@@ -76,10 +76,10 @@ fi
 if [ ! -e /work/gimp ]; then
 	if [ x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf gimp && \
-			git clone -b gimp-2-10 https://gitlab.gnome.org/GNOME/gimp.git) || exit 1
+			git clone -b gimp-2-10 --depth=1 https://gitlab.gnome.org/GNOME/gimp.git) || exit 1
 	else
 		(cd /work && rm -rf gimp && \
-			git clone -b "$GIMP_GIT_TAG" https://gitlab.gnome.org/GNOME/gimp.git) || exit 1
+			git clone -b "$GIMP_GIT_TAG" --depth=1 https://gitlab.gnome.org/GNOME/gimp.git) || exit 1
 	fi
 	#(cd /work/gimp && patch -N -p0 < /sources/gimp-glib-splash.patch)
 	(cd /work/gimp && sed -i -e 's|m4_define(\[gtk_required_version\], \[2.24.32\])|m4_define(\[gtk_required_version\], \[2.24.31\])|g' configure.ac && \
