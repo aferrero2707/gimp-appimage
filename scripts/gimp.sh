@@ -72,13 +72,15 @@ BABL_LIBDIR=$(pkg-config --variable=libdir babl)
 if [ x"${BABL_LIBDIR}" = "x" ]; then
   echo "Cannot determine BABL libdir, exiting"; exit 1;
 fi
-cp -a "${BABL_LIBDIR}/babl-0.1" "$APPDIR/usr/lib"
+cp -a "${BABL_LIBDIR}/babl-0.1" "$APPDIR/usr/lib" || exit 1
 
 GEGL_PLUGDIR=$(pkg-config --variable=pluginsdir gegl-0.4)
 if [ x"${GEGL_PLUGDIR}" = "x" ]; then
   echo "Cannot determine GEGL pluginsdir, exiting"; exit 1;
 fi
-cp -a "${GEGL_PLUGDIR}" "$APPDIR/usr/lib"
+cp -a "${GEGL_PLUGDIR}" "$APPDIR/usr/lib" || exit 1
+
+cp -a "/${PREFIX}/share/mypaint-data" "$APPDIR/usr/share/gimp/2.0"
 
 
 
