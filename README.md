@@ -12,12 +12,14 @@ The whole build process is automated with [Travis CI](https://travis-ci.org/afer
 
 # Included GIMP plug-ins
 
-The full-featured AppImages package comes with few useful plug-ins:
+Several GIMP plugins that can work in combination with the AppImage can be downloaded from [here](https://github.com/aferrero2707/gimp-plugins-collection/releases/tag/continuous).
+This is the current list of available plug-ins plug-ins:
 * [Resynthesizer](http://registry.gimp.org/node/25219) - texture synthesis
 * [Liquid rescale](http://liquidrescale.wikidot.com/) - content-aware image resizing based on seam carving
 * [NUfraw](https://sourceforge.net/projects/nufraw/) - RAW image processing
 * [G'MIC-Qt](https://gmic.eu/gimp.shtml) - the plug-in for the G'MIC filters library
 * [PhFGIMP](https://github.com/aferrero2707/PhFGimp) - front-end for the PhotoFlow editor
+Follow the instructions in the plug-ins release page to install them in your system.
 
 # Credits
 
