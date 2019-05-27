@@ -12,8 +12,9 @@ The whole build process is automated with [Travis CI](https://travis-ci.org/afer
 
 # GIMP plug-ins
 
-Several GIMP plugins that can work in combination with the AppImage can be downloaded from [here](https://github.com/aferrero2707/gimp-plugins-collection/releases/tag/continuous).
-This is the current list of available plug-ins plug-ins:
+Several GIMP plug-ins that can work in combination with the AppImage can be downloaded from [here](https://github.com/aferrero2707/gimp-plugins-collection/releases/tag/continuous).
+
+This is the current list of available plug-ins:
 * [Resynthesizer](http://registry.gimp.org/node/25219) - texture synthesis
 * [Liquid rescale](http://liquidrescale.wikidot.com/) - content-aware image resizing based on seam carving
 * [NUfraw](https://sourceforge.net/projects/nufraw/) - RAW image processing
