@@ -20,6 +20,7 @@ This is the current list of available plug-ins:
 * [NUfraw](https://sourceforge.net/projects/nufraw/) - RAW image processing
 * [G'MIC-Qt](https://gmic.eu/gimp.shtml) - the plug-in for the G'MIC filters library
 * [PhFGIMP](https://github.com/aferrero2707/PhFGimp) - front-end for the PhotoFlow editor
+
 Follow the instructions in the plug-ins release page to install them in your system.
 
 # Credits
