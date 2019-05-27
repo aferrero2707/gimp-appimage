@@ -10,7 +10,7 @@ A second step in the build process compiles a set of useful plug-ins ([build-app
 
 The whole build process is automated with [Travis CI](https://travis-ci.org/aferrero2707/gimp-appimage), using [this configuration file](https://github.com/aferrero2707/gimp-appimage/blob/master/.travis.yml). A cron job is scheduled to run on a weekly basis and builds the git HEAD version of BABL/GEGL/GIMP. The updated AppImage package is automatically uploaded to the [continuous release page](https://github.com/aferrero2707/gimp-appimage/releases/tag/continuous).
 
-# Included GIMP plug-ins
+# GIMP plug-ins
 
 Several GIMP plugins that can work in combination with the AppImage can be downloaded from [here](https://github.com/aferrero2707/gimp-plugins-collection/releases/tag/continuous).
 This is the current list of available plug-ins plug-ins:
