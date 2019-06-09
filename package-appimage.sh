@@ -119,7 +119,31 @@ rm -rf ../out
 export ARCH="x86_64"
 export NO_GLIBC_VERSION=true
 export DOCKER_BUILD=true
-generate_type2_appimage
-
 mkdir -p /sources/out
+generate_type2_appimage
 cp -a ../out/*.AppImage /sources/out/GIMP_AppImage-${VERSION}-${ARCH}.AppImage
+
+
+
+rm -f /tmp/plugin-list.txt
+wget -O /tmp/plugin-list.txt https://raw.githubusercontent.com/aferrero2707/gimp-plugins-collection/check/plugin-list.txt
+cat /tmp/plugin-list.txt
+
+mkdir -p "$APPDIR/plug-ins" || exit 1
+while IFS='' read -r line || [[ -n "$line" ]]; do
+	PLUGIN=${line}
+	RELEASE_URL="https://github.com/aferrero2707/gimp-plugins-collection/releases/download/continuous"
+	wget -O "/tmp/${PLUGIN}-Gimp-2.10-linux.AppImage" "${RELEASE_URL}/${PLUGIN}-Gimp-2.10-linux.AppImage"
+	if [ ! -e "/tmp/${PLUGIN}-Gimp-2.10-linux.AppImage" ]; then continue; fi
+	chmod +x "/tmp/${PLUGIN}-Gimp-2.10-linux.AppImage"
+
+	(mkdir -p "/tmp/${PLUGIN}.AppDir" && cd "/tmp/${PLUGIN}.AppDir" && \
+	 "/tmp/${PLUGIN}-Gimp-2.10-linux.AppImage" --appimage-extract) || exit 1
+	bash "/tmp/${PLUGIN}.AppDir/squashfs-root/AppRun" "$APPDIR/plug-ins"
+	
+	rm -rf "/tmp/${PLUGIN}.AppDir" "/tmp/${PLUGIN}-Gimp-2.10-linux.AppImage"
+
+done < /tmp/plugin-list.txt
+
+generate_type2_appimage
+cp -a ../out/*.AppImage /sources/out/GIMP_AppImage-${VERSION}-withplugins-${ARCH}.AppImage

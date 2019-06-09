@@ -127,15 +127,45 @@ fix_library() {
 # Execute user-supplied startup hook scripts
 load_external_plugins()
 {
-  for pd in "$HOME/.config/GIMP-AppImage/2.10/plug-ins"/*/plug-ins; do
-  	if [ ! -e "$pd" ]; then continue; fi
+  for pd in "$HOME/.config/GIMP-AppImage/2.10/plug-ins"/*; do
+  	if [ ! -e "$pd/plug-ins" ]; then continue; fi
     echo "load_external_plugins: linking plug-ins under $pd"
-  	ln -s "$pd"/* "$GIMP2_PLUGINDIR/plug-ins"
-    if [ -e "$pd"/../scripts/startup.sh ]; then
-    	echo "load_external_plugins: sourcing $pd/../scripts/startup.sh"
-    	source "$pd"/../scripts/startup.sh
+  	ln -f -s "$pd" "$GIMP2_PLUGINDIR/plug-ins"
+  	ln -f -s "$pd/plug-ins"/* "${GIMP2_PLUGINDIR}/plug-ins"
+  	
+  	if [ -e "$pd"/scripts/set_exists.sh ]; then
+    	echo "load_external_plugins: sourcing $pd/scripts/set_exists.sh"
+  		source "$pd"/scripts/set_exists.sh
+  	fi
+  	
+    if [ -e "$pd"/scripts/startup.sh ]; then
+    	echo "load_external_plugins: sourcing $pd/scripts/startup.sh"
+    	source "$pd"/scripts/startup.sh
     fi
   done
+
+  for pd in "$APPDIR/plug-ins"/*; do
+  	if [ ! -e "$pd/plug-ins" ]; then continue; fi
+  	if [ ! -e "$pd"/scripts/check_exists.sh ]; then continue; fi
+  	bash "$pd"/scripts/check_exists.sh
+  	if [ $? -ne 0 ]; then continue; fi
+  	
+    echo "load_external_plugins: linking plug-ins under $pd"
+    echo "ln -f -s \"$pd\" \"$GIMP2_PLUGINDIR/plug-ins\""
+  	ln -f -s "$pd" "$GIMP2_PLUGINDIR/plug-ins"
+  	ln -f -s "$pd/plug-ins"/* "${GIMP2_PLUGINDIR}/plug-ins"
+  	
+  	if [ -e "$pd"/scripts/set_exists.sh ]; then
+    	echo "load_external_plugins: sourcing $pd/scripts/set_exists.sh"
+  		source "$pd"/scripts/set_exists.sh
+  	fi
+  	
+    if [ -e "$pd"/scripts/startup.sh ]; then
+    	echo "load_external_plugins: sourcing $pd/scripts/startup.sh"
+    	source "$pd"/scripts/startup.sh
+    fi
+  done
+  
   echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
   echo "QT_PLUGIN_PATH: $QT_PLUGIN_PATH"
 }
