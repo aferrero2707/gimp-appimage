@@ -119,6 +119,54 @@ copy_deps2()
   PWD=$(readlink -f .)
   FILES=$(find . -type f -executable -or -name *.so.* -or -name *.so | sort | uniq )
   for FILE in $FILES ; do
+    ldd "${FILE}" | grep "=>" | awk '{print $3}' | xargs -I '{}' echo '{}' >> DEPSFILE
+  done
+  DEPS=$(cat DEPSFILE | sort | uniq)
+  for FILE in $DEPS ; do
+    if [ -e $FILE ] && [[ $(readlink -f $FILE)/ != $PWD/* ]] ; then
+      echo "Copying library \"$FILE\"..."
+      PARENT=""
+      if [[ -h "$FILE" ]]; then
+        PARENT=$(readlink "$FILE")
+      fi
+      #echo "  parent: $PARENT"
+      while [ -n "$PARENT" ]; do
+        DIR=$(dirname "$FILE")
+        PDIR=$(dirname "$PARENT")
+        if [ "$PDIR" != "." ]; then
+          cp -u -v -L "$FILE" ./usr/lib
+        else
+          cp -u -v -a "$FILE" ./usr/lib
+        fi
+        
+        ROOT=$(echo "$PARENT" | cut -c 1)
+        if [ x"$ROOT" != "x/" ]; then
+          FILE="$DIR/$PARENT"
+        else
+          FILE="$PARENT"
+        fi
+        
+        #echo "  file: $FILE"
+        PARENT=""
+        if [[ -h "$FILE" ]]; then
+          PARENT=$(readlink "$FILE")
+        fi
+        #echo "  parent: $PARENT"
+      done
+      cp -u -v -a "$FILE" ./usr/lib
+    fi
+  done
+  rm -f DEPSFILE
+}
+
+# Copy the library dependencies of all exectuable files in the current directory
+# (it can be beneficial to run this multiple times)
+copy_deps3()
+{
+  mkdir -p usr/lib
+  PWD=$(readlink -f .)
+  FILES=$(find . -type f -executable -or -name *.so.* -or -name *.so | sort | uniq )
+  for FILE in $FILES ; do
     echo "copy_deps2: collecting dependencies of \"${FILE}\""
     ldd "${FILE}"
     ldd "${FILE}" | grep "=>" | awk '{print $3}' | xargs -I '{}' echo '{}' >> DEPSFILE
