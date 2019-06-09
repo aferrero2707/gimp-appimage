@@ -10,14 +10,18 @@ A second step in the build process compiles a set of useful plug-ins ([build-app
 
 The whole build process is automated with [Travis CI](https://travis-ci.org/aferrero2707/gimp-appimage), using [this configuration file](https://github.com/aferrero2707/gimp-appimage/blob/master/.travis.yml). A cron job is scheduled to run on a weekly basis and builds the git HEAD version of BABL/GEGL/GIMP. The updated AppImage package is automatically uploaded to the [continuous release page](https://github.com/aferrero2707/gimp-appimage/releases/tag/continuous).
 
-# Included GIMP plug-ins
+# GIMP plug-ins
 
-The full-featured AppImages package comes with few useful plug-ins:
+Several GIMP plug-ins that can work in combination with the AppImage can be downloaded from [here](https://github.com/aferrero2707/gimp-plugins-collection/releases/tag/continuous).
+
+This is the current list of available plug-ins:
 * [Resynthesizer](http://registry.gimp.org/node/25219) - texture synthesis
 * [Liquid rescale](http://liquidrescale.wikidot.com/) - content-aware image resizing based on seam carving
 * [NUfraw](https://sourceforge.net/projects/nufraw/) - RAW image processing
 * [G'MIC-Qt](https://gmic.eu/gimp.shtml) - the plug-in for the G'MIC filters library
 * [PhFGIMP](https://github.com/aferrero2707/PhFGimp) - front-end for the PhotoFlow editor
+
+Follow the instructions in the plug-ins release page to install them in your system.
 
 # Credits
 
