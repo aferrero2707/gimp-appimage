@@ -9,6 +9,20 @@ export LD_LIBRARY_PATH=/${AIPREFIX}/lib64:/${AIPREFIX}/lib:$LD_LIBRARY_PATH
 
 
 
+if [ ! -e /work/poppler-done ]; then
+#(cd /work && rm -rf freetype-2.9 && \
+#wget https://download.savannah.gnu.org/releases/freetype/freetype-2.9.tar.gz && \
+#tar xf freetype-2.9.tar.gz && cd freetype-2.9 && \
+#./configure --prefix=/${AIPREFIX} && make -j 2 install) || exit 1
+ldd /zyx/lib/libcairo.so
+(cd /work && rm -rf poppler-0.74.0 && wget https://poppler.freedesktop.org/poppler-0.74.0.tar.xz && \
+tar xf poppler-0.74.0.tar.xz && cd poppler-0.74.0 && mkdir -p build && cd build && \
+Freetype_DIR=/${AIPREFIX} Fontconfig_DIR=/${AIPREFIX} cmake -DCMAKE_PREFIX_PATH=/${AIPREFIX} -DCMAKE_INSTALL_PREFIX=/${AIPREFIX} .. && \
+make -j 3 install) || exit 1
+touch /work/poppler-done
+fi
+
+
 if [ ! -e /work/libarchive-done ]; then
 (cd /work && rm -rf libarchive* && wget https://github.com/libarchive/libarchive/releases/download/v3.4.0/libarchive-3.4.0.tar.gz && \
 tar xf libarchive-3.4.0.tar.gz && cd libarchive* && ./configure --prefix=/${AIPREFIX} && make -j 2 install) || exit 1
