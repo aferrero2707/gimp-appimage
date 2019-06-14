@@ -19,7 +19,7 @@ export PATH=${GIMPPREFIX}/bin:$PATH
 
 
 if [ ! -e /work/babl ]; then
-	if [ x"$BABL_GIT_TAG" = "x" ]; then
+	if [ x"$BABL_GIT_TAG" = "x" -o x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf babl && \
 			git clone -b master --depth=1 https://gitlab.gnome.org/GNOME/babl.git) || exit 1
 	else
@@ -31,7 +31,7 @@ fi
 
 
 if [ ! -e /work/gegl ]; then
-	if [ x"$GEGL_GIT_TAG" = "x" ]; then
+	if [ x"$GEGL_GIT_TAG" = "x" -o x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf gegl && \
 			git clone -b master --depth=1 https://gitlab.gnome.org/GNOME/gegl.git) || exit 1
 	else
