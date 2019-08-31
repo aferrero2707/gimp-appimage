@@ -5,7 +5,12 @@ export ACLOCAL_PATH=/${AIPREFIX}/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=/${AIPREFIX}/lib64:/${AIPREFIX}/lib:$LD_LIBRARY_PATH
 
 #(yum update -y && yum install -y epel-release && yum update -y && yum install -y libtool-ltdl-devel autoconf automake libtools which json-c-devel json-glib-devel gtk-doc gperf libuuid-devel libcroco-devel) || exit 1
-(yum-config-manager --add-repo http://www.nasm.us/nasm.repo && yum update -y && yum install -y suitesparse-devel libunwind-devel libwmf-devel openjpeg2-devel libmng-devel libXpm-devel iso-codes-devel mercurial numactl-devel nasm gnome-common alsa-lib-devel libgudev1-devel libappstream-glib desktop-file-utils meson ninja) || exit 1
+(yum-config-manager --add-repo http://www.nasm.us/nasm.repo && yum update -y && yum install -y suitesparse-devel libunwind-devel libwmf-devel openjpeg2-devel libmng-devel libXpm-devel iso-codes-devel mercurial numactl-devel nasm gnome-common alsa-lib-devel libgudev1-devel libappstream-glib desktop-file-utils) || exit 1
+
+yum install -y https://centos7.iuscommunity.org/ius-release.rpm  && yum update -y
+yum install -y python36u python36u-libs python36u-devel python36u-pip || exit 1
+pip3.6 install --upgrade pip || exit 1
+pip3.6 install meson ninja || exit 1
 
 
 export GIMPPREFIX=/usr/local/gimp
@@ -13,6 +18,9 @@ export PKG_CONFIG_PATH=${GIMPPREFIX}/lib64/pkgconfig:${GIMPPREFIX}/lib/pkgconfig
 export ACLOCAL_PATH=${GIMPPREFIX}/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=${GIMPPREFIX}/lib64:${GIMPPREFIX}/lib:$LD_LIBRARY_PATH
 export PATH=${GIMPPREFIX}/bin:$PATH
+
+export LANG="en_US.UTF-8"
+export XDG_DATA_DIRS=$XDG_DATA_DIRS:${GIMPPREFIX}/share:/usr/share
 
 #export BABL_GIT_TAG=BABL_0_1_62
 #export GEGL_GIT_TAG=GEGL_0_4_14
@@ -47,7 +55,7 @@ if [ ! -e /work/gegl ]; then
 	if [ -e ./autogen.sh ]; then
 		(./autogen.sh --prefix=${GIMPPREFIX} --without-libavformat --enable-docs=no --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no && make -j 2 install) || exit 1
 	else
-		(meson build && meson configure -Dprefix=${GIMPPREFIX} -Dlibav=false -Ddocs=false build && cd build && ninja && ninja install) || exit 1
+		(meson build && meson configure -Dprefix=${GIMPPREFIX} -Dlibav=disabled -Ddocs=false build && cd build && ninja && ninja install) || exit 1
 	fi
 fi
 
