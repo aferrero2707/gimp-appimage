@@ -28,7 +28,7 @@ if [ ! -e /work/babl ]; then
 	fi
 	cd /work/babl || exit 1
 	if [ -e ./autogen.sh ]; then
-		(./autogen.sh --prefix=${GIMPPREFIX} && make -j 2 install) || exit 1)
+		(./autogen.sh --prefix=${GIMPPREFIX} && make -j 2 install) || exit 1
 	else
 		(meson --prefix ${GIMPPREFIX} build && cd build && ninja && ninja install) || exit 1
 	fi
@@ -45,7 +45,7 @@ if [ ! -e /work/gegl ]; then
 	fi
 	cd /work/gegl || exit 1
 	if [ -e ./autogen.sh ]; then
-		(./autogen.sh --prefix=${GIMPPREFIX} --without-libavformat --enable-docs=no --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no && make -j 2 install) || exit 1)
+		(./autogen.sh --prefix=${GIMPPREFIX} --without-libavformat --enable-docs=no --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no && make -j 2 install) || exit 1
 	else
 		(meson build && meson configure -Dprefix=${GIMPPREFIX} -Dlibav=false -Ddocs=false build && cd build && ninja && ninja install) || exit 1
 	fi
