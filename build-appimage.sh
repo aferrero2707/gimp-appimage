@@ -5,7 +5,7 @@ export ACLOCAL_PATH=/${AIPREFIX}/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=/${AIPREFIX}/lib64:/${AIPREFIX}/lib:$LD_LIBRARY_PATH
 
 #(yum update -y && yum install -y epel-release && yum update -y && yum install -y libtool-ltdl-devel autoconf automake libtools which json-c-devel json-glib-devel gtk-doc gperf libuuid-devel libcroco-devel) || exit 1
-(yum-config-manager --add-repo http://www.nasm.us/nasm.repo && yum update -y && yum install -y suitesparse-devel libunwind-devel libwmf-devel openjpeg2-devel libmng-devel libXpm-devel iso-codes-devel mercurial numactl-devel nasm gnome-common alsa-lib-devel libgudev1-devel libappstream-glib desktop-file-utils) || exit 1
+(yum-config-manager --add-repo http://www.nasm.us/nasm.repo && yum update -y && yum install -y suitesparse-devel libunwind-devel libwmf-devel openjpeg2-devel libmng-devel libXpm-devel iso-codes-devel mercurial numactl-devel nasm gnome-common alsa-lib-devel libgudev1-devel libappstream-glib desktop-file-utils meson ninja) || exit 1
 
 
 export GIMPPREFIX=/usr/local/gimp
