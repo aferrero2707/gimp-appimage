@@ -11,7 +11,9 @@ yum install -y https://centos7.iuscommunity.org/ius-release.rpm  && yum update -
 yum install -y python36u python36u-libs python36u-devel python36u-pip || exit 1
 pip3.6 install --upgrade pip || exit 1
 pip3.6 install meson ninja || exit 1
-
+#locale-gen en_US.UTF-8
+localectl set-locale LANG=en_US.utf8
+export LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8
 
 
 if [ ! -e /work/poppler-done ]; then
@@ -35,18 +37,25 @@ touch /work/libarchive-done
 fi
 
 
+if [ ! -e /work/pygobbject-done ]; then
+  (cd /work && rm -rf pygobject*  && wget https://ftp.acc.umu.se/pub/GNOME/sources/pygobject/3.34/pygobject-3.34.0.tar.xz && tar xvf pygobject-3.34.0.tar.xz && cd pygobject-3.34.0 && meson --prefix /usr build && cd build && ninja && ninja install) || exit 1
+touch /work/pygobbject-done
+fi
+
+
+
 export GIMPPREFIX=/usr/local/gimp
 export PKG_CONFIG_PATH=${GIMPPREFIX}/lib64/pkgconfig:${GIMPPREFIX}/lib/pkgconfig:${GIMPPREFIX}/share/pkgconfig:$PKG_CONFIG_PATH
 export ACLOCAL_PATH=${GIMPPREFIX}/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=${GIMPPREFIX}/lib64:${GIMPPREFIX}/lib:$LD_LIBRARY_PATH
 export PATH=${GIMPPREFIX}/bin:$PATH
 
-# build against BABL and GEGL git master for the moment
-export BABL_GIT_TAG=""
-export GEGL_GIT_TAG=""
+export LANG="en_US.UTF-8"
+export XDG_DATA_DIRS=$XDG_DATA_DIRS:${GIMPPREFIX}/share:/usr/share
+
 
 if [ ! -e /work/babl ]; then
-	if [ x"$BABL_GIT_TAG" = "x" ]; then
+	if [ x"$BABL_GIT_TAG" = "x" -o x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf babl && \
 			git clone -b master https://gitlab.gnome.org/GNOME/babl.git) || exit 1
 	else
@@ -63,7 +72,7 @@ fi
 
 
 if [ ! -e /work/gegl ]; then
-	if [ x"$GEGL_GIT_TAG" = "x" ]; then
+	if [ x"$GEGL_GIT_TAG" = "x" -o x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf gegl && \
 			git clone -b master https://gitlab.gnome.org/GNOME/gegl.git) || exit 1
 	else
@@ -79,7 +88,7 @@ if [ ! -e /work/gegl ]; then
 fi
 
 
-if [ ! -e /work/gimp ]; then
+if [ ! -e /work/gimp-done ]; then
 	if [ x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf gimp && \
 			git clone -b master https://gitlab.gnome.org/GNOME/gimp.git) || exit 1
@@ -91,8 +100,9 @@ if [ ! -e /work/gimp ]; then
 	cd /work/gimp || exit 1
 	if [ -e ./autogen.sh ]; then
 		(sed -i -e 's|m4_define(\[gtk_required_version\], \[2.24.32\])|m4_define(\[gtk_required_version\], \[2.24.31\])|g' configure.ac) || exit 1
-		(./autogen.sh --prefix=${GIMPPREFIX} --without-gnomevfs --with-gimpdir=GIMP-AppImage --enable-binreloc && make -j 2 install) || exit 1
+		(./autogen.sh --prefix=${GIMPPREFIX} --without-gnomevfs --with-gimpdir=GIMP-AppImage --enable-binreloc --with-javascript=force --with-lua=force && make -j 2 install) || exit 1
 	else
-		(meson build && meson configure -Dprefix=${GIMPPREFIX} -Drelocatable-bundle=enabled -Dgimpdir=GIMP-AppImage build && cd build && ninja && ninja install) || exit 1
+		(meson build && meson configure -Dprefix=${GIMPPREFIX} -Djavascript=never -Dlua=never -Drelocatable-bundle=enabled -Dgimpdir=GIMP-AppImage build && cd build && ninja && ninja install) || exit 1
 	fi
+	touch /work/gimp-done
 fi
