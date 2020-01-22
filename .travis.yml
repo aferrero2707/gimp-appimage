@@ -16,7 +16,7 @@ before_script:
   - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-centos7-gimp
   #- sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
   #- sudo docker run -it -v $(pwd):/sources -e GTK_VERSION="${GTK_VERSION}" -e BABL_GIT_TAG="BABL_0_1_62" -e GEGL_GIT_TAG="GEGL_0_4_14" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-centos7-gimp bash /sources/mkappimage.sh
-  - sudo docker run -it -v $(pwd):/sources -e GTK_VERSION="${GTK_VERSION}" -e BABL_GIT_TAG="BABL_0_1_72" -e GEGL_GIT_TAG="$GEGL_0_4_18" -e GIMP_GIT_TAG="${GIMP_GIT_TAG}" photoflow/docker-centos7-gimp bash /sources/mkappimage.sh
+  - sudo docker run -it -v $(pwd):/sources -e GTK_VERSION="${GTK_VERSION}" -e BABL_GIT_TAG="BABL_0_1_74" -e GEGL_GIT_TAG="$GEGL_0_4_20" -e GIMP_GIT_TAG="${GIMP_GIT_TAG}" photoflow/docker-centos7-gimp bash /sources/mkappimage.sh
 after_success:
   - cd $TRAVIS_BUILD_DIR
   - ls -lh
