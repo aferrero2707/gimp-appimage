@@ -37,11 +37,16 @@ touch /work/libarchive-done
 fi
 
 
+if [ ! -e /work/build/pycairo-1.17.1 ]; then
+  (mkdir -p /work/build && cd /work/build && rm -rf pycairo* && wget https://github.com/pygobject/pycairo/releases/download/v1.17.1/pycairo-1.17.1.tar.gz && tar xvf pycairo-1.17.1.tar.gz && cd pycairo-1.17.1 && meson --prefix /zyx builddir &&  meson configure -Dpython=python3 --prefix /usr builddir && cd builddir && ninja && ninja install) || exit 1
+#  exit
+fi
+
+
 if [ ! -e /work/pygobbject-done ]; then
   (cd /work && rm -rf pygobject*  && wget https://ftp.acc.umu.se/pub/GNOME/sources/pygobject/3.34/pygobject-3.34.0.tar.xz && tar xvf pygobject-3.34.0.tar.xz && cd pygobject-3.34.0 && meson --prefix /usr build && cd build && ninja && ninja install) || exit 1
 touch /work/pygobbject-done
 fi
-
 
 
 export GIMPPREFIX=/usr/local/gimp
@@ -85,12 +90,6 @@ if [ ! -e /work/gegl ]; then
 	else
 		(meson build && meson configure -Dprefix=${GIMPPREFIX} -Dlibav=disabled -Ddocs=false build && cd build && ninja && ninja install) || exit 1
 	fi
-fi
-
-
-if [ ! -e /work/build/pycairo-1.17.1 ]; then
-  (mkdir -p /work/build && cd /work/build && rm -rf pycairo* && wget https://github.com/pygobject/pycairo/releases/download/v1.17.1/pycairo-1.17.1.tar.gz && tar xvf pycairo-1.17.1.tar.gz && cd pycairo-1.17.1 && meson --prefix /zyx builddir &&  meson configure -Dpython=python2 --prefix /zyx builddir && cd builddir && ninja && ninja install) || exit 1
-#  exit
 fi
 
 
