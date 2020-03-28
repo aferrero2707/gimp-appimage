@@ -26,7 +26,7 @@ export XDG_DATA_DIRS=$XDG_DATA_DIRS:${GIMPPREFIX}/share:/usr/share
 #export GEGL_GIT_TAG=GEGL_0_4_14
 
 
-if [ ! -e /work/babl ]; then
+if [ ! -e /work/babl.done ]; then
 	if [ x"$BABL_GIT_TAG" = "x" -o x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf babl && \
 			git clone -b master --depth=1 https://gitlab.gnome.org/GNOME/babl.git) || exit 1
@@ -40,10 +40,11 @@ if [ ! -e /work/babl ]; then
 	else
 		(meson --prefix ${GIMPPREFIX} build && cd build && ninja && ninja install) || exit 1
 	fi
+	touch /work/babl.done
 fi
 
 
-if [ ! -e /work/gegl ]; then
+if [ ! -e /work/gegl.done ]; then
 	if [ x"$GEGL_GIT_TAG" = "x" -o x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf gegl && \
 			git clone -b master --depth=1 https://gitlab.gnome.org/GNOME/gegl.git) || exit 1
@@ -57,6 +58,7 @@ if [ ! -e /work/gegl ]; then
 	else
 		(meson build && meson configure -Dprefix=${GIMPPREFIX} -Dlibav=disabled -Ddocs=false build && cd build && ninja && ninja install) || exit 1
 	fi
+	touch /work/gegl.done
 fi
 
 
@@ -68,8 +70,8 @@ if [ ! -e /work/build/pygtk-2.24.0 ]; then
   (mkdir -p /work/build && cd /work/build && rm -rf pygtk* && wget https://ftp.acc.umu.se/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2 && tar xvf pygtk-2.24.0.tar.bz2 && cd pygtk-2.24.0 && ./configure --prefix=/usr && make install) || exit 1
 fi
 
-
-if [ ! -e /work/gimp ]; then
+echo "PKG_CONFIG_PATH: ${PKG_CONFIG_PATH}"
+if [ ! -e /work/gimp.done ]; then
 	if [ x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf gimp && \
 			git clone -b gimp-2-10 --depth=1 https://gitlab.gnome.org/GNOME/gimp.git) || exit 1
@@ -81,4 +83,5 @@ if [ ! -e /work/gimp ]; then
 	(cd /work/gimp && patch -N -p1 < /sources/gimp-mypaint-brush-dir.patch) || exit 1
 	(cd /work/gimp && sed -i -e 's|m4_define(\[gtk_required_version\], \[2.24.32\])|m4_define(\[gtk_required_version\], \[2.24.31\])|g' configure.ac && \
 	./autogen.sh --prefix=${GIMPPREFIX} --without-gnomevfs --with-gimpdir=GIMP-AppImage --enable-relocatable-bundle && make -j 2 install) || exit 1
+	touch /work/gimp.done
 fi

@@ -72,13 +72,25 @@ BABL_LIBDIR=$(pkg-config --variable=libdir babl)
 if [ x"${BABL_LIBDIR}" = "x" ]; then
   echo "Cannot determine BABL libdir, exiting"; exit 1;
 fi
-cp -a "${BABL_LIBDIR}/babl-0.1" "$APPDIR/usr/lib" || exit 1
+echo "BABL_LIBDIR: ${BABL_LIBDIR}"
+BABL_LIBDIR_NAME="$(basename ${BABL_LIBDIR})"
+mkdir -p "$APPDIR/usr/${BABL_LIBDIR_NAME}" || exit 1
+cp -a "${BABL_LIBDIR}/babl-0.1" "$APPDIR/usr/${BABL_LIBDIR_NAME}" || exit 1
+ls -l "$APPDIR/usr/${BABL_LIBDIR_NAME}"
 
+GEGL_LIBDIR=$(pkg-config --variable=libdir gegl-0.4)
+echo "GEGL_LIBDIR: ${GEGL_LIBDIR}"
+GEGL_LIBDIR_NAME="$(basename ${GEGL_LIBDIR})"
+mkdir -p "$APPDIR/usr/${GEGL_LIBDIR_NAME}" || exit 1
 GEGL_PLUGDIR=$(pkg-config --variable=pluginsdir gegl-0.4)
 if [ x"${GEGL_PLUGDIR}" = "x" ]; then
   echo "Cannot determine GEGL pluginsdir, exiting"; exit 1;
 fi
-cp -a "${GEGL_PLUGDIR}" "$APPDIR/usr/lib" || exit 1
+echo "GEGL_PLUGDIR: ${GEGL_PLUGDIR}"
+mkdir -p "$APPDIR/usr/${GEGL_LIBDIR_NAME}" || exit 1
+cp -a "${GEGL_PLUGDIR}" "$APPDIR/usr/${GEGL_LIBDIR_NAME}" || exit 1
+ls -l "$APPDIR/usr/${GEGL_LIBDIR_NAME}"
+
 
 cp -a "/${PREFIX}/share/mypaint-data" "$APPDIR/usr/share/gimp/2.0"
 
@@ -90,6 +102,17 @@ mkdir "$APPDIR/usr/include"
 mkdir "$APPDIR/usr/lib/pkgconfig"
 for dir in babl gegl gimp; do
   cp -a "${GIMP_PREFIX}/include/${dir}"* "$APPDIR/usr/include"
-  cp -a "${GIMP_PREFIX}/lib/pkgconfig/${dir}"*.pc "$APPDIR/usr/lib/pkgconfig"
 done
 
+mkdir -p "$APPDIR/usr/${BABL_LIBDIR_NAME}/pkgconfig" || exit 1
+cp -a "${BABL_LIBDIR}/pkgconfig/babl"*.pc "$APPDIR/usr/${BABL_LIBDIR_NAME}/pkgconfig" || exit 1
+
+mkdir -p "$APPDIR/usr/${GEGL_LIBDIR_NAME}/pkgconfig" || exit 1
+cp -a "${GEGL_LIBDIR}/pkgconfig/gegl"*.pc "$APPDIR/usr/${GEGL_LIBDIR_NAME}/pkgconfig" || exit 1
+
+
+GIMP_LIBDIR=$(pkg-config --variable=libdir gimp-2.0)
+echo "GIMP_LIBDIR: ${GIMP_LIBDIR}"
+GIMP_LIBDIR_NAME="$(basename ${GIMP_LIBDIR})"
+mkdir -p "$APPDIR/usr/${GIMP_LIBDIR_NAME}/pkgconfig" || exit 1
+cp -a "${GIMP_LIBDIR}/pkgconfig/gimp"*.pc "$APPDIR/usr/${GIMP_LIBDIR_NAME}/pkgconfig" || exit 1

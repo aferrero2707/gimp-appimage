@@ -25,6 +25,9 @@ mkdir -p "$APPDIR/usr/share/image"
 cp -a /usr/share/mime/image/x-*.xml "$APPDIR/usr/share/image" || exit 1
 
 
+# run the hook scripts
+run_hooks
+
 
 # build and install zenity
 (cd /work && rm -rf zenity && git clone https://github.com/aferrero2707/zenity.git && \
@@ -34,9 +37,6 @@ cp -a /usr/local/share/zenity "$APPDIR/usr/share" && \
 cp /sources/appimage-helper-scripts/zenity.sh "$APPDIR/usr/bin/zenity.sh") || exit 1
 
 
-
-# run the hook scripts
-run_hooks
 
 
 # enter the AppImage bundle
