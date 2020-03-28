@@ -63,7 +63,7 @@ fi
 
 
 if [ ! -e /work/build/pycairo-1.17.1 ]; then
-  (mkdir -p /work/build && cd /work/build && rm -rf pycairo* && wget https://github.com/pygobject/pycairo/releases/download/v1.17.1/pycairo-1.17.1.tar.gz && tar xvf pycairo-1.17.1.tar.gz && cd pycairo-1.17.1 && meson --prefix /zyx builddir &&  meson configure -Dpython=python2 --prefix /zyx builddir && cd builddir && ninja && ninja install) || exit 1
+  (mkdir -p /work/build && cd /work/build && rm -rf pycairo* && wget https://github.com/pygobject/pycairo/releases/download/v1.17.1/pycairo-1.17.1.tar.gz && tar xvf pycairo-1.17.1.tar.gz && cd pycairo-1.17.1 && meson --prefix /zyx builddir &&  meson configure -Dpython=python2 --prefix /usr builddir && cd builddir && ninja && ninja install) || exit 1
 fi
 
 if [ ! -e /work/build/pygtk-2.24.0 ]; then
