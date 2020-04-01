@@ -111,7 +111,11 @@ mkdir -p "$APPDIR/usr/${GEGL_LIBDIR_NAME}/pkgconfig" || exit 1
 cp -a "${GEGL_LIBDIR}/pkgconfig/gegl"*.pc "$APPDIR/usr/${GEGL_LIBDIR_NAME}/pkgconfig" || exit 1
 
 
-GIMP_LIBDIR=$(pkg-config --variable=libdir gimp-2.0)
+if [ x"${GTK_VERSION}" = "x3" ]; then
+	GIMP_LIBDIR=$(pkg-config --variable=libdir gimp-3.0)
+else
+	GIMP_LIBDIR=$(pkg-config --variable=libdir gimp-2.0)
+fi
 echo "GIMP_LIBDIR: ${GIMP_LIBDIR}"
 GIMP_LIBDIR_NAME="$(basename ${GIMP_LIBDIR})"
 mkdir -p "$APPDIR/usr/${GIMP_LIBDIR_NAME}/pkgconfig" || exit 1
