@@ -25,7 +25,6 @@ export XDG_DATA_DIRS=$XDG_DATA_DIRS:${GIMPPREFIX}/share:/usr/share
 #export BABL_GIT_TAG=BABL_0_1_62
 #export GEGL_GIT_TAG=GEGL_0_4_14
 
-
 if [ ! -e /work/babl.done ]; then
 	if [ x"$BABL_GIT_TAG" = "x" -o x"$GIMP_GIT_TAG" = "x" ]; then
 		(cd /work && rm -rf babl && \
