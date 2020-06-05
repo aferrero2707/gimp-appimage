@@ -8,7 +8,7 @@ export LD_LIBRARY_PATH=/${AIPREFIX}/lib64:/${AIPREFIX}/lib:$LD_LIBRARY_PATH
 (yum-config-manager --add-repo http://www.nasm.us/nasm.repo && yum update -y && yum install -y suitesparse-devel libunwind-devel libwmf-devel openjpeg2-devel libmng-devel libXpm-devel iso-codes-devel mercurial numactl-devel nasm gnome-common libappstream-glib-devel poppler-glib-devel) || exit 1
 
 yum install -y https://centos7.iuscommunity.org/ius-release.rpm  && yum update -y
-yum install -y python36u python36u-libs python36u-devel python36u-pip || exit 1
+yum install -y python3 python3-libs python3-devel python3-pip || exit 1
 #pip3.6 install --upgrade pip || exit 1
 pip3.6 install meson ninja || exit 1
 #locale-gen en_US.UTF-8
