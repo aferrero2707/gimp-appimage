@@ -27,9 +27,11 @@ export XDG_DATA_DIRS=$XDG_DATA_DIRS:${GIMPPREFIX}/share:/usr/share
 
 if [ ! -e /work/babl.done ]; then
 	if [ x"$BABL_GIT_TAG" = "x" -o x"$GIMP_GIT_TAG" = "x" ]; then
+		echo "Cloning BABL git master"
 		(cd /work && rm -rf babl && \
 			git clone -b master --depth=1 https://gitlab.gnome.org/GNOME/babl.git) || exit 1
 	else
+		echo "Cloning BABL $BABL_GIT_TAG"
 		(cd /work && rm -rf babl && \
 			git clone -b "$BABL_GIT_TAG" --depth=1 https://gitlab.gnome.org/GNOME/babl.git) || exit 1
 	fi
@@ -45,9 +47,11 @@ fi
 
 if [ ! -e /work/gegl.done ]; then
 	if [ x"$GEGL_GIT_TAG" = "x" -o x"$GIMP_GIT_TAG" = "x" ]; then
+		echo "Cloning GEGL git master"
 		(cd /work && rm -rf gegl && \
 			git clone -b master --depth=1 https://gitlab.gnome.org/GNOME/gegl.git) || exit 1
 	else
+		echo "Cloning GEGL $GEGL_GIT_TAG"
 		(cd /work && rm -rf gegl && \
 			git clone -b "$GEGL_GIT_TAG" --depth=1 https://gitlab.gnome.org/GNOME/gegl.git) || exit 1
 	fi
@@ -72,9 +76,11 @@ fi
 echo "PKG_CONFIG_PATH: ${PKG_CONFIG_PATH}"
 if [ ! -e /work/gimp.done ]; then
 	if [ x"$GIMP_GIT_TAG" = "x" ]; then
+		echo "Cloning GIMP 2-10"
 		(cd /work && rm -rf gimp && \
 			git clone -b gimp-2-10 --depth=1 https://gitlab.gnome.org/GNOME/gimp.git) || exit 1
 	else
+		echo "Cloning GIMP $GIMP_GIT_TAG"
 		(cd /work && rm -rf gimp && \
 			git clone -b "$GIMP_GIT_TAG" --depth=1 https://gitlab.gnome.org/GNOME/gimp.git) || exit 1
 	fi
