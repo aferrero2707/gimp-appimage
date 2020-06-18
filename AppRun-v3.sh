@@ -19,7 +19,8 @@ fix_library "libfreetype"
 
 
 init_environment
-export APPDIRS=$AILIBDIR:$APPDIRS
+export APPDIRS=$AILIBDIR:$AILIBDIR/gimp/2.99/plug-ins:$HOME/.config/GIMP-AppImage/2.99/plug-ins:$APPDIRS
+echo "APPDIRS: $APPDIRS"
 
 init_gtk
 
@@ -35,13 +36,14 @@ export PERLLIB=$DIR/usr/share/perl5/:$DIR/usr/lib/perl5/:$PERLLIB
 
 export GSETTINGS_SCHEMA_DIR=$DIR/usr/share/glib-2.0/schemas/:$GSETTINGS_SCHEMA_DIR
 
-export BABL_PATH=$(readlink -f "$DIR/usr/lib/babl-0.1")
+export BABL_PATH=$(readlink -f "$DIR/usr/lib64/babl-0.1")
 echo "BABL_PATH $BABL_PATH"
 
-export GEGL_PATH=$(readlink -f "$DIR/usr/lib/gegl-0.4")
+export GEGL_PATH=$(readlink -f "$DIR/usr/lib64/gegl-0.4")
 echo "GEGL_PATH $GEGL_PATH"
 
 mkdir -p "$AILIBDIR/gimp/2.99"
+
 ln -s $(readlink -f "$DIR/usr/lib/gimp/2.99")/* "$AILIBDIR/gimp/2.99"
 rm -rf "$AILIBDIR/gimp/2.99/interpreters"
 cp -a $(readlink -f "$DIR/usr/lib/gimp/2.99")/interpreters "$AILIBDIR/gimp/2.99"
@@ -59,6 +61,8 @@ if [ -e /etc/fonts/fonts.conf ]; then
 fi
 
 run_hooks
+
+load_external_plugins
 
 
 #cd $DIR/usr
