@@ -42,6 +42,9 @@ echo "BABL_PATH $BABL_PATH"
 export GEGL_PATH=$(readlink -f "$DIR/usr/lib64/gegl-0.4")
 echo "GEGL_PATH $GEGL_PATH"
 
+export GI_TYPELIB_PATH=$DIR/usr/lib/girepository-1.0:${GI_TYPELIB_PATH}
+echo "GI_TYPELIB_PATH $GI_TYPELIB_PATH"
+
 mkdir -p "$AILIBDIR/gimp/2.99"
 
 ln -s $(readlink -f "$DIR/usr/lib/gimp/2.99")/* "$AILIBDIR/gimp/2.99"
