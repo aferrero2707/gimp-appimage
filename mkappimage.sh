@@ -17,8 +17,12 @@ export APPROOT=/work/appimage
 (mkdir -p "${APPROOT}/scripts" && \
 cp -a /sources/scripts/gimp.sh "${APPROOT}/scripts" && \
 cp -a /sources/appimage-helper-scripts/bundle-gtk2.sh "${APPROOT}/scripts" &&
-cp -a /sources/appimage-helper-scripts/bundle-python.sh "${APPROOT}/scripts") || exit 1
-
+cp -a /sources/appimage-helper-scripts/bundle-gobject-introspection.sh "${APPROOT}/scripts") || exit 1
+if [ x"${GTK_VERSION}" = "x3" ]; then
+  cp -a /sources/appimage-helper-scripts/bundle-python3.sh "${APPROOT}/scripts" || exit 1
+else
+  cp -a /sources/appimage-helper-scripts/bundle-python.sh "${APPROOT}/scripts" || exit 1
+fi
 bash /sources/package-appimage.sh || exit 1
 exit 0
 
