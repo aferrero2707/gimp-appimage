@@ -5,12 +5,13 @@ export ACLOCAL_PATH=/${AIPREFIX}/share/aclocal:$ACLOCAL_PATH
 export LD_LIBRARY_PATH=/${AIPREFIX}/lib64:/${AIPREFIX}/lib:$LD_LIBRARY_PATH
 
 #(yum update -y && yum install -y epel-release && yum update -y && yum install -y libtool-ltdl-devel autoconf automake libtools which json-c-devel json-glib-devel gtk-doc gperf libuuid-devel libcroco-devel) || exit 1
-(yum-config-manager --add-repo http://www.nasm.us/nasm.repo && yum update -y && yum install -y suitesparse-devel libunwind-devel libwmf-devel openjpeg2-devel libmng-devel libXpm-devel iso-codes-devel mercurial numactl-devel nasm gnome-common libappstream-glib-devel poppler-glib-devel) || exit 1
+#(yum-config-manager --add-repo http://www.nasm.us/nasm.repo && yum update -y && yum install -y suitesparse-devel libunwind-devel libwmf-devel openjpeg2-devel libmng-devel libXpm-devel iso-codes-devel mercurial numactl-devel nasm gnome-common libappstream-glib-devel poppler-glib-devel) || exit 1
+(yum install -y suitesparse-devel libunwind-devel libwmf-devel openjpeg2-devel libmng-devel libXpm-devel iso-codes-devel mercurial numactl-devel gnome-common libappstream-glib-devel poppler-glib-devel) || exit 1
 
 yum install -y https://centos7.iuscommunity.org/ius-release.rpm  && yum update -y
 yum install -y python3 python3-libs python3-devel python3-pip || exit 1
 #pip3.6 install --upgrade pip || exit 1
-pip3.6 install meson ninja || exit 1
+pip3.6 install meson ninja pycairo PyGObject || exit 1
 #locale-gen en_US.UTF-8
 localectl set-locale LANG=en_US.utf8
 export LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8
@@ -37,16 +38,16 @@ touch /work/libarchive-done
 fi
 
 
-if [ ! -e /work/build/pycairo-1.17.1 ]; then
-  (mkdir -p /work/build && cd /work/build && rm -rf pycairo* && wget https://github.com/pygobject/pycairo/releases/download/v1.17.1/pycairo-1.17.1.tar.gz && tar xvf pycairo-1.17.1.tar.gz && cd pycairo-1.17.1 && meson --prefix /zyx builddir &&  meson configure -Dpython=python3 --prefix /usr builddir && cd builddir && ninja && ninja install) || exit 1
+#if [ ! -e /work/build/pycairo-1.17.1 ]; then
+#  (mkdir -p /work/build && cd /work/build && rm -rf pycairo* && wget https://github.com/pygobject/pycairo/releases/download/v1.17.1/pycairo-1.17.1.tar.gz && tar xvf pycairo-1.17.1.tar.gz && cd pycairo-1.17.1 && meson --prefix /zyx builddir &&  meson configure -Dpython=python3 --prefix /usr builddir && cd builddir && ninja && ninja install) || exit 1
 #  exit
-fi
+#fi
 
 
-if [ ! -e /work/pygobbject-done ]; then
-  (cd /work && rm -rf pygobject*  && wget https://ftp.acc.umu.se/pub/GNOME/sources/pygobject/3.34/pygobject-3.34.0.tar.xz && tar xvf pygobject-3.34.0.tar.xz && cd pygobject-3.34.0 && meson --prefix /usr build && cd build && ninja && ninja install) || exit 1
-touch /work/pygobbject-done
-fi
+#if [ ! -e /work/pygobbject-done ]; then
+#  (cd /work && rm -rf pygobject*  && wget https://ftp.gnome.org/pub/GNOME/sources/pygobject/3.34/pygobject-3.34.0.tar.xz && tar xvf pygobject-3.34.0.tar.xz && cd pygobject-3.34.0 && meson --prefix /usr build && cd build && ninja && ninja install) || exit 1
+#touch /work/pygobbject-done
+#fi
 
 
 export GIMPPREFIX=/usr/local/gimp
