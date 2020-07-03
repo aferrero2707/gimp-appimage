@@ -1,9 +1,9 @@
 #! /bin/bash
 
 # Bundle the python runtime
-PYTHON_PREFIX=$(pkg-config --variable=prefix python)
-PYTHON_LIBDIR=$(pkg-config --variable=libdir python)
-PYTHON_VERSION=$(pkg-config --modversion python)
+PYTHON_PREFIX=$(pkg-config --variable=prefix python3)
+PYTHON_LIBDIR=$(pkg-config --variable=libdir python3)
+PYTHON_VERSION=$(pkg-config --modversion python3)
 echo "PYTHON_PREFIX=${PYTHON_PREFIX}"
 echo "PYTHON_LIBDIR=${PYTHON_LIBDIR}"
 echo "PYTHON_VERSION=${PYTHON_VERSION}"
@@ -24,6 +24,10 @@ cp -a "${PYTHON_PREFIX}/bin"/python* "$APPDIR/usr/bin" || exit 1
 rm -rf "$APPDIR/usr/lib/python${PYTHON_VERSION}"
 mkdir -p "$APPDIR/usr/lib"
 cp -a "${PYTHON_LIBDIR}/python${PYTHON_VERSION}" "$APPDIR/usr/lib" || exit 1
+
+mkdir -p "$APPDIR/usr/lib/python${PYTHON_VERSION}/site-packages"
+cp -a /usr/local/lib64/python${PYTHON_VERSION}/site-packages/* "$APPDIR/usr/lib/python${PYTHON_VERSION}/site-packages"
+
 PYGLIB_LIBDIR=$(pkg-config --variable=libdir pygobject-2.0)
 if [ x"${PYGLIB_LIBDIR}" = "x" ]; then
 	echo "Could not determine PYGOBJECT library path, exiting."
