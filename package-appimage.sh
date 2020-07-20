@@ -124,6 +124,9 @@ generate_type2_appimage
 cp -a ../out/*.AppImage /sources/out/GIMP_AppImage-${VERSION}-${ARCH}.AppImage
 
 
+# do not bundle plugins for 2.99
+if [ x"${GTK_VERSION}" = "x3" ]; then exit 0; fi
+
 
 rm -f /tmp/plugin-list.txt
 wget -O /tmp/plugin-list.txt https://raw.githubusercontent.com/aferrero2707/gimp-plugins-collection/check/plugin-list.txt
