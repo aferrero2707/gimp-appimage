@@ -50,6 +50,15 @@ fi
 #fi
 
 
+if [ ! -e /work/heif-done ]; then
+(cd /work && rm -rf libheif && git clone -b v1.8.0 https://github.com/strukturag/libheif.git && \
+cd libheif && ./autogen.sh && ./configure --prefix=/${AIPREFIX}  && make -j 2 install && \
+cd / && rm -rf /work/libheif) || exit 1
+touch /work/heif-done
+fi
+
+
+
 export GIMPPREFIX=/usr/local/gimp
 export PKG_CONFIG_PATH=${GIMPPREFIX}/lib64/pkgconfig:${GIMPPREFIX}/lib/pkgconfig:${GIMPPREFIX}/share/pkgconfig:$PKG_CONFIG_PATH
 export ACLOCAL_PATH=${GIMPPREFIX}/share/aclocal:$ACLOCAL_PATH
