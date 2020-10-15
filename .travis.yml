@@ -9,14 +9,14 @@ env:
   - GTK_VERSION=3
   #- BABL_GIT_TAG=BABL_0_1_72
   #- GEGL_GIT_TAG=GEGL_0_4_18
-  - GIMP_GIT_TAG=GIMP_2_10_20
+  - GIMP_GIT_TAG=GIMP_2_10_22
   #- TARGET_SYSTEM=Linux
 
 before_script:
   - travis_wait 120 sleep infinity & sudo docker pull photoflow/docker-centos7-gimp
   #- sudo docker run -it -v $(pwd):/sources -e BABL_GIT_TAG="$BABL_GIT_TAG" -e GEGL_GIT_TAG="$GEGL_GIT_TAG" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-trusty-gimp bash /sources/build-appimage.sh
   #- sudo docker run -it -v $(pwd):/sources -e GTK_VERSION="${GTK_VERSION}" -e BABL_GIT_TAG="BABL_0_1_62" -e GEGL_GIT_TAG="GEGL_0_4_14" -e GIMP_GIT_TAG="$GIMP_GIT_TAG" photoflow/docker-centos7-gimp bash /sources/mkappimage.sh
-  - sudo docker run -it -v $(pwd):/sources -e GTK_VERSION="${GTK_VERSION}" -e BABL_GIT_TAG="BABL_0_1_78" -e GEGL_GIT_TAG="GEGL_0_4_24" -e GIMP_GIT_TAG="${GIMP_GIT_TAG}" photoflow/docker-centos7-gimp bash /sources/mkappimage.sh
+  - sudo docker run -it -v $(pwd):/sources -e GTK_VERSION="${GTK_VERSION}" -e BABL_GIT_TAG="BABL_0_1_82" -e GEGL_GIT_TAG="GEGL_0_4_26" -e GIMP_GIT_TAG="${GIMP_GIT_TAG}" photoflow/docker-centos7-gimp bash /sources/mkappimage.sh
 after_success:
   - cd $TRAVIS_BUILD_DIR
   - ls -lh
