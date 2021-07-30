@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/aferrero2707/gimp-appimage.svg?branch=master)](https://travis-ci.org/aferrero2707/gimp-appimage)
+[![Build Status](https://github.com/aferrero2707/gimp-appimage/actions/workflows/ci.yml/badge.svg)](https://github.com/aferrero2707/gimp-appimage/actions/workflows/ci.yml)
 
 # Introduction
 
