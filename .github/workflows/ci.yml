@@ -44,7 +44,7 @@ jobs:
           retention-days: 7
 
   upload:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master') || github.event_name == 'schedule' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
